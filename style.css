@@ -1,20 +1,33 @@
-/* ==========================================================================
-   1. MUUTTUJAT JA PERUSASETUKSET
-   ========================================================================== */
+/* =============================================================================
+   STREAMLAYER — Tyylitiedosto
+   ============================================================================= */
+
+/* =============================================================================
+   1. VÄRIMUUTTUJAT JA PERUSASETUKSET
+   ============================================================================= */
+
 :root {
+    /* Päävärit */
     --bg-main: #0a0a0b;
     --bg-side: #141415;
     --bg-card: #1c1c1e;
+    
+    /* Aksenttivärit */
     --accent: #007aff;
     --accent-hover: #005ecb;
+    --live-green: #32d74b;
+    --kick-green: #5aff2f;
+    --red: #ff453a;
+    
+    /* Tekstivärit */
     --text-main: #f5f5f7;
     --text-dim: #a1a1a6;
-    --live-green: #32d74b;
+    
+    /* Muut */
     --border: #2c2c2e;
-    --red: #ff453a;
-    --kick-green: #5aff2f;
 }
 
+/* Globaalit perustyylit */
 body { 
     margin: 0; 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
@@ -45,9 +58,10 @@ body::before {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #3a3a3c; border-radius: 10px; }
 
-/* ==========================================================================
-   2. SIVUPALKKI (ASIDE)
-   ========================================================================== */
+/* =============================================================================
+   2. SIVUPALKKI
+   ============================================================================= */
+
 aside { 
     width: 320px; 
     background-color: var(--bg-side); 
@@ -75,7 +89,7 @@ aside h3 {
     align-self: flex-start;
 }
 
-/* --- LOGO JA APP HEADER --- */
+/* --- Sivupalkin otsikko --- */
 .app-header {
     display: flex;
     align-items: center;
@@ -86,131 +100,274 @@ aside h3 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.app-logo { width: 32px; height: 32px; color: var(--accent); }
-.app-name {
-    font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 0%, var(--text-dim) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;
+.app-logo { 
+    width: 32px; 
+    height: 32px; 
+    color: var(--accent); 
 }
 
-/* --- SIVUPALKIN HALLINTA --- */
+.app-name {
+    font-size: 1.25rem; 
+    font-weight: 800; 
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, var(--text-dim) 100%);
+    background-clip: text;
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    margin: 0;
+}
+
+/* --- Sivupalkin hallintapainikkeet --- */
 .toggle-sidebar-btn {
     position: absolute;
-    right: -25px; top: 4px; width: 25px; height: 40px;
-    background-color: var(--bg-side); border: 1px solid var(--border);
-    border-left: none; border-radius: 0 8px 8px 0;
-    cursor: pointer; color: var(--text-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; z-index: 1001; 
+    right: -25px; 
+    top: 4px; 
+    width: 25px; 
+    height: 40px;
+    background-color: var(--bg-side); 
+    border: 1px solid var(--border);
+    border-left: none; 
+    border-radius: 0 8px 8px 0;
+    cursor: pointer; 
+    color: var(--text-dim);
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 12px; 
+    z-index: 1001; 
 }
 
-/* Mobiilin sulkunappi (Piilotettu oletuksena työpöydällä) */
+/* Mobiilin sulkunappi (piilotettu oletuksena) */
 .mobile-close-btn {
     display: none !important;
 }
 
-/* ==========================================================================
-   3. SUOSIKKILISTA JA FOOTER (Sivupalkin sisällä)
-   ========================================================================== */
+/* =============================================================================
+   3. SUOSIKKILISTA
+   ============================================================================= */
+
 #favorites-list { 
     display: flex; 
     flex-direction: column; 
     gap: 10px; 
     overflow-y: auto; 
     padding-right: 12px;
-    flex: 1;           /* Täyttää vapaan tilan */
-    min-height: 0;     /* Mahdollistaa skrollauksen */
+    flex: 1;
+    min-height: 0;
 }
 
 .favorite-item {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--bg-card); padding: 10px 12px; border-radius: 10px;
-    border: 1px solid var(--border); gap: 12px;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    background: var(--bg-card); 
+    padding: 10px 12px; 
+    border-radius: 10px;
+    border: 1px solid var(--border); 
+    gap: 12px;
 }
 
-.fav-info { display: flex; align-items: center; gap: 12px; flex-grow: 1; cursor: pointer; overflow: hidden; }
+.fav-info { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    flex-grow: 1; 
+    cursor: pointer; 
+    overflow: hidden; 
+}
 
-/* Status ja Platform ikonit */
-.icon-container { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 24px; min-height: 40px; flex-shrink: 0; }
-.platform-icon-wrapper { position: relative; width: 20px; height: 20px; }
-.platform-icon { width: 100%; height: 100%; display: block; border-radius: 4px; }
+/* --- Status- ja alustakuvakkeet --- */
+.icon-container { 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+    width: 24px; 
+    min-height: 40px; 
+    flex-shrink: 0; 
+}
+
+.platform-icon-wrapper { 
+    position: relative; 
+    width: 20px; 
+    height: 20px; 
+}
+
+.platform-icon { 
+    width: 100%; 
+    height: 100%; 
+    display: block; 
+    border-radius: 4px; 
+}
 
 .status-dot { 
-    position: absolute; top: -2px; right: -3px; width: 8px; height: 8px; 
-    border-radius: 50%; background-color: var(--red); border: 2px solid var(--bg-card); 
-    display: none; box-shadow: 0 0 4px rgba(255, 59, 48, 0.5);
+    position: absolute; 
+    top: -2px; 
+    right: -3px; 
+    width: 8px; 
+    height: 8px; 
+    border-radius: 50%; 
+    background-color: var(--red); 
+    border: 2px solid var(--bg-card); 
+    display: none; 
+    box-shadow: 0 0 4px rgba(255, 59, 48, 0.5);
 }
+
 .status-dot.live { display: block; }
 
-.fav-text-stack { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
-.fav-alias { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
-.status-text { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+.fav-text-stack { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    line-height: 1.2; 
+}
 
-/* Hallintapainikkeet suosikeissa */
-.delete-btn { background: transparent; color: var(--red); border: none; cursor: pointer; font-size: 1.1rem; opacity: 0.6; }
+.fav-alias { 
+    font-weight: 600; 
+    font-size: 0.9rem; 
+    color: var(--text-main); 
+}
+
+.status-text { 
+    font-size: 0.75rem; 
+    color: var(--text-dim); 
+    margin-top: 4px; 
+}
+
+/* --- Suosikkien hallintapainikkeet --- */
+.delete-btn { 
+    background: transparent; 
+    color: var(--red); 
+    border: none; 
+    cursor: pointer; 
+    font-size: 1.1rem; 
+    opacity: 0.6; 
+}
+
 .delete-btn:hover { opacity: 1; }
 
 .fav-auto {
-    appearance: none; -webkit-appearance: none; width: 24px !important; height: 12px !important;
-    background-color: #3a3a3c; border-radius: 10px !important; position: relative;
-    cursor: pointer; transition: background-color 0.2s ease; border: none !important;
-    margin: 0 !important; padding: 0 !important; flex-shrink: 0;
+    appearance: none; 
+    -webkit-appearance: none; 
+    width: 24px !important; 
+    height: 12px !important;
+    background-color: #3a3a3c; 
+    border-radius: 10px !important; 
+    position: relative;
+    cursor: pointer; 
+    transition: background-color 0.2s ease; 
+    border: none !important;
+    margin: 0 !important; 
+    padding: 0 !important; 
+    flex-shrink: 0;
 }
+
 .fav-auto::before {
-    content: ""; position: absolute; top: 2px; left: 2px; width: 8px; height: 8px;
-    background-color: #ffffff; border-radius: 50% !important; transition: transform 0.2s ease;
+    content: ""; 
+    position: absolute; 
+    top: 2px; 
+    left: 2px; 
+    width: 8px; 
+    height: 8px;
+    background-color: #ffffff; 
+    border-radius: 50% !important; 
+    transition: transform 0.2s ease;
 }
+
 .fav-auto:checked { background-color: var(--live-green); }
 .fav-auto:checked::before { transform: translateX(12px); }
 
-/* --- SIDEBAR FOOTER --- */
-.sidebar-footer {
+/* =============================================================================
+   4. SIVUPALKIN FOOTER
+   ============================================================================= */
+
+.app-footer {
     margin-top: auto !important;
-    position: relative !important;
-    bottom: 40px !important; 
-    padding: 20px 0 0 0 !important;
+    padding: 10px 0 5px 0 !important;
     border-top: 1px solid var(--border);
     text-align: center;
     width: 100%;
-    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
-.about-link { cursor: pointer; color: var(--accent); display: block; margin-bottom: 4px; font-weight: 500; }
-.footer-copy { color: #424245; padding-bottom: 10px; }
+.about-link { 
+    cursor: pointer; 
+    color: var(--accent); 
+    display: block; 
+    margin-bottom: 8px; 
+    font-weight: 500; 
+}
 
-/* ==========================================================================
-   4. PÄÄSISÄLTÖ JA LOMAKKEET
-   ========================================================================== */
+.footer-copy { 
+    color: #424245; 
+    font-size: 0.8rem;
+    padding-bottom: 10px;
+}
+
+/* =============================================================================
+   5. PÄÄSISÄLTÖALUE
+   ============================================================================= */
+
 main {
-    flex-grow: 1; margin-left: 320px; transition: margin-left 0.3s ease;
-    height: 100vh; overflow-y: auto; padding: 20px; box-sizing: border-box;
-    display: flex; flex-direction: column;
+    flex-grow: 1; 
+    margin-left: 320px; 
+    transition: margin-left 0.3s ease;
+    height: 100vh; 
+    overflow-y: auto; 
+    padding: 20px; 
+    box-sizing: border-box;
+    display: flex; 
+    flex-direction: column;
 }
 
 main.expanded { margin-left: 0; }
 
-.input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding-right: 12px; }
-input, select, button { padding: 12px; border-radius: 8px; border: 1px solid var(--border); background-color: var(--bg-card); color: white; outline: none; }
-button.primary-btn { background-color: var(--accent); border: none; font-weight: 600; cursor: pointer; }
+/* --- Lomakkeet --- */
+.input-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-bottom: 24px; 
+    padding-right: 12px; 
+}
 
-/* ==========================================================================
-   5. STRIIMIGRRIDI JA IKKUNAT
-   ========================================================================== */
+input, select, button { 
+    padding: 12px; 
+    border-radius: 8px; 
+    border: 1px solid var(--border); 
+    background-color: var(--bg-card); 
+    color: white; 
+    outline: none; 
+}
+
+button.primary-btn { 
+    background-color: var(--accent); 
+    border: none; 
+    font-weight: 600; 
+    cursor: pointer; 
+}
+
+/* =============================================================================
+   6. STRIIMIGRRIDI
+   ============================================================================= */
+
 #stream-grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
     gap: 15px; 
     width: 100%;
-    /* LISÄTTY: Varmistaa, että grid mahtuu näytölle ilman turhaa skrollausta */
     max-height: calc(100vh - 40px); 
 }
 
-/* Kun striimejä on vain yksi, rajoitetaan sen kokoa */
+/* Kun striimejä on vain yksi */
 #stream-grid:has(> :last-child:nth-child(1)) { 
     grid-template-columns: 1fr; 
     height: 100%;
 }
 
+/* --- Striimi-ikkunat --- */
 .stream-wrapper {
     display: flex; 
     flex-direction: column; 
@@ -219,7 +376,6 @@ button.primary-btn { background-color: var(--accent); border: none; font-weight:
     overflow: hidden; 
     border: 1px solid var(--border);
     width: 100%; 
-    /* MUUTETTU: Estetään liian suuri korkeus yhdellä striimillä */
     max-height: 100%; 
     transition: transform 0.2s ease;
 }
@@ -227,130 +383,334 @@ button.primary-btn { background-color: var(--accent); border: none; font-weight:
 .stream-wrapper.chat-open { grid-column: span 2; }
 #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open { grid-column: 1; }
 
+/* --- Striimin otsikko --- */
 .stream-header {
-    height: 56px; background: var(--bg-card); display: flex;
-    justify-content: space-between; align-items: center; padding: 0 16px;
-    flex-shrink: 0; cursor: grab;
+    height: 56px; 
+    background: var(--bg-card); 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 16px;
+    flex-shrink: 0; 
+    cursor: grab;
 }
+
 .stream-header:active { cursor: grabbing; }
 
-.header-icon { width: 18px !important; height: 18px !important; object-fit: contain; flex-shrink: 0; }
+.header-icon { 
+    width: 18px !important; 
+    height: 18px !important; 
+    object-fit: contain; 
+    flex-shrink: 0; 
+}
 
-/* Raahaus-tyylit */
-.stream-wrapper.dragging { opacity: 0.4; border: 2px dashed var(--accent) !important; }
-.stream-wrapper.dragging iframe { pointer-events: none; }
-.stream-wrapper.drag-over { border: 2px solid var(--accent) !important; box-shadow: 0 0 15px rgba(0, 122, 255, 0.4); transform: scale(1.02); }
+/* --- Ohjainpainikkeet --- */
+.stream-title-group { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
 
-body.is-dragging .stream-wrapper * { pointer-events: none; }
-body.is-dragging .stream-wrapper { pointer-events: all; }
-
-/* Striimin ohjaimet */
-.stream-title-group { display: flex; align-items: center; gap: 10px; }
-.stream-header-btns { display: flex; gap: 8px; align-items: center; }
+.stream-header-btns { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+}
 
 .icon-btn {
-    background: #2c2c2e; border: 1px solid #3a3a3c; color: white;
-    width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; padding: 0;
+    background: #2c2c2e; 
+    border: 1px solid #3a3a3c; 
+    color: white;
+    width: 38px; 
+    height: 38px; 
+    border-radius: 8px; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: all 0.2s; 
+    padding: 0;
 }
-.icon-btn svg { width: 20px; height: 20px; fill: currentColor; opacity: 0.8; }
-.icon-btn:hover { background: #3a3a3c; }
-.icon-btn.is-active { color: var(--live-green); border-color: var(--live-green); }
-.close-btn { background: var(--red); border: none; }
 
-/* ==========================================================================
-   6. VIDEO JA CHAT
-   ========================================================================== */
-.content-area { display: flex; width: 100%; background: #000; position: relative; min-height: 0; }
-.video-container { flex-grow: 1; position: relative; aspect-ratio: 16 / 9; }
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.icon-btn svg { 
+    width: 20px; 
+    height: 20px; 
+    fill: currentColor; 
+    opacity: 0.8; 
+}
+
+.icon-btn:hover { background: #3a3a3c; }
+.icon-btn.is-active { 
+    color: var(--live-green); 
+    border-color: var(--live-green); 
+}
+
+.close-btn { 
+    background: var(--red); 
+    border: none; 
+}
+
+/* =============================================================================
+   7. RAAHAUS (DRAG & DROP)
+   ============================================================================= */
+
+.stream-wrapper.dragging { 
+    opacity: 0.4; 
+    border: 2px dashed var(--accent) !important; 
+}
+
+.stream-wrapper.dragging iframe { 
+    pointer-events: none; 
+}
+
+.stream-wrapper.drag-over { 
+    border: 2px solid var(--accent) !important; 
+    box-shadow: 0 0 15px rgba(0, 122, 255, 0.4); 
+    transform: scale(1.02); 
+}
+
+body.is-dragging .stream-wrapper * { 
+    pointer-events: none; 
+}
+
+body.is-dragging .stream-wrapper { 
+    pointer-events: all; 
+}
+
+/* =============================================================================
+   8. VIDEO- JA CHAT-SISÄLLÖT
+   ============================================================================= */
+
+.content-area { 
+    display: flex; 
+    width: 100%; 
+    background: #000; 
+    position: relative; 
+    min-height: 0; 
+}
+
+.video-container { 
+    flex-grow: 1; 
+    position: relative; 
+    aspect-ratio: 16 / 9; 
+}
+
+.video-container iframe { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+}
 
 .chat-container {
-    width: 340px; border-left: 1px solid var(--border); background: #0e0e10;
-    display: none; position: relative; flex-shrink: 0;
+    width: 340px; 
+    border-left: 1px solid var(--border); 
+    background: #0e0e10;
+    display: none; 
+    position: relative; 
+    flex-shrink: 0;
 }
+
 .chat-open .chat-container { display: block; }
 
 .chat-container iframe {
-    background-color: #0e0e10; border: none; width: 125%; height: 125%;
-    transform: scale(0.8); transform-origin: top left;
-    position: absolute; top: 0; left: 0;
+    background-color: #0e0e10; 
+    border: none; 
+    width: 125%; 
+    height: 125%;
+    transform: scale(0.8); 
+    transform-origin: top left;
+    position: absolute; 
+    top: 0; 
+    left: 0;
 }
 
-/* ==========================================================================
-   7. MODALIT JA POPUPIT
-   ========================================================================== */
+/* =============================================================================
+   9. MODALIT
+   ============================================================================= */
+
 .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px); display: none; align-items: center;
-    justify-content: center; z-index: 9999;
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px); 
+    display: none; 
+    align-items: center;
+    justify-content: center; 
+    z-index: 9999;
 }
 
 .about-card {
-    background: #1c1c1e; border: 1px solid rgba(0, 122, 255, 0.4);
-    padding: 40px; border-radius: 24px; text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 90%;
-    max-width: 350px; position: relative; min-width: 280px;
+    background: #1c1c1e; 
+    border: 1px solid rgba(0, 122, 255, 0.4);
+    padding: 40px; 
+    border-radius: 24px; 
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+    width: 90%;
+    max-width: 350px; 
+    position: relative; 
+    min-width: 280px;
 }
 
 .modal-close {
-    position: absolute; top: 15px; right: 15px; background: none;
-    border: none; color: #8e8e93; font-size: 24px; cursor: pointer;
+    position: absolute; 
+    top: 15px; 
+    right: 15px; 
+    background: none;
+    border: none; 
+    color: #8e8e93; 
+    font-size: 24px; 
+    cursor: pointer;
 }
 
-.meta-info-list p { margin: 8px 0; color: var(--text-dim); font-size: 14px; }
-.modal-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+.meta-info-list p { 
+    margin: 8px 0; 
+    color: var(--text-dim); 
+    font-size: 14px; 
+}
+
+.modal-buttons { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    margin-top: 25px; 
+}
 
 .repo-btn, .kick-btn {
-    display: inline-block; padding: 12px 20px; border-radius: 10px;
-    font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.2s ease;
+    display: inline-block; 
+    padding: 12px 20px; 
+    border-radius: 10px;
+    font-weight: 700; 
+    text-decoration: none; 
+    font-size: 14px; 
+    transition: all 0.2s ease;
 }
-.repo-btn { background: var(--accent); color: white; }
-.repo-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
-.kick-btn { background: var(--kick-green); color: #050505; }
-.kick-btn:hover { background: #7aff3a; box-shadow: 0 0 15px rgba(90, 255, 47, 0.4); transform: translateY(-2px); }
+.repo-btn { 
+    background: var(--accent); 
+    color: white; 
+}
 
-/* ==========================================================================
-   8. MOBIILIOPTIMOINTI (@media)
-   ========================================================================== */
+.repo-btn:hover { 
+    background: var(--accent-hover); 
+    transform: translateY(-2px); 
+}
+
+.kick-btn { 
+    background: var(--kick-green); 
+    color: #050505; 
+}
+
+.kick-btn:hover { 
+    background: #7aff3a; 
+    box-shadow: 0 0 15px rgba(90, 255, 47, 0.4); 
+    transform: translateY(-2px); 
+}
+
+/* =============================================================================
+   10. MOBIILIOPTIMOINTI
+   ============================================================================= */
+
 @media (max-width: 768px) {
+    /* --- Sivupalkki mobiilissa --- */
     aside { 
         width: 100% !important; 
         padding-right: 24px !important; 
-        transform: translateX(0); /* Oletuksena auki tai JS hallitsee */
+        transform: translateX(0);
     }
 
-    aside.collapsed { transform: translateX(-100%) !important; }
+    aside.collapsed { 
+        transform: translateX(-100%) !important; 
+    }
 
-    main { margin-left: 0 !important; padding: 10px; }
+    /* --- Pääsisältö mobiilissa --- */
+    main { 
+        margin-left: 0 !important; 
+        padding: 10px; 
+        overflow-y: auto !important;
+        height: 100vh !important;
+        box-sizing: border-box;
+    }
 
-    /* Grid ja striimit mobiilissa */
+    /* --- Striimigridi mobiilissa --- */
     #stream-grid {
-        grid-template-columns: 1fr !important; 
         display: flex !important;
         flex-direction: column;
         gap: 15px;
+        width: 100%;
     }
-    .stream-wrapper { grid-column: span 1 !important; width: 100%; }
-    
-    /* Chat mobiilissa */
-    .chat-container { width: 100% !important; height: 400px; border-top: 1px solid var(--border); border-left: none; }
-    .content-area { flex-direction: column; }
-    .chat-container iframe { transform: scale(1); width: 100%; height: 100%; }
 
-    /* Mobiiliohjaimet */
-    .icon-btn { width: 44px; height: 44px; }
-    .toggle-sidebar-btn { right: -35px; width: 35px; height: 50px; font-size: 18px; display: flex; }
+    .stream-wrapper { 
+        width: 100%; 
+        max-width: 100%;
+        flex-shrink: 0;
+    }
     
-    /* Mobiilisulkunappi (Näkyy vain kun aside ei ole collapsed) */
+    /* --- Video- ja chat-kontainerit mobiilissa --- */
+    .video-container {
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+        max-height: calc(100vw * 0.5625) !important;
+    }
+    
+    .content-area { 
+        flex-direction: column; 
+        min-height: 0;
+    }
+
+    .chat-container { 
+        width: 100% !important; 
+        height: 400px !important; 
+        border-top: 1px solid var(--border); 
+        border-left: none; 
+        flex-shrink: 0;
+        display: none;
+    }
+
+    .chat-open .chat-container { 
+        display: block !important; 
+    }
+
+    .chat-container iframe { 
+        transform: scale(1); 
+        width: 100%; 
+        height: 100%;
+        border: none;
+    }
+
+    /* --- Ohjaimet mobiilissa --- */
+    .icon-btn { 
+        width: 44px; 
+        height: 44px; 
+    }
+
+    .toggle-sidebar-btn { 
+        right: -35px; 
+        width: 35px; 
+        height: 50px; 
+        font-size: 18px; 
+        display: flex; 
+    }
+    
+    /* --- Mobiilin sulkunappi --- */
     aside:not(.collapsed) .mobile-close-btn {
         display: flex !important;
-        position: absolute; top: 20px; right: 20px;
-        background: var(--bg-card); border: 1px solid var(--border);
-        color: var(--text-main); width: 44px; height: 44px;
-        border-radius: 50%; font-size: 28px; z-index: 1002;
-        cursor: pointer; align-items: center; justify-content: center;
+        position: absolute; 
+        top: 20px; 
+        right: 20px;
+        background: var(--bg-card); 
+        border: 1px solid var(--border);
+        color: var(--text-main); 
+        width: 44px; 
+        height: 44px;
+        border-radius: 50%; 
+        font-size: 28px; 
+        z-index: 1002;
+        cursor: pointer; 
+        align-items: center; 
+        justify-content: center;
     }
 }
