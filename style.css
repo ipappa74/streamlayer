@@ -273,6 +273,57 @@ body.is-dragging .stream-wrapper { pointer-events: all; }
     display: none;
 }
 
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 250px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #424245;
+    background: linear-gradient(to top, var(--bg-main) 20%, transparent);
+    z-index: 100;
+}
+
+.about-link {
+    cursor: pointer;
+    color: #007aff;
+}
+
+.about-card {
+    background: #1c1c1e;
+    border: 1px solid rgba(0, 122, 255, 0.4);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    min-width: 280px;
+}
+
+.meta-info-list p {
+    margin: 8px 0;
+    color: #a1a1a6;
+    font-size: 14px;
+}
+
+.repo-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #007aff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.repo-btn:hover {
+    background: #005ecb;
+}
+
 /* --- MOBIILI --- */
 @media (max-width: 768px) {
     /* Sivupalkki peittää mobiilissa koko näytön tai ison osan siitä */
@@ -367,4 +418,7 @@ body.is-dragging .stream-wrapper { pointer-events: all; }
     .toggle-sidebar-btn {
         display: flex; 
     }
+	
+	.app-footer { left: 0; }
+    .footer-copy { display: none; }
 }
