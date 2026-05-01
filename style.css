@@ -205,10 +205,11 @@ button.primary-btn { background-color: var(--accent); border: none; font-weight:
     max-height: calc(100vh - 40px); 
 }
 
-/* Kun striimejä on vain yksi, rajoitetaan sen kokoa */
+/* Yksi striimi: pidetään se näytön raameissa */
 #stream-grid:has(> :last-child:nth-child(1)) { 
     grid-template-columns: 1fr; 
-    height: 100%;
+    height: calc(100vh - 120px) !important; 
+    max-height: 85vh; 
 }
 
 .stream-wrapper {
@@ -262,9 +263,33 @@ body.is-dragging .stream-wrapper { pointer-events: all; }
 /* ==========================================================================
    6. VIDEO JA CHAT
    ========================================================================== */
-.content-area { display: flex; width: 100%; background: #000; position: relative; min-height: 0; }
-.video-container { flex-grow: 1; position: relative; aspect-ratio: 16 / 9; }
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.content-area { 
+    display: flex; 
+    flex: 1; 
+    width: 100%; 
+    height: 100%; /* Varmistaa, että säiliöllä on korkeus heti */
+    background: #000; 
+    position: relative; 
+    min-height: 0; 
+}
+
+.video-container { 
+    flex: 1; 
+    position: relative; 
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.video-container iframe { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    border: none;
+    visibility: visible; /* Varmistaa näkyvyyden */
+}
 
 .chat-container {
     width: 340px; border-left: 1px solid var(--border); background: #0e0e10;
