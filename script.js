@@ -1,5 +1,5 @@
 /* --- GLOBAALIT MUUTTUJAT JA ASETUKSET --- */
-const STORAGE_KEY = 'multistream_pro_v2';
+const STORAGE_KEY = 'streamlayer';
 let favorites = [];
 const players = {};
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
