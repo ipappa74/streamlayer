@@ -196,13 +196,32 @@ button.primary-btn { background-color: var(--accent); border: none; font-weight:
 /* ==========================================================================
    5. STRIIMIGRRIDI JA IKKUNAT
    ========================================================================== */
-#stream-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 15px; width: 100%; }
-#stream-grid:has(> :last-child:nth-child(1)) { grid-template-columns: 1fr; }
+#stream-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
+    gap: 15px; 
+    width: 100%;
+    /* LISÄTTY: Varmistaa, että grid mahtuu näytölle ilman turhaa skrollausta */
+    max-height: calc(100vh - 40px); 
+}
+
+/* Kun striimejä on vain yksi, rajoitetaan sen kokoa */
+#stream-grid:has(> :last-child:nth-child(1)) { 
+    grid-template-columns: 1fr; 
+    height: 100%;
+}
 
 .stream-wrapper {
-    display: flex; flex-direction: column; background-color: black;
-    border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
-    width: 100%; height: auto; transition: transform 0.2s ease;
+    display: flex; 
+    flex-direction: column; 
+    background-color: black;
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 1px solid var(--border);
+    width: 100%; 
+    /* MUUTETTU: Estetään liian suuri korkeus yhdellä striimillä */
+    max-height: 100%; 
+    transition: transform 0.2s ease;
 }
 
 .stream-wrapper.chat-open { grid-column: span 2; }
