@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>StreamLayer — Multistream</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Faviconit (Päivitetty polku) -->
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+<link rel="manifest" href="img/site.webmanifest">
+
+<style>
+/* GLOBAL */
+body {
+  margin: 0;
+  padding: 0;
+  background: #0a0a0b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #f5f5f7;
+  overflow-x: hidden;
+}
+
+/* Neon glow animation - StreamLayer Blue */
+@keyframes neonPulse {
+  0%   { text-shadow: 0 0 4px #007aff55, 0 0 8px #007aff33; }
+  50%  { text-shadow: 0 0 10px #007aff99, 0 0 18px #007aff55; }
+  100% { text-shadow: 0 0 4px #007aff55, 0 0 8px #007aff33; }
+}
+
+/* ANIMATED NEON GRID + PARTICLES */
+.bg-container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.neon-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  /* Ruudukon väri muutettu siniseksi */
+  background-image: url("data:image/svg+xml;utf8,\
+    <svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>\
+      <rect width='60' height='60' fill='none' stroke='rgba(0,122,255,0.15)' stroke-width='1'/>\
+    </svg>");
+  background-size: 60px 60px;
+  animation: gridScroll 18s linear infinite;
+  opacity: 0.3;
+  filter: drop-shadow(0 0 4px #007aff33);
+}
+
+@keyframes gridScroll {
+  0%   { background-position: 0 0; }
+  100% { background-position: 60px 60px; }
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #007aff;
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 4px #007aff);
+  animation: particleMove linear infinite;
+}
+
+@keyframes particleMove {
+  0% { transform: translateY(0) translateX(0); opacity: 0.7; }
+  100% { transform: translateY(-120vh) translateX(20px); opacity: 0; }
+}
+
+/* CRT scanline effect */
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0px,
+    rgba(0, 0, 0, 0.2) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  opacity: 0.5;
+}
+
+/* HERO SECTION */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-size: 72px;
+  font-weight: 800;
+  color: #f5f5f7;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  margin: 0;
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+.title span {
+  color: #007aff;
+}
+
+.subtitle {
+  margin-top: 15px;
+  font-size: 20px;
+  color: #a1a1a6;
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+/* BUTTON */
+.launch-btn {
+  margin-top: 45px;
+  padding: 16px 42px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #007aff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px 0 rgba(0,118,255,0.39);
+}
+
+.launch-btn:hover {
+  background: #005ecb;
+  box-shadow: 0 6px 20px rgba(0,118,255,0.5);
+  transform: translateY(-3px);
+}
+
+/* FOOTER */
+.footer {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  text-align: center;
+  color: #424245;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+/* Mobiili-skaalaus */
+@media (max-width: 768px) {
+  .title { font-size: 42px; letter-spacing: -1px; }
+  .subtitle { font-size: 16px; max-width: 90%; }
+  .launch-btn { width: 80%; padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+<div class="bg-container">
+  <div class="neon-grid"></div>
+  <div class="particles" id="particles"></div>
+  <div class="crt-scanlines"></div>
+</div>
+
+<div class="hero">
+  <h1 class="title">Stream<span>Layer</span></h1>
+  <p class="subtitle">
+    Seuraavan sukupolven multistream-hallinta. 
+    Katso Twitch- ja Kick-striimejä rinnakkain, seuraa live-tiloja ja räätälöi katselukokemuksesi.
+  </p>
+
+  <!-- Vaihda 'app.html' sovelluksesi tiedostonimeen -->
+  <button class="launch-btn" onclick="location.href='app.html'">
+    Avaa sovellus
+  </button>
+</div>
+
+<div class="footer">
+  © 2026 StreamLayer — Built for the community
+</div>
+
+<script>
+/* Generate neon particles */
+const container = document.getElementById("particles");
+
+for (let i = 0; i < 45; i++) {
+  const p = document.createElement("div");
+  p.className = "particle";
+
+  const size = Math.random() * 2 + 1.5;
+  p.style.width = size + "px";
+  p.style.height = size + "px";
+
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.top = Math.random() * 100 + "vh";
+
+  const duration = Math.random() * 15 + 10;
+  p.style.animationDuration = duration + "s";
+
+  const delay = Math.random() * -duration;
+  p.style.animationDelay = delay + "s";
+
+  container.appendChild(p);
+}
+</script>
+
+</body>
+</html>
