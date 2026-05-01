@@ -1,5 +1,31 @@
+// StreamLayer Metatiedot
+const APP_META = {
+    name: "StreamLayer",
+    version: "1.2.0",
+    buildDate: "2026-05-01",
+    author: "Toni",
+    repo: "https://github.com/ipappa74/streamlayer",
+    homepage: "https://ipappa74.github.io/streamlayer/"
+};
+
+function openAbout() {
+    document.getElementById('app-name').textContent = APP_META.name;
+    document.getElementById('app-version').textContent = `Versio ${APP_META.version}`;
+    document.getElementById('app-author').textContent = `Tekijä: ${APP_META.author}`;
+    document.getElementById('app-date').textContent = `Päivitetty: ${APP_META.buildDate}`;
+    document.getElementById('app-repo').href = APP_META.repo;
+    
+    document.getElementById('about-modal').style.display = 'flex';
+}
+
+function closeAbout(event) {
+    if (event.target.id === 'about-modal' || event.target.className === 'modal-close') {
+        document.getElementById('about-modal').style.display = 'none';
+    }
+}
+
 /* --- GLOBAALIT MUUTTUJAT JA ASETUKSET --- */
-const STORAGE_KEY = 'streamlayer';
+const STORAGE_KEY = 'multistream_pro_v2';
 let favorites = [];
 const players = {};
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
