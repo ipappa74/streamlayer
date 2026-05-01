@@ -1,0 +1,370 @@
+/* --- MUUTTUJAT JA PERUSASETUKSET --- */
+:root {
+    --bg-main: #0a0a0b;
+    --bg-side: #141415;
+    --bg-card: #1c1c1e;
+    --accent: #007aff;
+    --accent-hover: #005ecb;
+    --text-main: #f5f5f7;
+    --text-dim: #a1a1a6;
+    --live-green: #32d74b;
+    --border: #2c2c2e;
+    --red: #ff453a;
+}
+
+body { 
+    margin: 0; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    background-color: var(--bg-main); 
+    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+    background-size: 40px 40px; 
+    color: var(--text-main); 
+    display: flex; 
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+/* Taustan pehmeä häivytys */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, transparent, var(--bg-main) 80%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Skrollipalkkien tyylit */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3a3a3c; border-radius: 10px; }
+
+/* --- SIVUPALKKI (ASIDE) --- */
+aside { 
+    width: 320px; 
+    background-color: var(--bg-side); 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    padding: 0 12px 24px 24px !important; 
+    box-sizing: border-box; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+aside.collapsed { transform: translateX(-100%); }
+
+aside h3 {
+    margin-top: 10px !important;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    align-self: flex-start;
+}
+
+/* --- LOGO JA APP HEADER --- */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    margin-bottom: 5px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app-logo { width: 32px; height: 32px; color: var(--accent); }
+.app-name {
+    font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, var(--text-dim) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;
+}
+
+/* --- SIVUPALKIN HALLINTA --- */
+.toggle-sidebar-btn {
+    position: absolute;
+    right: -25px; top: 4px; width: 25px; height: 40px;
+    background-color: var(--bg-side); border: 1px solid var(--border);
+    border-left: none; border-radius: 0 8px 8px 0;
+    cursor: pointer; color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; z-index: 1001; 
+}
+
+/* --- PÄÄSISÄLTÖ JA LOMAKKEET --- */
+main {
+    flex-grow: 1; margin-left: 320px; transition: margin-left 0.3s ease;
+    height: 100vh; overflow-y: auto; padding: 20px; box-sizing: border-box;
+    display: flex; flex-direction: column;
+}
+
+main.expanded { margin-left: 0; }
+
+.input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding-right: 12px; }
+input, select, button { padding: 12px; border-radius: 8px; border: 1px solid var(--border); background-color: var(--bg-card); color: white; outline: none; }
+button.primary-btn { background-color: var(--accent); border: none; font-weight: 600; cursor: pointer; }
+
+/* --- SUOSIKKILISTA --- */
+#favorites-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 12px; }
+
+.favorite-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-card); padding: 10px 12px; border-radius: 10px;
+    border: 1px solid var(--border); gap: 12px;
+}
+
+.fav-info { display: flex; align-items: center; gap: 12px; flex-grow: 1; cursor: pointer; overflow: hidden; }
+.icon-container { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 24px; min-height: 40px; flex-shrink: 0; }
+
+.platform-icon-wrapper {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.platform-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 4px;
+}
+
+/* Auto-open kytkin */
+.fav-auto {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px !important;
+    height: 12px !important;
+    background-color: #3a3a3c;
+    border-radius: 10px !important;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0;
+}
+
+.fav-auto::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: #ffffff;
+    border-radius: 50% !important;
+    transition: transform 0.2s ease;
+}
+
+.fav-auto:checked {
+    background-color: var(--live-green);
+}
+
+.fav-auto:checked::before {
+    transform: translateX(12px);
+}
+
+.status-dot { 
+    position: absolute;
+    top: -2px;
+    right: -3px;
+    width: 8px;
+    height: 8px; 
+    border-radius: 50%;
+    background-color: #ff3b30;
+    border: 2px solid var(--bg-card); 
+    display: none;
+    box-shadow: 0 0 4px rgba(255, 59, 48, 0.5);
+}
+
+.status-dot.live {
+    display: block;
+}
+
+.fav-text-stack { display: flex; flex-direction: column; justify-content: center; line-height: 1.2; }
+.fav-alias { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+.status-text { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+.delete-btn { background: transparent; color: var(--red); border: none; cursor: pointer; font-size: 1.1rem; opacity: 0.6; }
+.delete-btn:hover { opacity: 1; }
+
+/* --- STRIIMIGRRIDI JA IKKUNAT --- */
+#stream-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 15px; width: 100%; }
+#stream-grid:has(> :last-child:nth-child(1)) { grid-template-columns: 1fr; }
+
+.stream-wrapper {
+    display: flex; flex-direction: column; background-color: black;
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+    width: 100%; height: auto; transition: transform 0.2s ease;
+}
+
+.stream-wrapper.chat-open { grid-column: span 2; }
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open { grid-column: 1; }
+
+.stream-header {
+    height: 56px; background: var(--bg-card); display: flex;
+    justify-content: space-between; align-items: center; padding: 0 16px;
+    flex-shrink: 0; cursor: grab;
+}
+
+.stream-header:active { cursor: grabbing; }
+
+/* --- RAAHAUS-TYYLIT --- */
+.stream-wrapper.dragging { opacity: 0.4; border: 2px dashed var(--accent) !important; }
+.stream-wrapper.dragging iframe { pointer-events: none; }
+.stream-wrapper.drag-over { border: 2px solid var(--accent) !important; box-shadow: 0 0 15px rgba(0, 122, 255, 0.4); transform: scale(1.02); }
+
+body.is-dragging .stream-wrapper * { pointer-events: none; }
+body.is-dragging .stream-wrapper { pointer-events: all; }
+
+/* --- PAINIKKEET JA ELEMENTIT STRIIMISSÄ --- */
+.stream-title-group { display: flex; align-items: center; gap: 12px; }
+.header-icon { width: 20px; height: 20px; }
+.stream-header-btns { display: flex; gap: 8px; align-items: center; }
+
+.icon-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 28px;
+    flex-shrink: 0;
+}
+
+.icon-btn {
+    background: #2c2c2e; border: 1px solid #3a3a3c; color: white;
+    width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; padding: 0;
+}
+
+.icon-btn svg { width: 20px; height: 20px; fill: currentColor; opacity: 0.8; }
+.icon-btn:hover { background: #3a3a3c; }
+.icon-btn.is-active { color: var(--live-green); border-color: var(--live-green); }
+.close-btn { background: var(--red); border: none; }
+
+/* --- VIDEO JA CHAT --- */
+.content-area { display: flex; width: 100%; background: #000; position: relative; min-height: 0; }
+.video-container { flex-grow: 1; position: relative; aspect-ratio: 16 / 9; }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+.chat-container {
+    width: 340px; border-left: 1px solid var(--border); background: #0e0e10;
+    display: none; position: relative; flex-shrink: 0;
+}
+
+.chat-open .chat-container { display: block; }
+
+.chat-container iframe {
+    background-color: #0e0e10; border: none; width: 125%; height: 125%;
+    transform: scale(0.8); transform-origin: top left;
+    position: absolute; top: 0; left: 0;
+}
+
+/* Piilotetaan mobiilisulku oletuksena työpöydällä */
+.mobile-close-btn {
+    display: none;
+}
+
+/* --- MOBIILI --- */
+@media (max-width: 768px) {
+    /* Sivupalkki peittää mobiilissa koko näytön tai ison osan siitä */
+    aside {
+        width: 100%;
+        padding-right: 24px !important;
+        transform: translateX(-100%);
+    }
+
+    aside.collapsed {
+        transform: translateX(-100%);
+    }
+
+    /* Näytetään sivupalkki, kun se ei ole collapsed */
+    aside:not(.collapsed) {
+        transform: translateX(0);
+    }
+
+    /* Pääalue vie mobiilissa koko leveyden */
+    main {
+        margin-left: 0 !important;
+        padding: 10px;
+    }
+
+    /* Grid mobiilissa: yksi striimi kerrallaan */
+	#stream-grid {
+		grid-template-columns: 1fr !important; 
+		display: flex !important;
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	.stream-wrapper {
+			grid-column: span 1 !important;
+			width: 100%;
+	}
+		
+    /* Chatin säädöt mobiilille */
+	.chat-container {
+		width: 100% !important;
+		height: 450px;
+		border-top: 1px solid var(--border);
+	}
+
+    .content-area {
+        flex-direction: column; /* Video ja chatti päällekkäin mobiilissa */
+    }
+
+    /* Skaalataan chatti paremmin mobiilille */
+    .chat-container iframe {
+        transform: scale(1);
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Suuremmat painikkeet helpottavat kosketuskäyttöä */
+    .icon-btn {
+        width: 44px;
+        height: 44px;
+    }
+
+    .toggle-sidebar-btn {
+        right: -35px;
+        width: 35px;
+        height: 50px;
+        font-size: 18px;
+    }
+	
+	/* Sulkemispainike sivupalkin sisällä */
+    .mobile-close-btn {
+		display: none;
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		background: var(--bg-card);
+		border: 1px solid var(--border);
+		color: var(--text-main);
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		font-size: 28px;
+		z-index: 1002;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: 1;
+		padding: 0;
+	}
+
+    /* Piilotetaan työpöytäversio toggle-painikkeesta mobiilissa, jos halutaan siistimpi ilme */
+    .toggle-sidebar-btn {
+        display: flex; 
+    }
+}
