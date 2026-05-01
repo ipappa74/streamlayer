@@ -110,7 +110,7 @@ aside h3 {
 }
 
 /* ==========================================================================
-   3. SUOSIKKILISTA JA FOOTER (Sivupalkin sisällä)
+   3. SUOSIKKILISTA JA FOOTER
    ========================================================================== */
 #favorites-list { 
     display: flex; 
@@ -168,7 +168,7 @@ aside h3 {
     margin-top: auto !important;
     position: relative !important;
     bottom: 40px !important; 
-    padding: 20px 0 0 0 !important;
+    padding: 25px 0 0 0 !important;
     border-top: 1px solid var(--border);
     text-align: center;
     width: 100%;
