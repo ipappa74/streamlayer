@@ -4,6 +4,7 @@ const APP_META = {
     version: "1.2.0",
     buildDate: "2026-05-01",
     author: "Toni",
+	kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
     homepage: "https://ipappa74.github.io/streamlayer/"
 };
@@ -13,19 +14,22 @@ function openAbout() {
     document.getElementById('app-version').textContent = `Versio ${APP_META.version}`;
     document.getElementById('app-author').textContent = `Tekijä: ${APP_META.author}`;
     document.getElementById('app-date').textContent = `Päivitetty: ${APP_META.buildDate}`;
+    document.getElementById('app-kick').href = APP_META.kick;	
     document.getElementById('app-repo').href = APP_META.repo;
-    
+	
     document.getElementById('about-modal').style.display = 'flex';
 }
 
 function closeAbout(event) {
-    if (event.target.id === 'about-modal' || event.target.className === 'modal-close') {
-        document.getElementById('about-modal').style.display = 'none';
+    const modal = document.getElementById('about-modal');
+    // Suljetaan jos klikataan taustaa (overlay) tai jos funktiota kutsutaan napista
+    if (event.target === modal || event.target.className === 'modal-close' || !event.target) {
+        modal.style.display = 'none';
     }
 }
 
 /* --- GLOBAALIT MUUTTUJAT JA ASETUKSET --- */
-const STORAGE_KEY = 'multistream_pro_v2';
+const STORAGE_KEY = 'streamlayer';
 let favorites = [];
 const players = {};
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
