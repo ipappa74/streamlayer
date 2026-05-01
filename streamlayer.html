@@ -45,7 +45,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamLayer - Multistream</title>
+    <title>StreamLayer</title>
     
     <!-- Faviconit ja Manifest -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/streamlayer/img/apple-touch-icon.png">
@@ -95,6 +95,26 @@
     <!-- Grid-alue, johon striimit avautuvat -->
     <div id="stream-grid"></div>
 </main>
+
+<!-- Footer -->
+<footer class="app-footer">
+    <span class="about-link" onclick="openAbout()">Tietoa sovelluksesta</span>
+    <span class="footer-copy">© 2026 StreamLayer</span>
+</footer>
+
+<!-- Tietoa-popup -->
+<div id="about-modal" class="modal-overlay" onclick="closeAbout(event)">
+    <div class="modal-content about-card">
+        <button class="modal-close" onclick="closeAbout(event)">×</button>
+        <h2 id="app-name">StreamLayer</h2>
+        <div class="meta-info-list">
+            <p id="app-version"></p>
+            <p id="app-author"></p>
+            <p id="app-date"></p>
+            <a id="app-repo" href="#" target="_blank" class="repo-btn">GitHub Repository</a>
+        </div>
+    </div>
+</div>
 
 <!-- Sovelluslogiikka -->
 <script src="script.js"></script>
