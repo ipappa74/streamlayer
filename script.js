@@ -386,7 +386,23 @@ function _loadChatIframe(id, name, platform) {
     const url = platform === 'kick'
         ? `https://kick.com/popout/${name}/chat`
         : `https://www.twitch.tv/embed/${name}/chat?parent=${parent}&darkpopout`;
-    chatContainer.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+    
+    if (platform === 'kick') {
+        chatContainer.innerHTML = `
+            <div style="position:relative;height:100%;">
+                <iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>
+                <button onclick="window.open('https://kick.com/${name}/chat', '_blank')"
+                        title="Avaa chatti Kickissä"
+                        style="position:absolute;bottom:10px;right:5px;width:120px;height:35px;background:#53fc18;color:#000;border:none;border-radius:5px;font-weight:600;cursor:pointer;font-size:12px;z-index:10;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:transform 0.2s,box-shadow 0.2s;"
+                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.4)';"
+                        onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';">
+                    Avaa Kickissä
+                </button>
+            </div>
+        `;
+    } else {
+        chatContainer.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+    }
 }
 
 function toggleMute(id, name, platform) {
