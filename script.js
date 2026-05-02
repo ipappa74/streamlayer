@@ -280,7 +280,8 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
             width: "100%",
             height: "100%",
             parent: [window.location.hostname || 'localhost'],
-            muted: true  // Aina muted alussa
+            muted: true,  // Aina muted alussa
+            volume: 0.8  // 0.0 - 1.0, eli tässä 80%
         });
         // Varmistetaan että soitin jatkaa toistoa
         setTimeout(() => {
