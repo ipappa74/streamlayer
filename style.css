@@ -28,16 +28,19 @@
 }
 
 /* Globaalit perustyylit */
-body { 
-    margin: 0; 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-    background-color: var(--bg-main); 
-    background-image: radial-gradient(circle at 2px 2px, rgba(0, 122, 255, 0.3) 1px, transparent 0);
-    background-size: 40px 40px; 
-    color: var(--text-main); 
-    display: flex; 
-    height: 100vh; 
-    overflow: hidden; 
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-main);
+    background-image: url("data:image/svg+xml;utf8,\
+        <svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>\
+          <rect width='60' height='60' fill='none' stroke='rgba(0,122,255,0.09)' stroke-width='1'/>\
+        </svg>");
+    background-size: 60px 60px;
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* Taustan pehmeä häivytys */
@@ -383,6 +386,17 @@ button.primary-btn {
 .stream-wrapper.chat-open { grid-column: span 2; }
 #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open { grid-column: 1; }
 
+/* Kun naapurilla on chat auki, keskitetään video */
+.stream-wrapper.neighbor-has-chat .content-area {
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.stream-wrapper.neighbor-has-chat .video-container {
+    max-height: calc((100vh - 200px) / 2);
+}
+
 /* --- Striimin otsikko --- */
 .stream-header {
     height: 56px; 
@@ -576,7 +590,7 @@ body.is-dragging .stream-wrapper {
     display: flex; 
     flex-direction: column; 
     gap: 15px; 
-    margin-top: 25px; 
+    margin-top: 35px; 
 }
 
 .repo-btn, .kick-btn {
@@ -675,10 +689,15 @@ body.is-dragging .stream-wrapper {
     }
 
     .chat-container iframe { 
-        transform: scale(1); 
-        width: 100%; 
-        height: 100%;
+        background-color: #0e0e10;
         border: none;
+        width: 125%; 
+        height: 125%;
+        transform: scale(0.8); 
+        transform-origin: top left;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
     /* --- Ohjaimet mobiilissa --- */
@@ -712,5 +731,21 @@ body.is-dragging .stream-wrapper {
         cursor: pointer; 
         align-items: center; 
         justify-content: center;
+    }
+
+    /* --- Modaalin buttonit mobiilissa --- */
+    .about-card {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .modal-buttons {
+        margin-top: 30px;
+        gap: 12px;
+    }
+
+    .repo-btn, .kick-btn {
+        padding: 14px 20px;
+        font-size: 13px;
     }
 }
