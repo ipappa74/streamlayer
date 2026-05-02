@@ -169,7 +169,7 @@ function renderFavorites() {
                         <span class="status-dot ${fav.isLive ? 'live' : ''}"></span>
                         <img src="${iconSrc}" class="platform-icon">
                     </div>
-                    <input type="checkbox" class="fav-auto" title="Auto-open"
+                    <input type="checkbox" class="fav-auto" title="Avaa automaattisesti kun livessä"
                         ${fav.autoOpen ? 'checked' : ''}
                         onchange="toggleAutoOpen(${i}, event)"
                         onclick="event.stopPropagation()">
