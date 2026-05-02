@@ -392,6 +392,15 @@ button.primary-btn {
 .stream-wrapper.chat-open { grid-column: span 2; }
 #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open { grid-column: 1; }
 
+/* Yksittäinen striimi chat auki -- täyttää koko korkeuden */
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .content-area {
+    flex: 1;
+}
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .video-container {
+    aspect-ratio: unset;
+    height: 100%;
+}
+
 /* Kun naapurilla on chat auki, keskitetään video */
 .stream-wrapper.neighbor-has-chat .content-area {
     flex: 1;
