@@ -235,7 +235,38 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
             <div class="chat-container" id="chat-${id}"></div>
         </div>`;
 
+    // Tallennetaan olemassa olevien striimien mute-tilat ennen layout-muutosta
+    const savedMuteStates = {};
+    document.querySelectorAll('.stream-wrapper').forEach(w => {
+        if (w.id === id) return;
+        const muteBtn = document.getElementById('mute-btn-' + w.id);
+        savedMuteStates[w.id] = muteBtn ? muteBtn.classList.contains('is-active') : false;
+    });
+
     grid.appendChild(wrapper);
+
+    // Palautetaan mute-tilat heti layout-muutoksen jälkeen
+    Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
+        const platform = streamId.split('-')[1];
+        const streamName = streamId.split('-').slice(2).join('-');
+        if (platform === 'kick' && !wasUnmuted) {
+            // Kick ei tue mute-APIa -- ladataan uudelleen heti oikealla muted-arvolla
+            const container = document.getElementById(`player-${streamId}`);
+            if (container) {
+                container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+            }
+        }
+    });
+
+    // Twitchin mute-palautus viiveellä (API vaatii aikaa)
+    setTimeout(() => {
+        Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
+            const platform = streamId.split('-')[1];
+            if (platform === 'twitch' && players[streamId]) {
+                players[streamId].setMuted(!wasUnmuted);
+            }
+        });
+    }, 300);
 
     // Ladataan chat heti jos palautetaan tallennetusta tilasta
     if (defaultChatOpen) {
