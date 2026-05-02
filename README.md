@@ -1,10 +1,10 @@
 # StreamLayer - Multistream
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/ipappa74/streamlayer?style=flat&color=5aff2f&label=Stars" />
-  <img src="https://img.shields.io/github/issues/ipappa74/streamlayer?color=5aff2f&label=Issues" />
-  <img src="https://img.shields.io/github/last-commit/ipappa74/streamlayer?color=5aff2f&label=Last%20Commit" />
-  <img src="https://img.shields.io/badge/License-MIT-5aff2f" />
+  <img src="https://img.shields.io/github/stars/ipappa74/streamlayer?style=flat&color=007aff&label=Stars" />
+  <img src="https://img.shields.io/github/issues/ipappa74/streamlayer?color=007aff&label=Issues" />
+  <img src="https://img.shields.io/github/last-commit/ipappa74/streamlayer?color=007aff&label=Last%20Commit" />
+  <img src="https://img.shields.io/badge/License-CC BY-NC-SA 4.0-007aff" />
   <img src="https://img.shields.io/badge/UI-StreamLayer_Blue-007aff?logo=airplayvideo&logoColor=white" />
 </p>
 
