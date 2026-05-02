@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.2.0",
-    buildDate: "2026-05-01",
+    version: "1.2.1",
+    buildDate: "2026-05-02",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -36,6 +36,13 @@ const svgIcons = {
 // =============================================================================
 
 function loadInitialData() {
+    // Tulostetaan sovellustiedot tyylitettynä konsoliin
+    console.log(
+        `%c ${APP_META.name} v${APP_META.version} %c ${APP_META.buildDate} `,
+        'background: #007aff; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px 0 0 4px;',
+        'background: #1c1c1e; color: #007aff; padding: 4px 8px; border-radius: 0 4px 4px 0; border: 1px solid #007aff;'
+    );
+
     // Ladataan suosikit localStoragesta
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -67,10 +74,13 @@ function updateActiveStreamsStorage() {
         const name = wrapper.querySelector('.fav-alias').textContent;
         // Alusta selviää id:n toisesta osasta (esim. "s-kick-pelaaja")
         const platform = wrapper.id.split('-')[1];
+        const muteBtn = document.getElementById('mute-btn-' + wrapper.id);
+        const isUnmuted = muteBtn ? muteBtn.classList.contains('is-active') : false;
         active.push({
             name,
             platform,
-            chatOpen: wrapper.classList.contains('chat-open')
+            chatOpen: wrapper.classList.contains('chat-open'),
+            unmuted: isUnmuted
         });
     });
     localStorage.setItem(STORAGE_ACTIVE, JSON.stringify(active));
@@ -178,7 +188,7 @@ function renderFavorites() {
 // STRIIMIEN HALLINTA
 // =============================================================================
 
-function openStream(name, platform, defaultChatOpen = false) {
+function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = false, skipStorage = false) {
     const grid = document.getElementById('stream-grid');
     const id = `s-${platform}-${name.toLowerCase()}`;
 
@@ -239,8 +249,14 @@ function openStream(name, platform, defaultChatOpen = false) {
             width: "100%",
             height: "100%",
             parent: [window.location.hostname || 'localhost'],
-            muted: true
+            muted: true  // Aina muted alussa
         });
+        // Varmistetaan että soitin jatkaa toistoa
+        setTimeout(() => {
+            if (players[id]) {
+                players[id].play();
+            }
+        }, 500);
     } else {
         const ifr = document.createElement('iframe');
         ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=true`;
@@ -248,7 +264,35 @@ function openStream(name, platform, defaultChatOpen = false) {
         document.getElementById(`player-${id}`).appendChild(ifr);
     }
 
-    updateActiveStreamsStorage();
+    // Päivitetään nappien tilat (viiveellä että DOM on valmis)
+    // HUOM: Koska selain pakottaa mute-tilan refreshin jälkeen, 
+    // näytetään aina muted-tila. Käyttäjä voi aktivoida äänen klikkaamalla.
+    setTimeout(() => {
+        const muteBtn = document.getElementById(`mute-btn-${id}`);
+        if (muteBtn) {
+            // Aina muted-tila refreshin jälkeen (selaimen rajoitus)
+            muteBtn.classList.remove('is-active');
+            muteBtn.innerHTML = svgIcons.unmute;
+        }
+
+        if (defaultChatOpen) {
+            const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
+            if (chatBtn) {
+                chatBtn.classList.add('is-active');
+            }
+        }
+    }, 0);
+
+    // Lisätään neighbor-has-chat luokka jos jollain muulla on chat auki
+    const anyChatOpen = document.querySelector('.stream-wrapper.chat-open') !== null;
+    if (anyChatOpen && !defaultChatOpen) {
+        wrapper.classList.add('neighbor-has-chat');
+    }
+
+    // Tallennetaan tila vain jos ei olla palauttamassa (skipStorage = false)
+    if (!skipStorage) {
+        updateActiveStreamsStorage();
+    }
 }
 
 function closeStream(id) {
@@ -257,6 +301,18 @@ function closeStream(id) {
 
     const el = document.getElementById(id);
     if (el) el.remove();
+
+    // Päivitetään neighbor-has-chat luokat
+    const allWrappers = document.querySelectorAll('.stream-wrapper');
+    const anyChatOpen = document.querySelector('.stream-wrapper.chat-open') !== null;
+    
+    allWrappers.forEach(w => {
+        if (anyChatOpen && !w.classList.contains('chat-open')) {
+            w.classList.add('neighbor-has-chat');
+        } else {
+            w.classList.remove('neighbor-has-chat');
+        }
+    });
 
     updateActiveStreamsStorage();
 }
@@ -281,12 +337,44 @@ function toggleChat(id, name, platform) {
     const chatContainer = document.getElementById(`chat-${id}`);
     const isOpening = !wrapper.classList.contains('chat-open');
 
+    // Mobiilissa: sulje kaikki muut chatit ennen uuden avaamista
+    if (window.innerWidth <= 768 && isOpening) {
+        document.querySelectorAll('.stream-wrapper.chat-open').forEach(openWrapper => {
+            if (openWrapper.id !== id) {
+                openWrapper.classList.remove('chat-open');
+                // Poista vihreä väri myös napista
+                const otherChatBtn = openWrapper.querySelector('button[onclick*="toggleChat"]');
+                if (otherChatBtn) {
+                    otherChatBtn.classList.remove('is-active');
+                }
+            }
+        });
+    }
+
     wrapper.classList.toggle('chat-open');
+
+    // Päivitetään chat-napin tila
+    const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
+    if (chatBtn) {
+        chatBtn.classList.toggle('is-active', isOpening);
+    }
 
     // Iframe ladataan vasta ensimmäisellä avauksella
     if (isOpening && chatContainer.innerHTML === '') {
         _loadChatIframe(id, name, platform);
     }
+
+    // Lisätään/poistetaan luokka muille streameille keskitystä varten
+    const allWrappers = document.querySelectorAll('.stream-wrapper');
+    const anyChatOpen = document.querySelector('.stream-wrapper.chat-open') !== null;
+    
+    allWrappers.forEach(w => {
+        if (anyChatOpen && !w.classList.contains('chat-open')) {
+            w.classList.add('neighbor-has-chat');
+        } else {
+            w.classList.remove('neighbor-has-chat');
+        }
+    });
 
     updateActiveStreamsStorage();
 }
@@ -314,6 +402,7 @@ function toggleMute(id, name, platform) {
     }
 
     btn.innerHTML = muted ? svgIcons.mute : svgIcons.unmute;
+    updateActiveStreamsStorage();
 }
 
 // =============================================================================
@@ -364,7 +453,16 @@ function restoreActiveStreams() {
     if (!saved) return;
     try {
         const streams = JSON.parse(saved);
-        streams.forEach(s => openStream(s.name, s.platform, s.chatOpen));
+        // skipStorage = true estää tallentamasta uudestaan (säilyttää unmuted-tilan)
+        streams.forEach(s => openStream(s.name, s.platform, s.chatOpen, s.unmuted || false, true));
+        
+        // Päivitetään neighbor-has-chat luokat palautuksen jälkeen
+        const anyChatOpen = document.querySelector('.stream-wrapper.chat-open') !== null;
+        if (anyChatOpen) {
+            document.querySelectorAll('.stream-wrapper:not(.chat-open)').forEach(w => {
+                w.classList.add('neighbor-has-chat');
+            });
+        }
     } catch (e) {
         console.error("Virhe striimien palautuksessa:", e);
     }
