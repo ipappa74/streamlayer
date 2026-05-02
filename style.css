@@ -230,7 +230,13 @@ aside h3 {
 .fav-alias { 
     font-weight: 600; 
     font-size: 0.9rem; 
-    color: var(--text-main); 
+    color: var(--text-main);
+    line-height: 1;
+    margin-top: -1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .status-text { 
@@ -415,7 +421,9 @@ button.primary-btn {
     width: 18px !important; 
     height: 18px !important; 
     object-fit: contain; 
-    flex-shrink: 0; 
+    flex-shrink: 0;
+    vertical-align: middle;
+    display: inline-block;
 }
 
 /* --- Ohjainpainikkeet --- */
@@ -747,5 +755,10 @@ body.is-dragging .stream-wrapper {
     .repo-btn, .kick-btn {
         padding: 14px 20px;
         font-size: 13px;
+    }
+
+    /* --- Nimen lyhennys mobiilissa --- */
+    .fav-alias {
+        max-width: 120px;
     }
 }
