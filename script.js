@@ -281,7 +281,7 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
             height: "100%",
             parent: [window.location.hostname || 'localhost'],
             muted: true,  // Aina muted alussa
-            volume: 0.8  // 0.0 - 1.0, eli tässä 80%
+			volume: 0.8  // 0.0 - 1.0, eli tässä 80%
         });
         // Varmistetaan että soitin jatkaa toistoa
         setTimeout(() => {
@@ -524,12 +524,36 @@ function toggleSidebar() {
     const sidebar = document.getElementById('main-sidebar');
     const main = document.querySelector('main');
     const btn = sidebar.querySelector('.toggle-sidebar-btn');
+
+    // Tallennetaan mute-tilat ennen layout-muutosta
+    const savedMuteStates = {};
+    document.querySelectorAll('.stream-wrapper').forEach(w => {
+        const muteBtn = document.getElementById('mute-btn-' + w.id);
+        savedMuteStates[w.id] = muteBtn ? muteBtn.classList.contains('is-active') : false;
+    });
+
     const isCollapsed = sidebar.classList.toggle('collapsed');
 
     if (main) main.classList.toggle('expanded');
     if (btn) btn.textContent = isCollapsed ? '▶' : '◀';
 
     localStorage.setItem('sidebar-collapsed', isCollapsed);
+
+    // Palautetaan mute-tilat layout-muutoksen jälkeen
+    setTimeout(() => {
+        Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
+            const platform = streamId.split('-')[1];
+            const streamName = streamId.split('-').slice(2).join('-');
+            if (platform === 'twitch' && players[streamId]) {
+                players[streamId].setMuted(!wasUnmuted);
+            } else if (platform === 'kick' && !wasUnmuted) {
+                const container = document.getElementById(`player-${streamId}`);
+                if (container) {
+                    container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+                }
+            }
+        });
+    }, 300);
 }
 
 // =============================================================================
