@@ -253,7 +253,7 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
             // Kick ei tue mute-APIa -- ladataan uudelleen heti oikealla muted-arvolla
             const container = document.getElementById(`player-${streamId}`);
             if (container) {
-                container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+                container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>`;
             }
         }
     });
@@ -293,6 +293,9 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
         const ifr = document.createElement('iframe');
         ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=true`;
         ifr.allow = "autoplay; fullscreen";
+        ifr.allowFullscreen = true;
+        ifr.setAttribute('frameborder', '0');
+        ifr.setAttribute('scrolling', 'no');
         document.getElementById(`player-${id}`).appendChild(ifr);
     }
 
@@ -446,7 +449,7 @@ function toggleMute(id, name, platform) {
     } else {
         // Kick ei tue mute-APIa -- uudelleenladataan soitin eri muted-arvolla
         const container = document.getElementById(`player-${id}`);
-        container.innerHTML = `<iframe src="https://player.kick.com/${name}?autoplay=true&muted=${!muted}" allow="autoplay; fullscreen"></iframe>`;
+        container.innerHTML = `<iframe src="https://player.kick.com/${name}?autoplay=true&muted=${!muted}" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>`;
     }
 
     btn.innerHTML = muted ? svgIcons.mute : svgIcons.unmute;
@@ -549,7 +552,7 @@ function toggleSidebar() {
             } else if (platform === 'kick' && !wasUnmuted) {
                 const container = document.getElementById(`player-${streamId}`);
                 if (container) {
-                    container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+                    container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>`;
                 }
             }
         });
