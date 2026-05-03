@@ -94,30 +94,11 @@ async function updateAllStatuses() {
     await Promise.all(favorites.map(async f => {
         try {
             if (f.platform === 'kick') {
-                // Kick API v2 -- v1 alkoi palauttaa CORS-virheitä suoraan selaimesta
-                // Jos v2 epäonnistuu, yritetään v1 fallbackina
-                let d = null;
-                try {
-                    const res = await fetch(`https://kick.com/api/v2/channels/${f.name.toLowerCase()}`, {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    if (res.ok) d = await res.json();
-                } catch (_) {}
-
-                if (!d) {
-                    // Fallback: v1
-                    const res = await fetch(`https://kick.com/api/v1/channels/${f.name.toLowerCase()}`);
-                    if (res.ok) d = await res.json();
-                }
-
-                if (d) {
-                    f.isLive = !!(d.livestream);
-                    f.viewers = f.isLive ? (d.livestream.viewer_count || 0) : 0;
-                    f.statusText = f.isLive ? `${f.viewers.toLocaleString()} katsojaa` : 'Offline';
-                } else {
-                    // Molemmat epäonnistuivat -- pidetään edellinen tila, ei näytetä "Virhe"
-                    f.statusText = f.isLive ? `${f.viewers.toLocaleString()} katsojaa` : 'Offline';
-                }
+                const res = await fetch(`https://kick.com/api/v1/channels/${f.name.toLowerCase()}`);
+                const d = await res.json();
+                f.isLive = !!(d.livestream);
+                f.viewers = f.isLive ? d.livestream.viewer_count : 0;
+                f.statusText = f.isLive ? `${f.viewers.toLocaleString()} katsojaa` : 'Offline';
             } else {
                 const res = await fetch(`https://decapi.me/twitch/uptime/${f.name}`);
                 const ut = await res.text();
@@ -154,11 +135,9 @@ async function updateAllStatuses() {
             checkAutoOpen(f);
 
         } catch (e) {
-            // Verkkohäiriö tai CORS -- säilytetään edellinen tunnettu tila
-            // eikä näytetä "Virhe" joka hämmentää käyttäjää
-            if (!f.statusText || f.statusText === '...') {
-                f.statusText = 'Ei yhteyttä';
-            }
+            f.isLive = false;
+            f.viewers = 0;
+            f.statusText = 'Virhe';
         }
     }));
 
@@ -314,28 +293,6 @@ function openStream(name, platform, defaultChatOpen = false, defaultUnmuted = fa
         const ifr = document.createElement('iframe');
         ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=true`;
         ifr.allow = "autoplay; fullscreen";
-        ifr.allowFullscreen = true;
-        ifr.setAttribute('frameborder', '0');
-        ifr.setAttribute('scrolling', 'no');
-
-        // Kick-soitin voi kaatua väliaikaisesti -- yritetään ladata uudelleen kerran
-        let kickRetried = false;
-        ifr.addEventListener('error', () => {
-            if (kickRetried) return;
-            kickRetried = true;
-            console.warn(`Kick-soitin virhe (${name}), yritetään uudelleen...`);
-            setTimeout(() => {
-                const container = document.getElementById(`player-${id}`);
-                if (container) {
-                    container.innerHTML = `<iframe
-                        src="https://player.kick.com/${name}?autoplay=true&muted=true"
-                        allow="autoplay; fullscreen"
-                        allowfullscreen="true"
-                        frameborder="0" scrolling="no"></iframe>`;
-                }
-            }, 3000);
-        });
-
         document.getElementById(`player-${id}`).appendChild(ifr);
     }
 
