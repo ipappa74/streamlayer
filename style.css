@@ -642,7 +642,72 @@ body.is-dragging .stream-wrapper {
 }
 
 /* =============================================================================
-   10. MOBIILIOPTIMOINTI
+   10. PYSTYNÄYTTÖ JA KAPEAT NÄYTÖT (Alle 1200px)
+   ============================================================================= */
+
+@media (max-width: 1200px) {
+    /* Pakotetaan striimit allekkain */
+    #stream-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* Ylikirjoitetaan yhden striimin erikoissääntö, jotta chatti mahtuu alle */
+    #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open {
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Varmistetaan, että wrapper vie täyden leveyden */
+    .stream-wrapper {
+        width: 100% !important;
+        grid-column: span 1 !important;
+    }
+
+    /* Sisältöalue pystysuuntaiseksi chatin ollessa auki */
+    .stream-wrapper.chat-open .content-area {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    /* Video säilyttää muotonsa */
+    .stream-wrapper.chat-open .video-container {
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+        height: auto !important;
+        flex: none !important;
+    }
+
+    /* Chatti videon alle */
+    .stream-wrapper.chat-open .chat-container {
+        width: 100% !important;
+        height: 500px !important; /* Voit säätää tätä korkeutta tarpeen mukaan */
+        border-left: none;
+        border-top: 1px solid var(--border);
+        display: block !important;
+        position: relative !important;
+    }
+
+    /* Chatin sisällä olevan iframen skaalaus */
+    .stream-wrapper.chat-open .chat-container iframe {
+        width: 125% !important;
+        height: 125% !important;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    /* Poistetaan rajoitukset muilta striimeiltä tässä tilassa */
+    .stream-wrapper.neighbor-has-chat .video-container {
+        max-height: none !important;
+    }
+}
+
+/* =============================================================================
+   11. MOBIILIOPTIMOINTI
    ============================================================================= */
 
 @media (max-width: 768px) {
