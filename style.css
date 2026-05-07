@@ -374,11 +374,10 @@ button.primary-btn {
 }
 
 /* Kun striimejä on vain yksi */
-#stream-grid:has(> :last-child:nth-child(1)) {
-    grid-template-columns: 1fr;
-    /* height: 100%; */
-    height: auto;
-    max-height: 85vh; /* Estää yhden striimin kasvamasta liian jättimäiseksi */
+/* Kun striimejä on vain yksi */
+#stream-grid:has(> :last-child:nth-child(1)) { 
+    grid-template-columns: 1fr; 
+    height: 100%;
 }
 
 /* --- Striimi-ikkunat --- */
