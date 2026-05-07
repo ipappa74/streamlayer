@@ -40,7 +40,8 @@ body {
     color: var(--text-main);
     display: flex;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Taustan pehmeä häivytys */
@@ -320,14 +321,15 @@ aside h3 {
    ============================================================================= */
 
 main {
-    flex-grow: 1; 
-    margin-left: 320px; 
+    flex-grow: 1;
+    margin-left: 320px;
     transition: margin-left 0.3s ease;
-    height: 100vh; 
-    overflow-y: auto; 
-    padding: 20px; 
+    min-height: 100vh;
+    height: auto;
+    overflow-y: visible;
+    padding: 20px;
     box-sizing: border-box;
-    display: flex; 
+    display: flex;
     flex-direction: column;
 }
 
@@ -362,18 +364,21 @@ button.primary-btn {
    6. STRIIMIGRRIDI
    ============================================================================= */
 
-#stream-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
-    gap: 15px; 
+#stream-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 15px;
     width: 100%;
-    max-height: calc(100vh - 40px); 
+    max-height: none;
+    align-content: start;
 }
 
 /* Kun striimejä on vain yksi */
-#stream-grid:has(> :last-child:nth-child(1)) { 
-    grid-template-columns: 1fr; 
-    height: 100%;
+#stream-grid:has(> :last-child:nth-child(1)) {
+    grid-template-columns: 1fr;
+    /* height: 100%; */
+    height: auto;
+    max-height: 85vh; /* Estää yhden striimin kasvamasta liian jättimäiseksi */
 }
 
 /* --- Striimi-ikkunat --- */
