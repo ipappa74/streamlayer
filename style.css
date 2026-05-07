@@ -373,13 +373,6 @@ button.primary-btn {
     align-content: start;
 }
 
-/* Kun striimejä on vain yksi */
-/* Kun striimejä on vain yksi */
-#stream-grid:has(> :last-child:nth-child(1)) { 
-    grid-template-columns: 1fr; 
-    height: 100%;
-}
-
 /* --- Striimi-ikkunat --- */
 .stream-wrapper {
     display: flex; 
@@ -393,19 +386,49 @@ button.primary-btn {
     transition: transform 0.2s ease;
 }
 
+/* Kun striimejä on vain yksi */
+#stream-grid:has(> :last-child:nth-child(1)) { 
+    grid-template-columns: 1fr; 
+    height: auto;
+    min-height: 0;
+}
+
+/* Yksittäisen striimin wrapper */
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper {
+    height: auto;
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+}
+
 .stream-wrapper.chat-open { grid-column: span 2; }
 #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open { grid-column: 1; }
 
-/* Yksittäinen striimi chat auki -- täyttää koko korkeuden */
+/* Yksittäinen striimi chat auki - täyttää koko korkeuden */
 #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .content-area {
+    display: flex;
+    flex-direction: row;
     flex: 1;
-}
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .video-container {
-    aspect-ratio: unset;
-    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* Kun naapurilla on chat auki, keskitetään video */
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .video-container {
+    aspect-ratio: 16 / 9;
+    flex: 1; 
+    height: auto;
+    max-height: 100%;
+    align-self: center;
+}
+
+/* Chatti säilyttää leveytensä mutta joustaa korkeudessa */
+#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .chat-container {
+    width: 340px;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+/* Kun vieressä on chat auki, keskitetään video */
 .stream-wrapper.neighbor-has-chat .content-area {
     flex: 1;
     align-items: center;
