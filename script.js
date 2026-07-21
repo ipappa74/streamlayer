@@ -461,7 +461,7 @@ function _loadChatIframe(id, name, platform) {
         chatContainer.innerHTML = `
                 <div style="position:relative;height:100%;overflow:hidden;">
                     <iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>
-                    <div style="position:absolute;bottom:0;left:0;right:0;height:85px;background:#0e0e10;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:5;">
+                    <div style="position:absolute;bottom:0;left:0;right:0;height:87px;background:#0e0e10;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:5;">
                         <button onclick="window.open('https://kick.com/${name}/chat', '_blank')"
                                 title="Avaa chatti Kickissä"
                                 style="width:160px;height:38px;background:#53fc18;color:#000;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:transform 0.2s,box-shadow 0.2s;"
