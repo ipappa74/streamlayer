@@ -1,0 +1,121 @@
+<!--
+===========================================================
+ STREAMLAYER — Advanced Multistream Dashboard
+===========================================================
+ Tekijä:      Toni
+ Sijainti:    Oulu, Suomi
+ Projekti:    StreamLayer (HTML5 + CSS3 + JS)
+
+ Kuvaus:
+   Kevyt, moderni ja täysin responsiivinen hallintapaneeli 
+   Twitch- ja Kick-striimien seuraamiseen. Tukee useita 
+   yhtäaikaisia striimejä, suosikkilistoja, automaattista 
+   LIVE-seurantaa ja kustomoitavaa grid-asettelua.
+
+ GitHub Repo:
+   https://github.com/ipappa74/streamlayer
+
+ GitHub Pages:
+   https://ipappa74.github.io/streamlayer/
+
+ Kontaktit:
+   Email:     toni.spams@gmail.com
+   GitHub:    https://github.com/ipappa74
+   Kick:      https://kick.com/ipappa
+   
+ Ominaisuudet:
+   • StreamLayer Blue UI (Neon & Glassmorphism)
+   • Monialustatuki: Kick & Twitch integraatiot
+   • Täysi mobiilioptimointi (stacked view + mobile menu)
+   • Suosikit automaattisella live-statuksella
+   • Reaaliaikaiset katsojamäärät (DecAPI & Kick API)
+   • Vedettävät ikkunat (Drag & Drop)
+   • Mute-tilan ja asetusten tallennus (localStorage)
+   • Integroitu chat-hallinta ja auto-open-toiminto
+
+ Lisenssi:
+   CC BY-NC-SA 4.0 License
+===========================================================
+-->
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamLayer</title>
+    
+<!-- Faviconit ja Manifest -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/streamlayer/img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/streamlayer/img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/streamlayer/img/favicon-16x16.png">
+	<link rel="manifest" href="/streamlayer/img/site.webmanifest">
+    
+<!-- Ulkoiset kirjastot ja tyylit -->
+    <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside id="main-sidebar">
+<!-- Mobiili sivupalkin sulku -->
+    <button class="mobile-close-btn" onclick="toggleSidebar()">×</button>
+<!-- Sivupalkin hallintapainike -->
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">◀</button>
+
+<!-- Sovelluksen logo ja otsikko -->
+    <div class="app-header">
+        <svg class="app-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            <path d="M19 12l-14 9V3l14 9z" fill="var(--accent)" fill-opacity="0.2"></path>
+            <path d="M22 12l-14 9V3l14 9z" opacity="0.3"></path>
+        </svg>
+        <h1 class="app-name">StreamLayer</h1>
+    </div>	
+	
+    <h3>Suosikit</h3>
+    
+<!-- Uuden kanavan lisäyslomake -->
+    <div class="input-group">
+        <select id="platform-select">
+            <option value="kick">Kick</option>
+            <option value="twitch">Twitch</option>
+        </select>
+        <input type="text" id="channel-name" placeholder="Käyttäjänimi">
+        <button class="primary-btn" onclick="saveFavorite()">Lisää listalle</button>
+    </div>
+
+<!-- Lista tallennetuista suosikeista -->
+    <div id="favorites-list"></div>
+	
+<!-- Footer -->
+	<footer class="app-footer">
+		<span class="about-link" onclick="openAbout()">Tietoa sovelluksesta</span>
+		<span class="footer-copy">© 2026 StreamLayer by Toni</span>
+	</footer>
+</aside>
+
+<main>
+<!-- Grid-alue, johon striimit avautuvat -->
+    <div id="stream-grid"></div>
+</main>
+
+<!-- Tietoa-modal -->
+<div id="about-modal" class="modal-overlay" onclick="closeAbout(event)">
+    <div class="modal-content about-card">
+        <button class="modal-close" onclick="closeAbout(event)">×</button>
+        <h2 id="app-name">StreamLayer - Multistream</h2>
+        <div class="meta-info-list">
+            <p id="app-version"></p>
+            <p id="app-author"></p>
+            <p id="app-date"></p>
+			<a id="app-kick" href="#" target="_blank" class="kick-btn">Seuraa Kick:ssä</a>
+            <a id="app-repo" href="#" target="_blank" class="repo-btn">GitHub Repository</a>
+        </div>
+    </div>
+</div>
+
+<!-- Sovelluslogiikka -->
+<script src="script.js"></script>
+</body>
+</html>
