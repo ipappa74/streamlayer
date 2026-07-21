@@ -102,11 +102,20 @@ async function updateAllStatuses() {
                     const res = await fetch(
                         `https://kick.com/api/v1/channels/${f.name.toLowerCase()}`,
                     );
-                    const d = await res.json();
-                    f.isLive = !!d.livestream;
-                    f.viewers = f.isLive ? d.livestream.viewer_count : 0;
-                    f.statusText = f.isLive ? `${f.viewers.toLocaleString()} katsojaa` : "Offline";
-                    f.title = f.isLive ? d.livestream.session_title || "" : "";
+                    if (!res.ok) {
+                        f.isLive = false;
+                        f.viewers = 0;
+                        f.statusText = res.status === 404 ? "Kanavaa ei löydy" : "Virhe";
+                        f.title = "";
+                    } else {
+                        const d = await res.json();
+                        f.isLive = !!d.livestream;
+                        f.viewers = f.isLive ? d.livestream.viewer_count : 0;
+                        f.statusText = f.isLive
+                            ? `${f.viewers.toLocaleString()} katsojaa`
+                            : "Offline";
+                        f.title = f.isLive ? d.livestream.session_title || "" : "";
+                    }
                 } else {
                     const res = await fetch(`https://decapi.me/twitch/uptime/${f.name}`);
                     const ut = await res.text();
@@ -160,18 +169,18 @@ async function updateAllStatuses() {
         return b.viewers - a.viewers;
     });
 
-    function escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
     renderFavorites();
 }
 
 // =============================================================================
 // KÄYTTÖLIITTYMÄN RENDERÖINTI
 // =============================================================================
+
+function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
 
 function renderFavorites() {
     const list = document.getElementById("favorites-list");
