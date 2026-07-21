@@ -237,6 +237,7 @@ aside h3 {
     flex-direction: column;
     justify-content: center;
     line-height: 1.2;
+    min-width: 0;
 }
 
 .fav-alias {

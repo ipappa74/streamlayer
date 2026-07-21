@@ -204,11 +204,11 @@ function renderFavorites() {
                         onchange="toggleAutoOpen(${i}, event)"
                         onclick="event.stopPropagation()">
                 </div>
-                <div class="fav-text-stack">
-                    <span class="fav-alias">${fav.name}</span>
-                    <div class="status-text">${fav.statusText}</div>
-                    ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
-                </div>
+                    <div class="fav-text-stack">
+                        <span class="fav-alias">${fav.name}</span>
+                        ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
+                        <div class="status-text">${fav.statusText}</div>
+                    </div>
             </div>
             <button class="delete-btn" onclick="removeFavorite(${i}, event)">×</button>
         </div>`;
