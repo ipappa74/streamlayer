@@ -260,7 +260,7 @@ aside h3 {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .status-text {
