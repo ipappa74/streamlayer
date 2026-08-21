@@ -5,48 +5,52 @@
 
 ---
 
-# StreamLayer - Multistream
+# StreamLayer – Multistream
+
+Nykyinen versio: **1.7.0** · Päivitetty: **2026-08-21**
 
 ## 🎯 Yleiskuvaus
 
-**StreamLayer** on moderni, nopea ja täysin responsiivinen monistriimaustyökalu, joka on suunniteltu erityisesti Twitch- ja Kick.com-alustojen käyttäjille. Se tarjoaa minimalistisen ja tehokkaan käyttöliittymän useiden lähetysten samanaikaiseen seuraamiseen ilman raskaita sovellusasennuksia.
+**StreamLayer** on kevyt ja responsiivinen monistriimaussovellus Twitch- ja Kick-lähetysten seuraamiseen. Lisää kanavat suosikeiksi, avaa useita lähetyksiä rinnakkain ja hallitse chattia sekä ääntä striimikohtaisesti ilman erillistä palvelinsovellusta.
 
-Projekti on toteutettu **Zero Backend** -periaatteella – se hyödyntää vain puhdasta HTML5, CSS3 ja Vanilla JavaScript -teknologiaa.
+Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosikit ja asetukset säilyvät selaimessa, ja niistä voi tehdä ladattavan varmuuskopion.
 
 ---
 
 ## 🚀 Ominaisuudet
 
-### 🎥 Monialustatuki & Hallinta
+### 🎥 Monialustatuki ja hallinta
 
-- **Twitch & Kick Integraatio:** Lisää ja seuraa molempien alustojen striimejä saumattomasti rinnakkain.
-- **Automaattinen Grid-asettelu:** Älykäs asettelu, joka optimoi tilankäytön striimien määrän mukaan.
-- **Drag & Drop:** Järjestele striimi-ikkunoita raahaamalla ne haluamaasi järjestykseen.
+- **Twitch ja Kick:** Lisää saman niminen kanava kummaltakin alustalta omaksi suosikikseen.
+- **Mukautuva asettelu:** Yksi avoin striimi käyttää koko pääalueen. Useat striimit asettuvat ruudukoksi.
+- **Raahaus:** Järjestä avoimia striimejä vetämällä. Avoimien striimien järjestys säilyy selaimessa.
+- **Tyhjät näkymät:** Sovellus opastaa, kun suosikkeja tai avoimia striimejä ei vielä ole.
 
-### 📱 Täysi Mobiilioptimointi
+### 📱 Mobiilikäyttö
 
-- **Responsiivinen UI:** Mobiililaitteilla striimit asettuvat automaattisesti allekkain parhaan katselukokemuksen takaamiseksi.
-- **Mobiilivalikko:** Erillinen, helppokäyttöinen sivupalkki ja sulkemispainikkeet, jotka on optimoitu kosketuskäyttöön.
-- **Älykäs Chat:** Chatti on mobiilissa oletuksena piilotettu ja se aukeaa videon alapuolelle viemättä tilaa leveyssuunnassa.
+- Striimit asettuvat mobiilissa allekkain ja chatti avautuu videon alapuolelle.
+- Sivupalkki sulkeutuu, kun avaat striimin.
+- Mobiiliselaimet estävät äänekästä automaattista toistoa. Ota ääni käyttöön ja käynnistä tarvittaessa video sen omalla toistopainikkeella.
 
-### 🔇 Mute / Unmute – tila säilyy
+### 🔇 Ääni ja chat
 
-- Jokaisella slotilla oma mute‑tila
-- Tallentuu localStorageen
-- Uusi striimi aloittaa aina mutella (oletus)
-- Offline-striimin automaattinen sulkeminen on vapaaehtoinen asetus
+- Jokaisella striimillä on oma chat- ja äänensäätönsä.
+- Uusi striimi alkaa mykistettynä.
+- Avoimien striimien chat- ja äänitilat palautetaan selaimen muistista.
+- Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
-### ⭐ Suosikit & Automaatio
+### ⭐ Suosikit, automaatio ja asetukset
 
-- **Älykäs suosikkilista:** Tallenna usein katsomasi kanavat. LIVE-tilassa olevat kanavat nousevat listan kärkeen katsojamäärän mukaan.
-- **Auto-Open:** Mahdollisuus asettaa kanava avautumaan automaattisesti heti, kun se aloittaa lähetyksen.
-- **Pilleripainikkeet:** Modernit ja selkeät kytkimet auto-open-toiminnallisuuden hallintaan.
+- LIVE-tilassa olevat suosikit nousevat listan alkuun katsojamäärän mukaan.
+- Auto-open avaa valitun kanavan, kun se on livenä.
+- **Asetukset**-ikkunasta voi ottaa käyttöön offline-striimin automaattisen sulkemisen minuutin kuluttua. Asetus on oletuksena pois päältä.
+- Asetukset-ikkunasta voi viedä ja palauttaa JSON-varmuuskopion.
 
-### 🟢 Reaaliaikainen Status
+### 🟢 Live-tilanne
 
-- **LIVE-indikaattorit:** Punainen status-piste ja animoidut tekstit ilmoittavat heti, kun striimaaja on livenä.
-- **Striimin otsikko:** Striimajan asettaman otsikon näyttö.
-- **Katsojamäärät:** Reaaliaikaiset katsojatiedot haetaan suoraan APIn kautta ja päivitetään säännöllisesti.
+- Live-merkintä, lähetyksen otsikko ja katsojaluku päivittyvät minuutin välein.
+- Kickin tiedot haetaan Kickin kanavarajapinnasta ja Twitchin tiedot DecAPI-palvelusta.
+- Haku keskeytyy kahdeksan sekunnin kuluttua ja sitä yritetään kerran uudelleen, jos verkkopyyntö epäonnistuu.
 
 ---
 
@@ -54,43 +58,44 @@ Projekti on toteutettu **Zero Backend** -periaatteella – se hyödyntää vain 
 
 ### Käytetyt teknologiat
 
-- **HTML5 & CSS3:** StreamLayer Blue -teema, jossa hyödynnetään Glassmorphism-efektejä ja neon-korostuksia.
-- **Vanilla JavaScript:** Kevyt ja nopea toiminnallisuus ilman ulkoisia kirjastoriippuvuuksia.
-- **API-integraatiot:** Twitch Embed SDK, Kick Player, DecAPI ja Kick API live-tietojen hakuun.
+- **HTML5 ja CSS3:** Tumma StreamLayer Blue -teema, responsiivinen ruudukko ja popup-ikkunat.
+- **Vanilla JavaScript:** Sovelluslogiikka ilman rakennusvaihetta tai npm-riippuvuuksia.
+- **Upotukset ja rajapinnat:** Twitch Embed SDK, Kick Player, DecAPI ja Kickin kanavarajapinta.
 
-### Tallennus (localStorage)
+### Tallennus ja varmuuskopiointi
 
-- Sovellus tallentaa suosikkisi, kanavien järjestyksen, mute-tilat ja chat-asetukset suoraan selaimen muistiin.
-- Voit viedä suosikit, asetukset ja avoimet striimit JSON-varmuuskopioksi sekä palauttaa ne myöhemmin.
+- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen, chatin ja äänen tilat selaimen `localStorage`-muistiin.
+- Selaindatan tyhjennys poistaa nämä tiedot. Vie ensin JSON-varmuuskopio **Asetukset**-ikkunasta.
+- Varmuuskopio sisältää suosikit, auto-open-valinnat, asetukset ja avoimet striimit. Palautus korvaa nykyiset tiedot vahvistuksen jälkeen.
 
 ---
 
 ## 🛠 Käyttö
 
-### 1. Lisää striimi
+### 1. Lisää suosikki
 
-- Valitse alusta (Kick, Twitch)
-- Syötä käyttäjän/kanavan nimi
-- Klikkaa **Lisää listalle**
-- Listan päällimäiseksi tulee livenä olevat katsojamäärän mukaan
-- Punaisesta "ruksista" voit poistaa suosikin
+- Valitse Kick tai Twitch.
+- Syötä kanavan käyttäjänimi ja valitse **Lisää listalle**.
+- Avaa kanava klikkaamalla suosikkia.
+- Poista suosikki punaisesta sulkupainikkeesta.
 
-### 2. Avaa striimi
+### 2. Hallitse striimiä
 
-- Klikkaa tallentamaasi **Suosikkia**
-- Striimi avautuu oikealle
+- Käytä striimikortin painikkeita chatin avaamiseen, äänen säätämiseen, lataamiseen uudelleen ja sulkemiseen.
+- Vedä striimikortteja haluamaasi järjestykseen.
 
-### 3. Chat
+### 3. Muuta asetuksia ja tee varmuuskopio
 
-- Klikkaa **Chat**-nappia
-- Chat avautuu oikealle (mobiilissa alas)
+- Avaa sivupalkin alareunasta **Asetukset**.
+- Valitse halutessasi offline-striimien automaattinen sulkeminen.
+- Vie JSON-varmuuskopio ennen selaindatan tyhjentämistä ja palauta se tarvittaessa samasta ikkunasta.
 
-### 4. Mute / Unmute
+## Käynnistys
 
-- Paina **Mute / Unmute**
-- Tila tallentuu ja säilyy reloadissa
+- Avaa [index.html](index.html) selaimessa tai julkaise projektin tiedostot staattisena sivustona.
+- Twitch-upotus tarvitsee tuotannossa HTTPS-osoitteen ja oikean verkkotunnuksen `parent`-asetukseksi.
 
-### 5. Drag & Drop
+## Huomioitavaa
 
-- Vedä slottia → järjestä uudelleen
-- Kaikki tilat siirtyvät mukana
+- DecAPI on ulkoinen palvelu. Jos se ei vastaa, Twitchin live-tiedot voivat näkyä virhetilana.
+- Kickin ja Twitchin upotusten toiminta, erityisesti mobiiliääni, riippuu myös selaimen autoplay-säännöistä ja palveluiden omista rajoituksista.
