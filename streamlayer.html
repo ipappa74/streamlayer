@@ -75,11 +75,6 @@
 	
     <h3>Suosikit</h3>
 
-    <label class="stream-setting" for="auto-close-offline">
-        <input type="checkbox" id="auto-close-offline" onchange="toggleAutoCloseOffline(event)">
-        <span>Sulje offline-striimi minuutin kuluttua</span>
-    </label>
-    
 <!-- Uuden kanavan lisäyslomake -->
     <form class="input-group" onsubmit="saveFavorite(event)">
         <select id="platform-select">
@@ -88,6 +83,10 @@
         </select>
         <input type="text" id="channel-name" placeholder="Käyttäjänimi" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]+">
         <button class="primary-btn" type="submit">Lisää listalle</button>
+        <label class="stream-setting" for="auto-close-offline">
+            <input type="checkbox" id="auto-close-offline" onchange="toggleAutoCloseOffline(event)">
+            <span>Sulje offline-striimi minuutin kuluttua</span>
+        </label>
         <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
     </form>
 
