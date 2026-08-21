@@ -386,6 +386,13 @@ button {
     outline: none;
 }
 
+.form-feedback {
+    min-height: 1.2em;
+    margin: -4px 0 0;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+}
+
 button.primary-btn {
     background-color: var(--accent);
     border: none;

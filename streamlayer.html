@@ -43,7 +43,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamLayer</title>
+    <title>StreamLayer – Multistream</title>
     
 <!-- Faviconit ja Manifest -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/streamlayer/img/apple-touch-icon.png">
@@ -52,7 +52,7 @@
 	<link rel="manifest" href="/streamlayer/img/site.webmanifest">
     
 <!-- Ulkoiset kirjastot ja tyylit -->
-    <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+    <script src="https://player.twitch.tv/js/embed/v1.js" async></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -76,14 +76,15 @@
     <h3>Suosikit</h3>
     
 <!-- Uuden kanavan lisäyslomake -->
-    <div class="input-group">
+    <form class="input-group" onsubmit="saveFavorite(event)">
         <select id="platform-select">
             <option value="kick">Kick</option>
             <option value="twitch">Twitch</option>
         </select>
-        <input type="text" id="channel-name" placeholder="Käyttäjänimi">
-        <button class="primary-btn" onclick="saveFavorite()">Lisää listalle</button>
-    </div>
+        <input type="text" id="channel-name" placeholder="Käyttäjänimi" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]+">
+        <button class="primary-btn" type="submit">Lisää listalle</button>
+        <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
+    </form>
 
 <!-- Lista tallennetuista suosikeista -->
     <div id="favorites-list"></div>

@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.2.1",
-    buildDate: "2026-05-02",
+    version: "1.2.2",
+    buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -21,6 +21,7 @@ const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi su
 let favorites = [];
 const players = {};
 const offlineTrackers = {};
+const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 
 /* --- SVG-KUVAKKEET --- */
 const svgIcons = {
@@ -47,7 +48,22 @@ function loadInitialData() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
         try {
-            favorites = JSON.parse(raw);
+            favorites = JSON.parse(raw)
+                .filter((favorite) =>
+                    favorite &&
+                    ["kick", "twitch"].includes(favorite.platform) &&
+                    typeof favorite.name === "string" &&
+                    CHANNEL_NAME_PATTERN.test(favorite.name),
+                )
+                .map((favorite) => ({
+                    ...favorite,
+                    name: favorite.name.trim(),
+                    isLive: Boolean(favorite.isLive),
+                    viewers: Number(favorite.viewers) || 0,
+                    statusText: typeof favorite.statusText === "string" ? favorite.statusText : "Offline",
+                    title: typeof favorite.title === "string" ? favorite.title : "",
+                    autoOpen: Boolean(favorite.autoOpen),
+                }));
         } catch (e) {
             favorites = [];
         }
@@ -207,7 +223,7 @@ function renderFavorites() {
                     <div class="fav-text-stack">
                         <span class="fav-alias">${fav.name}</span>
                         ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
-                        <div class="status-text">${fav.statusText}</div>
+                        <div class="status-text">${escapeHtml(fav.statusText || "")}</div>
                     </div>
             </div>
             <button class="delete-btn" onclick="removeFavorite(${i}, event)">×</button>
@@ -234,7 +250,10 @@ function openStream(
     if (document.getElementById(id)) return;
 
     // Mobiilissa suljetaan sivupalkki automaattisesti
-    if (window.innerWidth <= 768) toggleSidebar();
+    const sidebar = document.getElementById("main-sidebar");
+    if (window.innerWidth <= 768 && !skipStorage && !sidebar.classList.contains("collapsed")) {
+        toggleSidebar();
+    }
 
     const wrapper = document.createElement("div");
     wrapper.className = "stream-wrapper";
@@ -317,7 +336,7 @@ function openStream(
             width: "100%",
             height: "100%",
             parent: [window.location.hostname || "localhost"],
-            muted: true, // Aina muted alussa
+            muted: !defaultUnmuted,
             volume: 0.8, // 0.0 - 1.0, eli tässä 80%
         });
         // Varmistetaan että soitin jatkaa toistoa
@@ -328,7 +347,7 @@ function openStream(
         }, 500);
     } else {
         const ifr = document.createElement("iframe");
-        ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=true`;
+        ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=${!defaultUnmuted}`;
         ifr.allow = "autoplay; fullscreen";
         document.getElementById(`player-${id}`).appendChild(ifr);
     }
@@ -339,9 +358,8 @@ function openStream(
     setTimeout(() => {
         const muteBtn = document.getElementById(`mute-btn-${id}`);
         if (muteBtn) {
-            // Aina muted-tila refreshin jälkeen (selaimen rajoitus)
-            muteBtn.classList.remove("is-active");
-            muteBtn.innerHTML = svgIcons.unmute;
+            muteBtn.classList.toggle("is-active", defaultUnmuted);
+            muteBtn.innerHTML = defaultUnmuted ? svgIcons.mute : svgIcons.unmute;
         }
 
         if (defaultChatOpen) {
@@ -497,12 +515,20 @@ function toggleMute(id, name, platform) {
 // SUOSIKIT
 // =============================================================================
 
-function saveFavorite() {
+function saveFavorite(event) {
+    if (event) event.preventDefault();
     const n = document.getElementById("channel-name").value.trim();
     const p = document.getElementById("platform-select").value;
+    const feedback = document.getElementById("form-feedback");
 
-    if (!n) return;
-    if (favorites.find((f) => f.name.toLowerCase() === n.toLowerCase())) return;
+    if (!CHANNEL_NAME_PATTERN.test(n)) {
+        feedback.textContent = "Käytä 1–50 kirjainta, numeroa, alaviivaa tai yhdysmerkkiä.";
+        return;
+    }
+    if (favorites.find((f) => f.platform === p && f.name.toLowerCase() === n.toLowerCase())) {
+        feedback.textContent = "Kanava on jo suosikeissa tällä alustalla.";
+        return;
+    }
 
     favorites.push({
         name: n,
@@ -514,6 +540,7 @@ function saveFavorite() {
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     document.getElementById("channel-name").value = "";
+    feedback.textContent = `${n} lisättiin suosikkeihin.`;
     renderFavorites();
     updateAllStatuses();
 }
@@ -678,6 +705,7 @@ function handleDrop(e) {
 
         if (fromIndex < toIndex) this.after(draggedElement);
         else this.before(draggedElement);
+        updateActiveStreamsStorage();
     }
     return false;
 }
