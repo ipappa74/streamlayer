@@ -90,6 +90,12 @@
         <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
     </form>
 
+    <section class="backup-actions" aria-label="Varmuuskopiointi">
+        <button class="backup-btn" type="button" onclick="exportBackup()">Vie varmuuskopio</button>
+        <label class="backup-btn" for="backup-file">Palauta varmuuskopio</label>
+        <input class="backup-file-input" id="backup-file" type="file" accept="application/json,.json" onchange="importBackup(event)">
+    </section>
+
 <!-- Lista tallennetuista suosikeista -->
     <div id="favorites-list"></div>
 	

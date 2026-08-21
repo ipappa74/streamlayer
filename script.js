@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.4.0",
+    version: "1.5.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -20,6 +20,7 @@ const STORAGE_SETTINGS = "streamlayer_settings_v1";
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
 const STATUS_TIMEOUT_MS = 8000;
 const STATUS_RETRIES = 1;
+const BACKUP_SCHEMA_VERSION = 1;
 
 let favorites = [];
 let autoCloseOffline = false;
@@ -82,14 +83,7 @@ function loadInitialData() {
     document.getElementById("auto-close-offline").checked = autoCloseOffline;
 
     // Palautetaan sivupalkin tila edelliseltä sessiolta
-    if (localStorage.getItem("sidebar-collapsed") === "true") {
-        const sidebar = document.getElementById("main-sidebar");
-        const main = document.querySelector("main");
-        const btn = sidebar.querySelector(".toggle-sidebar-btn");
-        sidebar.classList.add("collapsed");
-        if (main) main.classList.add("expanded");
-        if (btn) btn.textContent = "▶";
-    }
+    applySidebarState(localStorage.getItem("sidebar-collapsed") === "true");
 
     renderFavorites();
     updateAllStatuses();
@@ -591,18 +585,149 @@ function toggleMute(id, name, platform) {
 // SUOSIKIT
 // =============================================================================
 
+function setFormFeedback(message) {
+    document.getElementById("form-feedback").textContent = message;
+}
+
+function getValidFavorites(items) {
+    if (!Array.isArray(items)) return [];
+
+    const seen = new Set();
+    return items.reduce((validFavorites, favorite) => {
+        if (
+            !favorite ||
+            !["kick", "twitch"].includes(favorite.platform) ||
+            typeof favorite.name !== "string" ||
+            !CHANNEL_NAME_PATTERN.test(favorite.name)
+        ) {
+            return validFavorites;
+        }
+
+        const key = `${favorite.platform}:${favorite.name.toLowerCase()}`;
+        if (seen.has(key)) return validFavorites;
+        seen.add(key);
+
+        validFavorites.push({
+            name: favorite.name,
+            platform: favorite.platform,
+            isLive: false,
+            viewers: 0,
+            statusText: "...",
+            title: "",
+            autoOpen: favorite.autoOpen === true,
+        });
+        return validFavorites;
+    }, []);
+}
+
+function getValidActiveStreams(streams) {
+    if (!Array.isArray(streams)) return [];
+
+    const seen = new Set();
+    return streams.reduce((validStreams, stream) => {
+        if (
+            !stream ||
+            !["kick", "twitch"].includes(stream.platform) ||
+            typeof stream.name !== "string" ||
+            !CHANNEL_NAME_PATTERN.test(stream.name)
+        ) {
+            return validStreams;
+        }
+
+        const key = `${stream.platform}:${stream.name.toLowerCase()}`;
+        if (seen.has(key)) return validStreams;
+        seen.add(key);
+        validStreams.push({
+            name: stream.name,
+            platform: stream.platform,
+            chatOpen: stream.chatOpen === true,
+            unmuted: stream.unmuted === true,
+        });
+        return validStreams;
+    }, []);
+}
+
+function getStoredActiveStreams() {
+    try {
+        return getValidActiveStreams(JSON.parse(localStorage.getItem(STORAGE_ACTIVE) || "[]"));
+    } catch (e) {
+        return [];
+    }
+}
+
+function exportBackup() {
+    const backup = {
+        schemaVersion: BACKUP_SCHEMA_VERSION,
+        app: APP_META.name,
+        exportedAt: new Date().toISOString(),
+        favorites: favorites.map(({ name, platform, autoOpen }) => ({ name, platform, autoOpen })),
+        settings: {
+            autoCloseOffline,
+            sidebarCollapsed: localStorage.getItem("sidebar-collapsed") === "true",
+        },
+        activeStreams: getStoredActiveStreams(),
+    };
+    const file = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `streamlayer-varmuuskopio-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    setFormFeedback("Varmuuskopio ladattiin laitteellesi.");
+}
+
+async function importBackup(event) {
+    const input = event.target;
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    try {
+        const backup = JSON.parse(await file.text());
+        if (backup.schemaVersion !== BACKUP_SCHEMA_VERSION || !Array.isArray(backup.favorites)) {
+            throw new Error("Tuntematon varmuuskopion muoto");
+        }
+
+        const importedFavorites = getValidFavorites(backup.favorites);
+        const importedStreams = getValidActiveStreams(backup.activeStreams);
+        const importedAutoCloseOffline = backup.settings?.autoCloseOffline === true;
+        const importedSidebarCollapsed = backup.settings?.sidebarCollapsed === true;
+
+        if (!window.confirm("Palautus korvaa nykyiset suosikit ja asetukset. Jatketaanko?")) return;
+
+        favorites = importedFavorites;
+        autoCloseOffline = importedAutoCloseOffline;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+        localStorage.setItem(STORAGE_SETTINGS, JSON.stringify({ autoCloseOffline }));
+        localStorage.setItem(STORAGE_ACTIVE, JSON.stringify(importedStreams));
+        localStorage.setItem("sidebar-collapsed", String(importedSidebarCollapsed));
+
+        document.getElementById("auto-close-offline").checked = autoCloseOffline;
+        applySidebarState(importedSidebarCollapsed);
+        Object.keys(players).forEach((id) => delete players[id]);
+        document.querySelectorAll(".stream-wrapper").forEach((wrapper) => wrapper.remove());
+        updateStreamEmptyState();
+        renderFavorites();
+        restoreActiveStreams();
+        updateAllStatuses();
+        setFormFeedback("Varmuuskopio palautettiin.");
+    } catch (error) {
+        setFormFeedback("Varmuuskopiota ei voitu palauttaa. Valitse StreamLayerin JSON-tiedosto.");
+    } finally {
+        input.value = "";
+    }
+}
+
 function saveFavorite(event) {
     if (event) event.preventDefault();
     const n = document.getElementById("channel-name").value.trim();
     const p = document.getElementById("platform-select").value;
-    const feedback = document.getElementById("form-feedback");
-
     if (!CHANNEL_NAME_PATTERN.test(n)) {
-        feedback.textContent = "Käytä 1–50 kirjainta, numeroa, alaviivaa tai yhdysmerkkiä.";
+        setFormFeedback("Käytä 1–50 kirjainta, numeroa, alaviivaa tai yhdysmerkkiä.");
         return;
     }
     if (favorites.find((f) => f.platform === p && f.name.toLowerCase() === n.toLowerCase())) {
-        feedback.textContent = "Kanava on jo suosikeissa tällä alustalla.";
+        setFormFeedback("Kanava on jo suosikeissa tällä alustalla.");
         return;
     }
 
@@ -616,7 +741,7 @@ function saveFavorite(event) {
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     document.getElementById("channel-name").value = "";
-    feedback.textContent = `${n} lisättiin suosikkeihin.`;
+    setFormFeedback(`${n} lisättiin suosikkeihin.`);
     renderFavorites();
     updateAllStatuses();
 }
@@ -680,6 +805,16 @@ function restoreActiveStreams() {
 // =============================================================================
 // SIVUPALKKI
 // =============================================================================
+
+function applySidebarState(isCollapsed) {
+    const sidebar = document.getElementById("main-sidebar");
+    const main = document.querySelector("main");
+    const btn = sidebar.querySelector(".toggle-sidebar-btn");
+
+    sidebar.classList.toggle("collapsed", isCollapsed);
+    if (main) main.classList.toggle("expanded", isCollapsed);
+    if (btn) btn.textContent = isCollapsed ? "▶" : "◀";
+}
 
 function toggleSidebar() {
     const sidebar = document.getElementById("main-sidebar");

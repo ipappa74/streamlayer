@@ -61,6 +61,7 @@ Projekti on toteutettu **Zero Backend** -periaatteella – se hyödyntää vain 
 ### Tallennus (localStorage)
 
 - Sovellus tallentaa suosikkisi, kanavien järjestyksen, mute-tilat ja chat-asetukset suoraan selaimen muistiin.
+- Voit viedä suosikit, asetukset ja avoimet striimit JSON-varmuuskopioksi sekä palauttaa ne myöhemmin.
 
 ---
 

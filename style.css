@@ -431,6 +431,35 @@ button {
     display: none;
 }
 
+.backup-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 12px 12px 0;
+}
+
+.backup-btn {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+}
+
+.backup-btn:hover {
+    color: var(--text-main);
+    border-color: var(--accent);
+}
+
+.backup-file-input {
+    display: none;
+}
+
 button.primary-btn {
     background-color: var(--accent);
     border: none;
