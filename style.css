@@ -164,7 +164,7 @@ aside h3 {
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
-    padding-right: 12px;
+    padding: 0 12px 16px 0;
     flex: 1;
     min-height: 0;
 }
@@ -359,7 +359,7 @@ aside h3 {
 
 .app-footer {
     margin-top: auto !important;
-    padding: 10px 0 5px 0 !important;
+    padding: 16px 0 5px 0 !important;
     border-top: 1px solid var(--border);
     text-align: center;
     width: 100%;
@@ -498,13 +498,23 @@ button.primary-btn {
     align-content: start;
 }
 
+#stream-grid:has(#stream-empty-state:not([hidden])) {
+    min-height: calc(100vh - 40px);
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
 .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: min(60vh, 520px);
-    padding: 32px;
+    justify-self: center;
+    align-self: center;
+    width: min(100%, 420px);
+    min-height: 0;
+    padding: 30px;
     box-sizing: border-box;
     text-align: center;
     color: var(--text-dim);
@@ -779,12 +789,12 @@ body.is-dragging .stream-wrapper {
 }
 
 .about-card {
-    background: #1c1c1e;
-    border: 1px solid rgba(0, 122, 255, 0.4);
+    background: linear-gradient(145deg, #242428 0%, #18181b 100%);
+    border: 1px solid rgba(0, 122, 255, 0.55);
     padding: 40px;
-    border-radius: 24px;
+    border-radius: 22px;
     text-align: center;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.58), 0 0 32px rgba(0, 122, 255, 0.08);
     width: 90%;
     max-width: 350px;
     position: relative;
@@ -807,8 +817,10 @@ body.is-dragging .stream-wrapper {
 
 .settings-section {
     margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.14);
 }
 
 .settings-section h3 {
@@ -832,12 +844,26 @@ body.is-dragging .stream-wrapper {
     color: #8e8e93;
     font-size: 24px;
     cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .meta-info-list p {
-    margin: 8px 0;
+    margin: 7px 0;
     color: var(--text-dim);
     font-size: 14px;
+}
+
+.meta-info-list a:first-of-type {
+    margin-top: 20px;
+}
+
+.meta-info-list a + a {
+    margin-left: 8px;
 }
 
 .modal-buttons {
