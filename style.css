@@ -564,7 +564,7 @@ button.primary-btn {
 
 /* Yksittäisen striimin wrapper */
 #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper {
-    height: auto;
+    height: calc(100vh - 40px);
     max-height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
