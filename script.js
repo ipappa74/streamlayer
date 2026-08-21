@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.3",
+    version: "1.8.4",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -293,13 +293,8 @@ function showPlayerError(id, message) {
 
 function createKickPlayerIframe(name, unmuted = false) {
     const iframe = document.createElement("iframe");
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const autoplay = !isMobile;
-    const muted = isMobile ? false : !unmuted;
 
-    // Mobiilissa käyttäjän oma toistopainike käynnistää Kick-striimin äänen kanssa.
-    // Työpöydällä käytetään StreamLayerin otsikkopalkin äänipainiketta.
-    iframe.src = `https://player.kick.com/${name}?autoplay=${autoplay}&muted=${muted}`;
+    iframe.src = `https://player.kick.com/${name}?autoplay=true&muted=${!unmuted}`;
     iframe.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
     iframe.allowFullscreen = true;
     iframe.title = `Kick-striimi: ${name}`;
