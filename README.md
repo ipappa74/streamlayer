@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.6** · Päivitetty: **2026-08-21**
+Nykyinen versio: **1.8.7** · Päivitetty: **2026-08-21**
 
 ## 🎯 Yleiskuvaus
 
@@ -30,7 +30,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 - Striimit asettuvat mobiilissa allekkain ja chatti avautuu videon alapuolelle.
 - Sivupalkki sulkeutuu, kun avaat striimin.
-- Mobiiliselaimet voivat rajoittaa äänekästä automaattista toistoa. Kickin ja Twitchin ääntä hallitaan striimikortin äänipainikkeesta myös mobiilissa.
+- Mobiiliselaimet voivat rajoittaa äänekästä automaattista toistoa. Kickissä ota ääni käyttöön striimikortin äänipainikkeesta ja käynnistä tarvittaessa video soittimen omasta toistopainikkeesta.
 
 ### 🔇 Ääni ja chat
 

@@ -502,6 +502,7 @@ button.primary-btn {
 }
 
 #stream-grid:has(#stream-empty-state:not([hidden])) {
+    grid-template-columns: 1fr;
     min-height: calc(100vh - 40px);
     align-content: center;
     justify-content: center;
