@@ -1039,7 +1039,7 @@ body.is-dragging .stream-wrapper {
 
     .chat-container {
         width: 100% !important;
-        height: 340px !important;
+        height: clamp(220px, 30svh, 270px) !important;
         border-top: 1px solid var(--border);
         border-left: none;
         flex-shrink: 0;
