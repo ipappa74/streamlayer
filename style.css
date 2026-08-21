@@ -1020,6 +1020,11 @@ body.is-dragging .stream-wrapper {
         touch-action: none;
     }
 
+    /* Kickin ääni käynnistyy mobiilissa soittimen omasta toistopainikkeesta. */
+    .stream-wrapper[data-platform="kick"] .mute-btn {
+        display: none;
+    }
+
     /* --- Video- ja chat-kontainerit mobiilissa --- */
     .video-container {
         width: 100% !important;
