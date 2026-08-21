@@ -553,14 +553,14 @@ button.primary-btn {
 }
 
 /* Kun striimejä on vain yksi */
-#stream-grid:has(> :last-child:nth-child(1)) {
+#stream-grid:has(> .stream-wrapper:only-of-type) {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: 0;
+    min-height: calc(100vh - 40px);
 }
 
 /* Yksittäisen striimin wrapper */
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper {
+#stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper {
     height: auto;
     max-height: calc(100vh - 40px);
     display: flex;
@@ -570,12 +570,12 @@ button.primary-btn {
 .stream-wrapper.chat-open {
     grid-column: span 2;
 }
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open {
+#stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open {
     grid-column: 1;
 }
 
 /* Yksittäinen striimi chat auki - täyttää koko korkeuden */
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .content-area {
+#stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .content-area {
     display: flex;
     flex-direction: row;
     flex: 1;
@@ -583,7 +583,7 @@ button.primary-btn {
     overflow: hidden;
 }
 
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .video-container {
+#stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .video-container {
     aspect-ratio: 16 / 9;
     flex: 1;
     height: auto;
@@ -592,7 +592,7 @@ button.primary-btn {
 }
 
 /* Chatti säilyttää leveytensä mutta joustaa korkeudessa */
-#stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open .chat-container {
+#stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .chat-container {
     width: 340px;
     height: 100%;
     flex-shrink: 0;
@@ -920,7 +920,7 @@ body.is-dragging .stream-wrapper {
     }
 
     /* Ylikirjoitetaan yhden striimin erikoissääntö, jotta chatti mahtuu alle */
-    #stream-grid:has(> :last-child:nth-child(1)) .stream-wrapper.chat-open {
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open {
         height: auto !important;
         display: flex !important;
         flex-direction: column !important;

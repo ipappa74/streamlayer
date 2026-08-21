@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.6.2",
+    version: "1.7.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -291,6 +291,19 @@ function showPlayerError(id, message) {
     }
 }
 
+function createKickPlayerIframe(name, unmuted = false) {
+    const iframe = document.createElement("iframe");
+    const needsDirectPlay = unmuted && window.matchMedia("(max-width: 768px)").matches;
+
+    // Mobiiliselaimet estävät äänekään autoplayn. Tällöin videon oma toistopainike
+    // käynnistää äänen käyttäjän suoralla kosketuksella.
+    iframe.src = `https://player.kick.com/${name}?autoplay=${!needsDirectPlay}&muted=${!unmuted}`;
+    iframe.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
+    iframe.allowFullscreen = true;
+    iframe.title = `Kick-striimi: ${name}`;
+    return iframe;
+}
+
 // =============================================================================
 // STRIIMIEN HALLINTA
 // =============================================================================
@@ -369,7 +382,7 @@ function openStream(
             // Kick ei tue mute-APIa -- ladataan uudelleen heti oikealla muted-arvolla
             const container = document.getElementById(`player-${streamId}`);
             if (container) {
-                container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+                container.replaceChildren(createKickPlayerIframe(streamName));
             }
         }
     });
@@ -399,18 +412,8 @@ function openStream(
             muted: !defaultUnmuted,
             volume: 0.8, // 0.0 - 1.0, eli tässä 80%
         });
-        // Varmistetaan että soitin jatkaa toistoa
-        setTimeout(() => {
-            if (players[id]) {
-                players[id].play();
-            }
-        }, 500);
     } else if (platform === "kick") {
-        const ifr = document.createElement("iframe");
-        ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=${!defaultUnmuted}`;
-        ifr.allow = "autoplay; fullscreen";
-        ifr.title = `Kick-striimi: ${name}`;
-        document.getElementById(`player-${id}`).appendChild(ifr);
+        document.getElementById(`player-${id}`).appendChild(createKickPlayerIframe(name, defaultUnmuted));
     } else {
         showPlayerError(id, "Twitch-soitinta ei voitu ladata. Tarkista verkkoyhteys ja yritä sivun lataamista uudelleen.");
     }
@@ -569,10 +572,16 @@ function toggleMute(id, name, platform) {
 
     if (platform === "twitch" && players[id]) {
         players[id].setMuted(!muted);
+        if (muted && window.matchMedia("(max-width: 768px)").matches) {
+            const playback = players[id].play();
+            if (playback && typeof playback.catch === "function") {
+                playback.catch(() => {});
+            }
+        }
     } else {
-        // Kick ei tue mute-APIa -- uudelleenladataan soitin eri muted-arvolla
+        // Kick ei tue mute-APIa -- uudelleenladataan soitin eri muted-arvolla.
         const container = document.getElementById(`player-${id}`);
-        container.innerHTML = `<iframe src="https://player.kick.com/${name}?autoplay=true&muted=${!muted}" allow="autoplay; fullscreen"></iframe>`;
+        container.replaceChildren(createKickPlayerIframe(name, muted));
     }
 
     btn.innerHTML = muted ? svgIcons.mute : svgIcons.unmute;
@@ -849,7 +858,7 @@ function toggleSidebar() {
             } else if (platform === "kick" && !wasUnmuted) {
                 const container = document.getElementById(`player-${streamId}`);
                 if (container) {
-                    container.innerHTML = `<iframe src="https://player.kick.com/${streamName}?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe>`;
+                    container.replaceChildren(createKickPlayerIframe(streamName));
                 }
             }
         });
