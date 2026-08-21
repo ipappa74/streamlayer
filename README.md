@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.7.3** · Päivitetty: **2026-08-21**
+Nykyinen versio: **1.8.0** · Päivitetty: **2026-08-21**
 
 ## 🎯 Yleiskuvaus
 
@@ -30,7 +30,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 - Striimit asettuvat mobiilissa allekkain ja chatti avautuu videon alapuolelle.
 - Sivupalkki sulkeutuu, kun avaat striimin.
-- Mobiiliselaimet estävät äänekästä automaattista toistoa. Ota ääni käyttöön ja käynnistä tarvittaessa video sen omalla toistopainikkeella.
+- Mobiiliselaimet estävät äänekästä automaattista toistoa. Kickissä käytä videon omia äänen- ja toistonohjaimia, jotta striimi ei käynnisty uudelleen.
 
 ### 🔇 Ääni ja chat
 
@@ -82,7 +82,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 ### 2. Hallitse striimiä
 
 - Käytä striimikortin painikkeita chatin avaamiseen, äänen säätämiseen, lataamiseen uudelleen ja sulkemiseen.
-- Vedä striimikortteja haluamaasi järjestykseen.
+- Vedä striimikortteja haluamaasi järjestykseen. Mobiilissa raahaus aloitetaan striimikortin otsikkopalkista, ei videosta tai painikkeista.
 
 ### 3. Muuta asetuksia ja tee varmuuskopio
 

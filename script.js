@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.7.3",
+    version: "1.8.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -330,6 +330,7 @@ function openStream(
     const wrapper = document.createElement("div");
     wrapper.className = "stream-wrapper";
     wrapper.id = id;
+    wrapper.dataset.platform = platform;
     wrapper.draggable = true;
 
     if (defaultChatOpen) wrapper.classList.add("chat-open");
@@ -353,15 +354,22 @@ function openStream(
             </div>
             <div class="stream-header-btns">
                 <button class="icon-btn" aria-label="Avaa tai sulje chat" onclick="toggleChat('${id}', '${name}', '${platform}')" title="Avaa tai sulje chat">${svgIcons.chat}</button>
-                <button class="icon-btn" id="mute-btn-${id}" aria-label="Poista mykistys" onclick="toggleMute('${id}', '${name}', '${platform}')" title="Poista mykistys">${svgIcons.unmute}</button>
+                <button class="icon-btn mute-btn" id="mute-btn-${id}" aria-label="Poista mykistys" onclick="toggleMute('${id}', '${name}', '${platform}')" title="Poista mykistys">${svgIcons.unmute}</button>
                 <button class="icon-btn" aria-label="Lataa striimi uudelleen" onclick="refreshStream('${id}')" title="Lataa striimi uudelleen">${svgIcons.refresh}</button>
                 <button class="icon-btn close-btn" aria-label="Sulje striimi" onclick="closeStream('${id}')" title="Sulje striimi">${svgIcons.close}</button>
             </div>
         </div>
+        <p class="mobile-kick-audio-hint">Ääni videon omista ohjaimista.</p>
         <div class="content-area">
             <div class="video-container" id="player-${id}"></div>
             <div class="chat-container" id="chat-${id}"></div>
         </div>`;
+
+    const header = wrapper.querySelector(".stream-header");
+    header.addEventListener("touchstart", handleTouchStart, { passive: false });
+    header.addEventListener("touchmove", handleTouchMove, { passive: false });
+    header.addEventListener("touchend", handleTouchEnd);
+    header.addEventListener("touchcancel", handleTouchEnd);
 
     // Tallennetaan olemassa olevien striimien mute-tilat ennen layout-muutosta
     const savedMuteStates = {};
@@ -904,6 +912,47 @@ function closeAbout(event) {
 
 let draggedElement = null;
 let dragCounter = 0;
+let touchDraggedElement = null;
+let touchDragStarted = false;
+let touchStartY = 0;
+
+function handleTouchStart(event) {
+    if (event.touches.length !== 1 || event.target.closest("button")) return;
+
+    touchDraggedElement = this.closest(".stream-wrapper");
+    touchStartY = event.touches[0].clientY;
+    touchDragStarted = false;
+}
+
+function handleTouchMove(event) {
+    if (!touchDraggedElement || event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+    if (!touchDragStarted && Math.abs(touch.clientY - touchStartY) < 8) return;
+
+    touchDragStarted = true;
+    event.preventDefault();
+    touchDraggedElement.classList.add("dragging");
+
+    const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest(".stream-wrapper");
+    if (!target || target === touchDraggedElement) return;
+
+    const targetBounds = target.getBoundingClientRect();
+    if (touch.clientY < targetBounds.top + targetBounds.height / 2) {
+        target.before(touchDraggedElement);
+    } else {
+        target.after(touchDraggedElement);
+    }
+}
+
+function handleTouchEnd() {
+    if (!touchDraggedElement) return;
+
+    touchDraggedElement.classList.remove("dragging");
+    if (touchDragStarted) updateActiveStreamsStorage();
+    touchDraggedElement = null;
+    touchDragStarted = false;
+}
 
 function handleDragStart(e) {
     draggedElement = this;

@@ -627,6 +627,10 @@ button.primary-btn {
     cursor: grabbing;
 }
 
+.mobile-kick-audio-hint {
+    display: none;
+}
+
 .header-icon {
     width: 18px !important;
     height: 18px !important;
@@ -1014,6 +1018,25 @@ body.is-dragging .stream-wrapper {
         width: 100%;
         max-width: 100%;
         flex-shrink: 0;
+    }
+
+    .stream-header {
+        touch-action: none;
+    }
+
+    .stream-wrapper[data-platform="kick"] .mute-btn {
+        display: none;
+    }
+
+    .stream-wrapper[data-platform="kick"] .mobile-kick-audio-hint {
+        display: block;
+        margin: 0;
+        padding: 6px 12px;
+        color: var(--text-dim);
+        background: var(--bg-card);
+        border-top: 1px solid var(--border);
+        font-size: 0.72rem;
+        text-align: center;
     }
 
     /* --- Video- ja chat-kontainerit mobiilissa --- */
