@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.3.0",
+    version: "1.4.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -18,6 +18,8 @@ const STORAGE_KEY = "streamlayer";
 const STORAGE_ACTIVE = "streamlayer_active_v1";
 const STORAGE_SETTINGS = "streamlayer_settings_v1";
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
+const STATUS_TIMEOUT_MS = 8000;
+const STATUS_RETRIES = 1;
 
 let favorites = [];
 let autoCloseOffline = false;
@@ -120,12 +122,38 @@ function updateActiveStreamsStorage() {
 // LIVE-TILANNE JA API-KUTSUT
 // =============================================================================
 
+async function fetchWithRetry(url, options = {}, retries = STATUS_RETRIES) {
+    let lastError;
+
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), STATUS_TIMEOUT_MS);
+
+        try {
+            const response = await fetch(url, { ...options, signal: controller.signal });
+            if (!response.ok && response.status >= 500) {
+                throw new Error(`Palvelinvirhe ${response.status}`);
+            }
+            return response;
+        } catch (error) {
+            lastError = error;
+            if (attempt < retries) {
+                await new Promise((resolve) => setTimeout(resolve, 350 * (attempt + 1)));
+            }
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    throw lastError;
+}
+
 async function updateAllStatuses() {
     await Promise.all(
         favorites.map(async (f) => {
             try {
                 if (f.platform === "kick") {
-                    const res = await fetch(
+                    const res = await fetchWithRetry(
                         `https://kick.com/api/v1/channels/${f.name.toLowerCase()}`,
                     );
                     if (!res.ok) {
@@ -143,17 +171,20 @@ async function updateAllStatuses() {
                         f.title = f.isLive ? d.livestream.session_title || "" : "";
                     }
                 } else {
-                    const res = await fetch(`https://decapi.me/twitch/uptime/${f.name}`);
+                    const res = await fetchWithRetry(`https://decapi.me/twitch/uptime/${f.name}`);
+                    if (!res.ok) throw new Error(`DecAPI-virhe ${res.status}`);
                     const ut = await res.text();
                     f.isLive = !ut.includes("offline");
 
                     if (f.isLive) {
-                        const vRes = await fetch(`https://decapi.me/twitch/viewercount/${f.name}`);
+                        const vRes = await fetchWithRetry(`https://decapi.me/twitch/viewercount/${f.name}`);
+                        if (!vRes.ok) throw new Error(`DecAPI-virhe ${vRes.status}`);
                         const vText = await vRes.text();
                         f.viewers = parseInt(vText.replace(/,/g, "")) || 0;
                         f.statusText = `${f.viewers.toLocaleString()} katsojaa`;
 
-                        const tRes = await fetch(`https://decapi.me/twitch/title/${f.name}`);
+                        const tRes = await fetchWithRetry(`https://decapi.me/twitch/title/${f.name}`);
+                        if (!tRes.ok) throw new Error(`DecAPI-virhe ${tRes.status}`);
                         f.title = (await tRes.text()).trim();
                     } else {
                         f.viewers = 0;
@@ -212,6 +243,15 @@ function escapeHtml(str) {
 
 function renderFavorites() {
     const list = document.getElementById("favorites-list");
+    if (favorites.length === 0) {
+        list.innerHTML = `
+            <div class="favorite-empty-state">
+                <strong>Ei vielä suosikkeja</strong>
+                <span>Valitse alusta ja lisää ensimmäinen kanava.</span>
+            </div>`;
+        return;
+    }
+
     list.innerHTML = favorites
         .map((fav, i) => {
             const iconSrc =
@@ -242,6 +282,19 @@ function renderFavorites() {
         </div>`;
         })
         .join("");
+}
+
+function updateStreamEmptyState() {
+    const grid = document.getElementById("stream-grid");
+    const emptyState = document.getElementById("stream-empty-state");
+    emptyState.hidden = grid.querySelector(".stream-wrapper") !== null;
+}
+
+function showPlayerError(id, message) {
+    const container = document.getElementById(`player-${id}`);
+    if (container) {
+        container.innerHTML = `<div class="player-error" role="alert">${message}</div>`;
+    }
 }
 
 // =============================================================================
@@ -292,10 +345,10 @@ function openStream(
                 <span class="fav-alias">${name}</span>
             </div>
             <div class="stream-header-btns">
-                <button class="icon-btn" onclick="toggleChat('${id}', '${name}', '${platform}')" title="Chat">${svgIcons.chat}</button>
-                <button class="icon-btn" id="mute-btn-${id}" onclick="toggleMute('${id}', '${name}', '${platform}')">${svgIcons.unmute}</button>
-                <button class="icon-btn" onclick="refreshStream('${id}')">${svgIcons.refresh}</button>
-                <button class="icon-btn close-btn" onclick="closeStream('${id}')">${svgIcons.close}</button>
+                <button class="icon-btn" aria-label="Avaa tai sulje chat" onclick="toggleChat('${id}', '${name}', '${platform}')" title="Avaa tai sulje chat">${svgIcons.chat}</button>
+                <button class="icon-btn" id="mute-btn-${id}" aria-label="Poista mykistys" onclick="toggleMute('${id}', '${name}', '${platform}')" title="Poista mykistys">${svgIcons.unmute}</button>
+                <button class="icon-btn" aria-label="Lataa striimi uudelleen" onclick="refreshStream('${id}')" title="Lataa striimi uudelleen">${svgIcons.refresh}</button>
+                <button class="icon-btn close-btn" aria-label="Sulje striimi" onclick="closeStream('${id}')" title="Sulje striimi">${svgIcons.close}</button>
             </div>
         </div>
         <div class="content-area">
@@ -312,6 +365,7 @@ function openStream(
     });
 
     grid.appendChild(wrapper);
+    updateStreamEmptyState();
 
     // Palautetaan mute-tilat heti layout-muutoksen jälkeen
     Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
@@ -342,8 +396,8 @@ function openStream(
     }
 
     // Luodaan videosoitin
-    if (platform === "twitch") {
-        players[id] = new Twitch.Player(`player-${id}`, {
+    if (platform === "twitch" && window.Twitch?.Player) {
+        players[id] = new window.Twitch.Player(`player-${id}`, {
             channel: name,
             width: "100%",
             height: "100%",
@@ -357,11 +411,14 @@ function openStream(
                 players[id].play();
             }
         }, 500);
-    } else {
+    } else if (platform === "kick") {
         const ifr = document.createElement("iframe");
         ifr.src = `https://player.kick.com/${name}?autoplay=true&muted=${!defaultUnmuted}`;
         ifr.allow = "autoplay; fullscreen";
+        ifr.title = `Kick-striimi: ${name}`;
         document.getElementById(`player-${id}`).appendChild(ifr);
+    } else {
+        showPlayerError(id, "Twitch-soitinta ei voitu ladata. Tarkista verkkoyhteys ja yritä sivun lataamista uudelleen.");
     }
 
     // Päivitetään nappien tilat (viiveellä että DOM on valmis)
@@ -372,6 +429,8 @@ function openStream(
         if (muteBtn) {
             muteBtn.classList.toggle("is-active", defaultUnmuted);
             muteBtn.innerHTML = defaultUnmuted ? svgIcons.mute : svgIcons.unmute;
+            muteBtn.setAttribute("aria-label", defaultUnmuted ? "Mykistä striimi" : "Poista mykistys");
+            muteBtn.title = muteBtn.getAttribute("aria-label");
         }
 
         if (defaultChatOpen) {
@@ -400,6 +459,7 @@ function closeStream(id) {
 
     const el = document.getElementById(id);
     if (el) el.remove();
+    updateStreamEmptyState();
 
     // Päivitetään neighbor-has-chat luokat
     const allWrappers = document.querySelectorAll(".stream-wrapper");
@@ -456,6 +516,8 @@ function toggleChat(id, name, platform) {
     const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
     if (chatBtn) {
         chatBtn.classList.toggle("is-active", isOpening);
+        chatBtn.setAttribute("aria-label", isOpening ? "Sulje chat" : "Avaa chat");
+        chatBtn.title = chatBtn.getAttribute("aria-label");
     }
 
     // Iframe ladataan vasta ensimmäisellä avauksella
@@ -520,6 +582,8 @@ function toggleMute(id, name, platform) {
     }
 
     btn.innerHTML = muted ? svgIcons.mute : svgIcons.unmute;
+    btn.setAttribute("aria-label", muted ? "Mykistä striimi" : "Poista mykistys");
+    btn.title = btn.getAttribute("aria-label");
     updateActiveStreamsStorage();
 }
 

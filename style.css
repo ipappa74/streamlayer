@@ -169,11 +169,29 @@ aside h3 {
     min-height: 0;
 }
 
+.favorite-empty-state {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 12px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+}
+
+.favorite-empty-state strong {
+    color: var(--text-main);
+}
+
 .stream-setting {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
     margin: -4px 0 0;
+    width: 100%;
     color: var(--text-dim);
     font-size: 0.75rem;
     line-height: 1.35;
@@ -182,7 +200,7 @@ aside h3 {
 
 .stream-setting input {
     width: auto;
-    margin: 2px 0 0;
+    margin: 0;
     accent-color: var(--accent);
 }
 
@@ -388,7 +406,7 @@ main.expanded {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     padding-right: 12px;
 }
 
@@ -404,10 +422,13 @@ button {
 }
 
 .form-feedback {
-    min-height: 1.2em;
     margin: -4px 0 0;
     color: var(--text-dim);
     font-size: 0.8rem;
+}
+
+.form-feedback:empty {
+    display: none;
 }
 
 button.primary-btn {
@@ -428,6 +449,37 @@ button.primary-btn {
     width: 100%;
     max-height: none;
     align-content: start;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: min(60vh, 520px);
+    padding: 32px;
+    box-sizing: border-box;
+    text-align: center;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: rgba(28, 28, 30, 0.45);
+}
+
+.empty-state h2 {
+    margin: 0 0 8px;
+    color: var(--text-main);
+    font-size: 1.25rem;
+}
+
+.empty-state p {
+    max-width: 360px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.empty-state[hidden] {
+    display: none;
 }
 
 /* --- Striimi-ikkunat --- */
@@ -625,6 +677,18 @@ body.is-dragging .stream-wrapper {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+.player-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    text-align: center;
+    color: var(--text-dim);
+    line-height: 1.5;
 }
 
 .chat-container {
