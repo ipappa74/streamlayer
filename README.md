@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.7** · Päivitetty: **2026-08-21**
+Nykyinen versio: **1.8.8** · Päivitetty: **2026-08-21**
 
 ## 🎯 Yleiskuvaus
 
@@ -36,7 +36,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
 - Uusi striimi alkaa mykistettynä.
-- Avoimien striimien chat- ja äänitilat palautetaan selaimen muistista.
+- Avoimien striimien chat- ja äänitilat palautetaan selaimen muistista. Mobiilissa Kick avautuu aina ensin mykistettynä selaimen toistorajoitusten vuoksi.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
 ### ⭐ Suosikit, automaatio ja asetukset

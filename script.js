@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.7",
+    version: "1.8.8",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -806,9 +806,14 @@ function restoreActiveStreams() {
     try {
         const streams = JSON.parse(saved);
         // skipStorage = true estää tallentamasta uudestaan (säilyttää unmuted-tilan)
-        streams.forEach((s) =>
-            openStream(s.name, s.platform, s.chatOpen, s.unmuted || false, true),
-        );
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        streams.forEach((s) => {
+            // Kick avataan mobiilissa aina ensin mykistettynä. Näin video käynnistyy
+            // luotettavasti, ja äänen käyttöönotto palauttaa aiemman kaksivaiheisen
+            // toiston: äänipainike avaa soittimen ääntä varten, sitten video käynnistetään.
+            const restoreUnmuted = isMobile && s.platform === "kick" ? false : s.unmuted === true;
+            openStream(s.name, s.platform, s.chatOpen, restoreUnmuted, true);
+        });
 
         // Päivitetään neighbor-has-chat luokat palautuksen jälkeen
         const anyChatOpen = document.querySelector(".stream-wrapper.chat-open") !== null;

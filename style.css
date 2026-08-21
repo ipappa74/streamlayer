@@ -923,9 +923,11 @@ body.is-dragging .stream-wrapper {
         max-height: none !important;
     }
 
-    /* Ylikirjoitetaan yhden striimin erikoissääntö, jotta chatti mahtuu alle */
-    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open {
+    /* Kapeassa asettelussa yksittäinen striimi on aina sisältönsä korkuinen.
+       Muuten ilman chattia videon alle jää tarpeeton tyhjä alue. */
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper {
         height: auto !important;
+        max-height: none !important;
         display: flex !important;
         flex-direction: column !important;
     }
