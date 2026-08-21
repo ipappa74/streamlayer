@@ -34,6 +34,7 @@ Projekti on toteutettu **Zero Backend** -periaatteella – se hyödyntää vain 
 - Jokaisella slotilla oma mute‑tila
 - Tallentuu localStorageen
 - Uusi striimi aloittaa aina mutella (oletus)
+- Offline-striimin automaattinen sulkeminen on vapaaehtoinen asetus
 
 ### ⭐ Suosikit & Automaatio
 

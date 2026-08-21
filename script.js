@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.2.2",
+    version: "1.3.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -16,9 +16,11 @@ const APP_META = {
 /* --- GLOBAALIT MUUTTUJAT --- */
 const STORAGE_KEY = "streamlayer";
 const STORAGE_ACTIVE = "streamlayer_active_v1";
+const STORAGE_SETTINGS = "streamlayer_settings_v1";
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
 
 let favorites = [];
+let autoCloseOffline = false;
 const players = {};
 const offlineTrackers = {};
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
@@ -68,6 +70,14 @@ function loadInitialData() {
             favorites = [];
         }
     }
+
+    try {
+        const settings = JSON.parse(localStorage.getItem(STORAGE_SETTINGS) || "{}");
+        autoCloseOffline = settings.autoCloseOffline === true;
+    } catch (e) {
+        autoCloseOffline = false;
+    }
+    document.getElementById("auto-close-offline").checked = autoCloseOffline;
 
     // Palautetaan sivupalkin tila edelliseltä sessiolta
     if (localStorage.getItem("sidebar-collapsed") === "true") {
@@ -152,11 +162,11 @@ async function updateAllStatuses() {
                     }
                 }
 
-                // Seurataan offline-aikaa automaattista sulkemista varten
+                // Offline-striimejä suljetaan vain käyttäjän erikseen valitsemalla asetuksella.
                 const streamId = `s-${f.platform}-${f.name.toLowerCase()}`;
                 const wrapper = document.getElementById(streamId);
 
-                if (wrapper) {
+                if (wrapper && autoCloseOffline) {
                     if (!f.isLive) {
                         if (!offlineTrackers[streamId]) {
                             offlineTrackers[streamId] = Date.now();
@@ -167,6 +177,8 @@ async function updateAllStatuses() {
                     } else {
                         delete offlineTrackers[streamId];
                     }
+                } else {
+                    delete offlineTrackers[streamId];
                 }
 
                 checkAutoOpen(f);
@@ -556,6 +568,15 @@ function toggleAutoOpen(index, event) {
     event.stopPropagation();
     favorites[index].autoOpen = event.target.checked;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
+
+function toggleAutoCloseOffline(event) {
+    autoCloseOffline = event.target.checked;
+    localStorage.setItem(STORAGE_SETTINGS, JSON.stringify({ autoCloseOffline }));
+
+    if (!autoCloseOffline) {
+        Object.keys(offlineTrackers).forEach((id) => delete offlineTrackers[id]);
+    }
 }
 
 function checkAutoOpen(fav) {
