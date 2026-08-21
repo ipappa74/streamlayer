@@ -83,25 +83,18 @@
         </select>
         <input type="text" id="channel-name" placeholder="Käyttäjänimi" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]+">
         <button class="primary-btn" type="submit">Lisää listalle</button>
-        <label class="stream-setting" for="auto-close-offline">
-            <input type="checkbox" id="auto-close-offline" onchange="toggleAutoCloseOffline(event)">
-            <span>Sulje offline-striimi minuutin kuluttua</span>
-        </label>
         <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
     </form>
-
-    <section class="backup-actions" aria-label="Varmuuskopiointi">
-        <button class="backup-btn" type="button" onclick="exportBackup()">Vie varmuuskopio</button>
-        <label class="backup-btn" for="backup-file">Palauta varmuuskopio</label>
-        <input class="backup-file-input" id="backup-file" type="file" accept="application/json,.json" onchange="importBackup(event)">
-    </section>
 
 <!-- Lista tallennetuista suosikeista -->
     <div id="favorites-list"></div>
 	
 <!-- Footer -->
 	<footer class="app-footer">
-		<span class="about-link" onclick="openAbout()">Tietoa sovelluksesta</span>
+		<div class="footer-links">
+			<button class="footer-link" type="button" onclick="openSettings()">Asetukset</button>
+			<button class="footer-link" type="button" onclick="openAbout()">Tietoa sovelluksesta</button>
+		</div>
 		<span class="footer-copy">© 2026 StreamLayer by Toni</span>
 	</footer>
 </aside>
@@ -128,6 +121,28 @@
 			<a id="app-kick" href="#" target="_blank" class="kick-btn">Seuraa Kick:ssä</a>
             <a id="app-repo" href="#" target="_blank" class="repo-btn">GitHub Repository</a>
         </div>
+    </div>
+</div>
+
+<!-- Asetukset-modal -->
+<div id="settings-modal" class="modal-overlay" onclick="closeSettings(event)">
+    <div class="modal-content about-card settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <button class="modal-close" type="button" aria-label="Sulje asetukset" onclick="closeSettings(event)">×</button>
+        <h2 id="settings-title">Asetukset</h2>
+        <label class="stream-setting" for="auto-close-offline">
+            <input type="checkbox" id="auto-close-offline" onchange="toggleAutoCloseOffline(event)">
+            <span>Sulje offline-striimi minuutin kuluttua</span>
+        </label>
+        <section class="settings-section" aria-labelledby="backup-title">
+            <h3 id="backup-title">Varmuuskopio</h3>
+            <p>Tallenna suosikit ja asetukset JSON-tiedostoon tai palauta ne takaisin.</p>
+            <div class="backup-actions">
+                <button class="backup-btn" type="button" onclick="exportBackup()">Vie varmuuskopio</button>
+                <label class="backup-btn" for="backup-file">Palauta varmuuskopio</label>
+                <input class="backup-file-input" id="backup-file" type="file" accept="application/json,.json" onchange="importBackup(event)">
+            </div>
+            <p id="settings-feedback" class="form-feedback" aria-live="polite"></p>
+        </section>
     </div>
 </div>
 

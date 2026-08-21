@@ -366,12 +366,26 @@ aside h3 {
     flex-shrink: 0;
 }
 
-.about-link {
-    cursor: pointer;
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.footer-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: var(--accent);
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
+    font: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.footer-link:hover {
+    color: var(--text-main);
+    text-decoration: underline;
 }
 
 .footer-copy {
@@ -436,6 +450,10 @@ button {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin: 0 12px 12px 0;
+}
+
+.settings-card .backup-actions {
+    margin: 14px 0 0;
 }
 
 .backup-btn {
@@ -771,6 +789,38 @@ body.is-dragging .stream-wrapper {
     max-width: 350px;
     position: relative;
     min-width: 280px;
+}
+
+.settings-card {
+    text-align: left;
+}
+
+.settings-card h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.settings-card .stream-setting {
+    margin: 18px 0 0;
+    font-size: 0.82rem;
+}
+
+.settings-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.settings-section h3 {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+}
+
+.settings-section p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.45;
 }
 
 .modal-close {

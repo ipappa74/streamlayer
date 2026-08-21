@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.5.0",
+    version: "1.6.0",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -589,6 +589,10 @@ function setFormFeedback(message) {
     document.getElementById("form-feedback").textContent = message;
 }
 
+function setSettingsFeedback(message) {
+    document.getElementById("settings-feedback").textContent = message;
+}
+
 function getValidFavorites(items) {
     if (!Array.isArray(items)) return [];
 
@@ -674,7 +678,7 @@ function exportBackup() {
     link.download = `streamlayer-varmuuskopio-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
-    setFormFeedback("Varmuuskopio ladattiin laitteellesi.");
+    setSettingsFeedback("Varmuuskopio ladattiin laitteellesi.");
 }
 
 async function importBackup(event) {
@@ -710,9 +714,9 @@ async function importBackup(event) {
         renderFavorites();
         restoreActiveStreams();
         updateAllStatuses();
-        setFormFeedback("Varmuuskopio palautettiin.");
+        setSettingsFeedback("Varmuuskopio palautettiin.");
     } catch (error) {
-        setFormFeedback("Varmuuskopiota ei voitu palauttaa. Valitse StreamLayerin JSON-tiedosto.");
+        setSettingsFeedback("Varmuuskopiota ei voitu palauttaa. Valitse StreamLayerin JSON-tiedosto.");
     } finally {
         input.value = "";
     }
@@ -855,6 +859,17 @@ function toggleSidebar() {
 // =============================================================================
 // TIETOA-MODAL
 // =============================================================================
+
+function openSettings() {
+    document.getElementById("settings-modal").style.display = "flex";
+}
+
+function closeSettings(event) {
+    const modal = document.getElementById("settings-modal");
+    if (event.target === modal || event.target.classList.contains("modal-close")) {
+        modal.style.display = "none";
+    }
+}
 
 function openAbout() {
     document.getElementById("app-name").textContent = APP_META.name;
