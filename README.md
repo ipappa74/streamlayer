@@ -5,9 +5,9 @@
 
 ---
 
-# StreamLayer – Multistream
+# StreamLayer
 
-Nykyinen versio: **1.7.0** · Päivitetty: **2026-08-21**
+Nykyinen versio: **1.7.3** · Päivitetty: **2026-08-21**
 
 ## 🎯 Yleiskuvaus
 

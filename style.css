@@ -401,7 +401,8 @@ aside h3 {
 main {
     flex-grow: 1;
     margin-left: 320px;
-    transition: margin-left 0.3s ease;
+    width: calc(100% - 320px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
     min-height: 100vh;
     height: auto;
     overflow-y: visible;
@@ -413,6 +414,7 @@ main {
 
 main.expanded {
     margin-left: 0;
+    width: 100%;
 }
 
 /* --- Lomakkeet --- */
@@ -993,6 +995,7 @@ body.is-dragging .stream-wrapper {
     /* --- Pääsisältö mobiilissa --- */
     main {
         margin-left: 0 !important;
+        width: 100% !important;
         padding: 10px;
         overflow-y: auto !important;
         height: 100vh !important;
@@ -1027,7 +1030,7 @@ body.is-dragging .stream-wrapper {
 
     .chat-container {
         width: 100% !important;
-        height: 400px !important;
+        height: 340px !important;
         border-top: 1px solid var(--border);
         border-left: none;
         flex-shrink: 0;
