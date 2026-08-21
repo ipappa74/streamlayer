@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.1",
+    version: "1.8.2",
     buildDate: "2026-08-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -293,13 +293,8 @@ function showPlayerError(id, message) {
 
 function createKickPlayerIframe(name, unmuted = false) {
     const iframe = document.createElement("iframe");
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const autoplay = !isMobile;
-    const muted = isMobile ? false : !unmuted;
 
-    // Mobiilissa Kickin oma toistopainike käynnistää videon äänen kanssa.
-    // Työpöydällä käytetään sovelluksen otsikkopalkin äänipainiketta.
-    iframe.src = `https://player.kick.com/${name}?autoplay=${autoplay}&muted=${muted}`;
+    iframe.src = `https://player.kick.com/${name}?autoplay=true&muted=${!unmuted}`;
     iframe.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
     iframe.allowFullscreen = true;
     iframe.title = `Kick-striimi: ${name}`;
@@ -361,7 +356,6 @@ function openStream(
                 <button class="icon-btn close-btn" aria-label="Sulje striimi" onclick="closeStream('${id}')" title="Sulje striimi">${svgIcons.close}</button>
             </div>
         </div>
-        <p class="mobile-kick-audio-hint">Käynnistä striimi äänen kanssa videon toistopainikkeesta.</p>
         <div class="content-area">
             <div class="video-container" id="player-${id}"></div>
             <div class="chat-container" id="chat-${id}"></div>
