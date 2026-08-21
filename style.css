@@ -399,7 +399,7 @@ aside h3 {
    ============================================================================= */
 
 main {
-    flex-grow: 1;
+    flex: 0 0 calc(100% - 320px);
     margin-left: 320px;
     width: calc(100% - 320px);
     transition: margin-left 0.3s ease, width 0.3s ease;
@@ -415,6 +415,7 @@ main {
 main.expanded {
     margin-left: 0;
     width: 100%;
+    flex-basis: 100%;
 }
 
 /* --- Lomakkeet --- */
@@ -996,6 +997,7 @@ body.is-dragging .stream-wrapper {
     main {
         margin-left: 0 !important;
         width: 100% !important;
+        flex-basis: 100% !important;
         padding: 10px;
         overflow-y: auto !important;
         height: 100vh !important;
