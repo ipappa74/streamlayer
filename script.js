@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.11",
+    version: "1.8.15",
     buildDate: "2026-08-22",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -30,6 +30,17 @@ const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 
 function isCompactMobileLayout() {
     return window.innerWidth <= 932 && window.innerHeight <= 600 && window.innerWidth > window.innerHeight;
+}
+
+function syncViewportHeight() {
+    const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight);
+    document.documentElement.style.setProperty("--app-viewport-height", `${viewportHeight}px`);
+}
+
+function refreshViewportAfterRotation() {
+    syncViewportHeight();
+    requestAnimationFrame(syncViewportHeight);
+    window.setTimeout(syncViewportHeight, 180);
 }
 
 /* --- SVG-KUVAKKEET --- */
@@ -847,8 +858,11 @@ function applySidebarState(isCollapsed) {
 }
 
 window.addEventListener("resize", () => {
+    refreshViewportAfterRotation();
     if (isCompactMobileLayout()) applySidebarState(true);
 });
+window.addEventListener("orientationchange", refreshViewportAfterRotation);
+window.visualViewport?.addEventListener("resize", refreshViewportAfterRotation);
 
 function toggleSidebar() {
     const sidebar = document.getElementById("main-sidebar");
@@ -1028,5 +1042,6 @@ function handleDrop(e) {
 // KÄYNNISTYS JA AJASTIMET
 // =============================================================================
 
+syncViewportHeight();
 loadInitialData();
 setInterval(updateAllStatuses, 60000);
