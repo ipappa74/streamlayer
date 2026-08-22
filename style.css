@@ -1117,3 +1117,87 @@ body.is-dragging .stream-wrapper {
         max-width: 120px;
     }
 }
+
+/* =============================================================================
+   12. MOBIILI VAAKASUUNNASSA
+   ============================================================================= */
+
+/* Puhelimen vaakasuunnassa korkeutta on vähän. Pidetään chat videon vieressä,
+   jotta yhden striimin katselu ei muutu pitkäksi pystysuuntaiseksi sivuksi. */
+@media (max-width: 932px) and (max-height: 600px) and (orientation: landscape) {
+    aside {
+        transform: translateX(-100%) !important;
+    }
+
+    aside.landscape-open {
+        transform: translateX(0) !important;
+    }
+
+    main,
+    main.expanded {
+        margin-left: 0;
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .toggle-sidebar-btn {
+        right: -36px;
+        width: 36px;
+        height: 44px;
+        font-size: 16px;
+    }
+
+    main {
+        height: 100svh !important;
+        padding: 8px;
+    }
+
+    #stream-grid {
+        gap: 10px;
+    }
+
+    .stream-header {
+        height: 44px;
+        padding: 0 8px;
+    }
+
+    .stream-header-btns {
+        gap: 4px;
+    }
+
+    .icon-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    #stream-grid:has(> .stream-wrapper:only-of-type),
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper {
+        min-height: 0;
+        height: calc(100svh - 16px) !important;
+        max-height: calc(100svh - 16px) !important;
+    }
+
+    .stream-wrapper.chat-open .content-area {
+        flex: 1 1 auto;
+        flex-direction: row !important;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .stream-wrapper.chat-open .video-container {
+        width: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        flex: 1 1 0 !important;
+        align-self: center;
+    }
+
+    .stream-wrapper.chat-open .chat-container {
+        width: clamp(200px, 34vw, 300px) !important;
+        height: auto !important;
+        min-height: 0;
+        border-top: none;
+        border-left: 1px solid var(--border);
+        flex: 0 0 clamp(200px, 34vw, 300px);
+    }
+}
