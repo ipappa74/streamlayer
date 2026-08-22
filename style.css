@@ -1013,6 +1013,17 @@ body.is-dragging .stream-wrapper {
         box-sizing: border-box;
     }
 
+    /* Useamman striimin vieritys pysähtyy luontevasti seuraavan ikkunan alkuun. */
+    main:has(#stream-grid > .stream-wrapper + .stream-wrapper) {
+        scroll-padding-block: 10px;
+        scroll-snap-type: y proximity;
+    }
+
+    main:has(#stream-grid > .stream-wrapper + .stream-wrapper) .stream-wrapper {
+        scroll-snap-align: start;
+        scroll-snap-stop: normal;
+    }
+
     /* --- Striimigridi mobiilissa --- */
     #stream-grid {
         display: flex !important;

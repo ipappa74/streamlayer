@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.15",
+    version: "1.8.16",
     buildDate: "2026-08-22",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -37,10 +37,33 @@ function syncViewportHeight() {
     document.documentElement.style.setProperty("--app-viewport-height", `${viewportHeight}px`);
 }
 
+function alignCurrentLandscapeStream() {
+    if (!isCompactMobileLayout()) return;
+
+    const main = document.querySelector("main");
+    const streams = Array.from(document.querySelectorAll(".stream-wrapper"));
+    if (!main || streams.length === 0) return;
+
+    const mainTop = main.getBoundingClientRect().top;
+    const closestStream = streams.reduce((closest, stream) => {
+        const distance = Math.abs(stream.getBoundingClientRect().top - mainTop - 8);
+        return distance < closest.distance ? { stream, distance } : closest;
+    }, { stream: streams[0], distance: Number.POSITIVE_INFINITY });
+    const offset = closestStream.stream.getBoundingClientRect().top - mainTop - 8;
+
+    if (Math.abs(offset) > 1) main.scrollTop += offset;
+}
+
 function refreshViewportAfterRotation() {
     syncViewportHeight();
-    requestAnimationFrame(syncViewportHeight);
-    window.setTimeout(syncViewportHeight, 180);
+    requestAnimationFrame(() => {
+        syncViewportHeight();
+        alignCurrentLandscapeStream();
+    });
+    window.setTimeout(() => {
+        syncViewportHeight();
+        alignCurrentLandscapeStream();
+    }, 180);
 }
 
 /* --- SVG-KUVAKKEET --- */
