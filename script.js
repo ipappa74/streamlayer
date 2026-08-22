@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.9",
-    buildDate: "2026-08-21",
+    version: "1.8.10",
+    buildDate: "2026-08-22",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -27,6 +27,10 @@ let autoCloseOffline = false;
 const players = {};
 const offlineTrackers = {};
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
+
+function isCompactMobileLayout() {
+    return window.innerWidth <= 932 && window.innerHeight <= 600 && window.innerWidth > window.innerHeight;
+}
 
 /* --- SVG-KUVAKKEET --- */
 const svgIcons = {
@@ -83,7 +87,7 @@ function loadInitialData() {
     document.getElementById("auto-close-offline").checked = autoCloseOffline;
 
     // Palautetaan sivupalkin tila edelliseltä sessiolta
-    applySidebarState(localStorage.getItem("sidebar-collapsed") === "true");
+    applySidebarState(isCompactMobileLayout() || localStorage.getItem("sidebar-collapsed") === "true");
 
     renderFavorites();
     updateAllStatuses();
@@ -323,7 +327,7 @@ function openStream(
 
     // Mobiilissa suljetaan sivupalkki automaattisesti
     const sidebar = document.getElementById("main-sidebar");
-    if (window.innerWidth <= 768 && !skipStorage && !sidebar.classList.contains("collapsed")) {
+    if ((window.innerWidth <= 768 || isCompactMobileLayout()) && !skipStorage && !sidebar.classList.contains("collapsed")) {
         toggleSidebar();
     }
 
@@ -501,7 +505,7 @@ function toggleChat(id, name, platform) {
     const isOpening = !wrapper.classList.contains("chat-open");
 
     // Mobiilissa: sulje kaikki muut chatit ennen uuden avaamista
-    if (window.innerWidth <= 768 && isOpening) {
+    if ((window.innerWidth <= 768 || isCompactMobileLayout()) && isOpening) {
         document.querySelectorAll(".stream-wrapper.chat-open").forEach((openWrapper) => {
             if (openWrapper.id !== id) {
                 openWrapper.classList.remove("chat-open");
@@ -837,9 +841,14 @@ function applySidebarState(isCollapsed) {
     const btn = sidebar.querySelector(".toggle-sidebar-btn");
 
     sidebar.classList.toggle("collapsed", isCollapsed);
+    sidebar.classList.toggle("landscape-open", isCompactMobileLayout() && !isCollapsed);
     if (main) main.classList.toggle("expanded", isCollapsed);
     if (btn) btn.textContent = isCollapsed ? "▶" : "◀";
 }
+
+window.addEventListener("resize", () => {
+    if (isCompactMobileLayout()) applySidebarState(true);
+});
 
 function toggleSidebar() {
     const sidebar = document.getElementById("main-sidebar");
@@ -853,9 +862,17 @@ function toggleSidebar() {
         savedMuteStates[w.id] = muteBtn ? muteBtn.classList.contains("is-active") : false;
     });
 
-    const isCollapsed = sidebar.classList.toggle("collapsed");
+    let isCollapsed;
+    if (isCompactMobileLayout()) {
+        const isOpening = !sidebar.classList.contains("landscape-open");
+        sidebar.classList.toggle("landscape-open", isOpening);
+        sidebar.classList.toggle("collapsed", !isOpening);
+        isCollapsed = !isOpening;
+    } else {
+        isCollapsed = sidebar.classList.toggle("collapsed");
+    }
 
-    if (main) main.classList.toggle("expanded");
+    if (main) main.classList.toggle("expanded", isCollapsed);
     if (btn) btn.textContent = isCollapsed ? "▶" : "◀";
 
     localStorage.setItem("sidebar-collapsed", isCollapsed);
