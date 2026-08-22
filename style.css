@@ -971,6 +971,12 @@ body.is-dragging .stream-wrapper {
     }
 
     /* Poistetaan rajoitukset muilta striimeiltä tässä tilassa */
+    .stream-wrapper.neighbor-has-chat .content-area {
+        flex: 0 0 auto;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
     .stream-wrapper.neighbor-has-chat .video-container {
         max-height: none !important;
     }
@@ -1126,6 +1132,8 @@ body.is-dragging .stream-wrapper {
    jotta yhden striimin katselu ei muutu pitkäksi pystysuuntaiseksi sivuksi. */
 @media (max-width: 932px) and (max-height: 600px) and (orientation: landscape) {
     aside {
+        width: min(320px, calc(100vw - 36px));
+        padding: 0 8px 6px 14px !important;
         transform: translateX(-100%) !important;
     }
 
@@ -1145,6 +1153,56 @@ body.is-dragging .stream-wrapper {
         width: 36px;
         height: 44px;
         font-size: 16px;
+    }
+
+    aside .app-header {
+        margin-top: 8px;
+        margin-bottom: 2px;
+        padding-bottom: 6px;
+    }
+
+    aside h3 {
+        margin: 5px 0 !important;
+        font-size: 1rem;
+    }
+
+    aside .input-group {
+        display: grid;
+        grid-template-columns: 74px minmax(0, 1fr) auto;
+        gap: 6px;
+        margin-bottom: 6px;
+        padding-right: 0;
+    }
+
+    aside .input-group input,
+    aside .input-group select,
+    aside .input-group button {
+        padding: 8px;
+    }
+
+    aside .input-group .form-feedback {
+        grid-column: 1 / -1;
+    }
+
+    aside #favorites-list {
+        gap: 6px;
+        padding: 0 4px 6px 0;
+    }
+
+    aside .favorite-item {
+        padding: 6px 8px;
+    }
+
+    aside .icon-container {
+        min-height: 28px;
+    }
+
+    aside .app-footer {
+        padding: 6px 0 0 !important;
+    }
+
+    aside .footer-copy {
+        display: none;
     }
 
     main {
@@ -1199,5 +1257,11 @@ body.is-dragging .stream-wrapper {
         border-top: none;
         border-left: 1px solid var(--border);
         flex: 0 0 clamp(200px, 34vw, 300px);
+    }
+
+    .stream-wrapper.neighbor-has-chat .content-area {
+        flex: 0 0 auto;
+        align-items: stretch;
+        justify-content: flex-start;
     }
 }
