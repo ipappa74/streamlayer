@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.16",
+    version: "1.8.18",
     buildDate: "2026-08-22",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -27,6 +27,7 @@ let autoCloseOffline = false;
 const players = {};
 const offlineTrackers = {};
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
+let playerLayoutFrame = null;
 
 function isCompactMobileLayout() {
     return window.innerWidth <= 932 && window.innerHeight <= 600 && window.innerWidth > window.innerHeight;
@@ -54,15 +55,42 @@ function alignCurrentLandscapeStream() {
     if (Math.abs(offset) > 1) main.scrollTop += offset;
 }
 
+function schedulePlayerLayoutRefresh() {
+    if (playerLayoutFrame !== null) cancelAnimationFrame(playerLayoutFrame);
+
+    playerLayoutFrame = requestAnimationFrame(() => {
+        playerLayoutFrame = requestAnimationFrame(() => {
+            document.querySelectorAll(".video-container iframe").forEach((iframe) => {
+                const container = iframe.parentElement;
+                const width = Math.round(container?.clientWidth || 0);
+                const height = Math.round(container?.clientHeight || 0);
+                if (width === 0 || height === 0) return;
+
+                // Kickin upotus tarvitsee nimenomaisen mitoituksen layout-muutoksen
+                // jälkeen. Mittojen palautus säilyttää käynnissä olevan toiston.
+                iframe.style.width = `${width}px`;
+                iframe.style.height = `${height}px`;
+                requestAnimationFrame(() => {
+                    iframe.style.removeProperty("width");
+                    iframe.style.removeProperty("height");
+                });
+            });
+            playerLayoutFrame = null;
+        });
+    });
+}
+
 function refreshViewportAfterRotation() {
     syncViewportHeight();
     requestAnimationFrame(() => {
         syncViewportHeight();
         alignCurrentLandscapeStream();
+        schedulePlayerLayoutRefresh();
     });
     window.setTimeout(() => {
         syncViewportHeight();
         alignCurrentLandscapeStream();
+        schedulePlayerLayoutRefresh();
     }, 180);
 }
 
@@ -553,6 +581,8 @@ function toggleChat(id, name, platform) {
     }
 
     wrapper.classList.toggle("chat-open");
+    schedulePlayerLayoutRefresh();
+    window.setTimeout(schedulePlayerLayoutRefresh, 180);
 
     // Päivitetään chat-napin tila
     const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
