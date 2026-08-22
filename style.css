@@ -1245,6 +1245,7 @@ body.is-dragging .stream-wrapper {
     }
 
     #stream-grid:has(> .stream-wrapper:only-of-type),
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper,
     .stream-wrapper {
         min-height: 0;
         height: calc(var(--app-viewport-height, 100svh) - 16px) !important;
