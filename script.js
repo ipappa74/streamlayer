@@ -133,6 +133,7 @@ function loadInitialData() {
                     isLive: Boolean(favorite.isLive),
                     viewers: Number(favorite.viewers) || 0,
                     statusText: typeof favorite.statusText === "string" ? favorite.statusText : "Offline",
+                    statusError: false,
                     title: typeof favorite.title === "string" ? favorite.title : "",
                     autoOpen: Boolean(favorite.autoOpen),
                 }));
@@ -221,6 +222,7 @@ async function updateAllStatuses() {
                         f.isLive = false;
                         f.viewers = 0;
                         f.statusText = res.status === 404 ? "Kanavaa ei löydy" : "Virhe";
+                        f.statusError = res.status !== 404;
                         f.title = "";
                     } else {
                         const d = await res.json();
@@ -230,6 +232,7 @@ async function updateAllStatuses() {
                             ? `${f.viewers.toLocaleString()} katsojaa`
                             : "Offline";
                         f.title = f.isLive ? d.livestream.session_title || "" : "";
+                        f.statusError = false;
                     }
                 } else {
                     const res = await fetchWithRetry(`https://decapi.me/twitch/uptime/${f.name}`);
@@ -251,6 +254,7 @@ async function updateAllStatuses() {
                         f.viewers = 0;
                         f.statusText = "Offline";
                         f.title = "";
+                        f.statusError = false;
                     }
                 }
 
@@ -278,6 +282,7 @@ async function updateAllStatuses() {
                 f.isLive = false;
                 f.viewers = 0;
                 f.statusText = "Virhe";
+                f.statusError = true;
                 f.title = "";
             }
         }),
@@ -336,7 +341,9 @@ function renderFavorites() {
                     <div class="fav-text-stack">
                         <span class="fav-alias">${fav.name}</span>
                         ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
-                        <div class="status-text">${escapeHtml(fav.statusText || "")}</div>
+                        ${fav.statusError
+                            ? `<div class="status-text status-error">Tilaa ei saatu haettua <span aria-hidden="true">·</span> <button class="status-refresh" type="button" onclick="refreshFavoriteStatus(${i}, event)" aria-label="Yritä hakea kanavan live-tila uudelleen">Päivitä</button></div>`
+                            : `<div class="status-text">${escapeHtml(fav.statusText || "")}</div>`}
                     </div>
             </div>
             <button class="delete-btn" onclick="removeFavorite(${i}, event)">×</button>
@@ -765,6 +772,7 @@ function getValidFavorites(items) {
             viewers: 0,
             statusText: "...",
             title: "",
+            statusError: false,
             autoOpen: favorite.autoOpen === true,
         });
         return validFavorites;
@@ -888,6 +896,7 @@ function saveFavorite(event) {
         isLive: false,
         viewers: 0,
         statusText: "...",
+        statusError: false,
         autoOpen: false,
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
@@ -908,6 +917,16 @@ function toggleAutoOpen(index, event) {
     event.stopPropagation();
     favorites[index].autoOpen = event.target.checked;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
+
+function refreshFavoriteStatus(index, event) {
+    event.stopPropagation();
+    if (!favorites[index]) return;
+
+    favorites[index].statusError = false;
+    favorites[index].statusText = "Päivitetään…";
+    renderFavorites();
+    updateAllStatuses();
 }
 
 function toggleAutoCloseOffline(event) {

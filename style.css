@@ -304,6 +304,27 @@ aside h3 {
     margin-top: 4px;
 }
 
+.status-error {
+    color: #ff9b96;
+}
+
+.status-refresh {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.status-refresh:hover,
+.status-refresh:focus-visible {
+    color: var(--text-main);
+}
+
 /* --- Suosikkien hallintapainikkeet --- */
 .delete-btn {
     background: transparent;
