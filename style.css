@@ -753,6 +753,17 @@ body.is-dragging .stream-wrapper {
     line-height: 1.5;
 }
 
+.player-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    color: var(--text-dim);
+    text-align: center;
+}
+
 .chat-container {
     width: 340px;
     border-left: 1px solid var(--border);

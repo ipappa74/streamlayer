@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.19",
-    buildDate: "2026-08-22",
+    version: "1.8.20",
+    buildDate: "2026-09-03",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -28,6 +28,7 @@ const players = {};
 const offlineTrackers = {};
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 let playerLayoutFrame = null;
+let twitchSdkPromise = null;
 
 function isCompactMobileLayout() {
     return window.innerWidth <= 932 && window.innerHeight <= 600 && window.innerWidth > window.innerHeight;
@@ -370,6 +371,75 @@ function createKickPlayerIframe(name, unmuted = false) {
     return iframe;
 }
 
+function waitForTwitchSdk() {
+    if (window.Twitch?.Player) return Promise.resolve();
+    if (twitchSdkPromise) return twitchSdkPromise;
+
+    const sdkScript = document.getElementById("twitch-embed-sdk");
+    if (!sdkScript) {
+        return Promise.reject(new Error("Twitch-kirjaston latausskripti puuttuu."));
+    }
+
+    twitchSdkPromise = new Promise((resolve, reject) => {
+        const timeoutId = window.setTimeout(() => {
+            reject(new Error("Twitch-kirjaston lataus aikakatkaistiin."));
+        }, 10000);
+
+        const finish = () => {
+            window.clearTimeout(timeoutId);
+            if (window.Twitch?.Player) {
+                resolve();
+            } else {
+                reject(new Error("Twitch-kirjasto latautui puutteellisesti."));
+            }
+        };
+
+        sdkScript.addEventListener("load", finish, { once: true });
+        sdkScript.addEventListener(
+            "error",
+            () => {
+                window.clearTimeout(timeoutId);
+                reject(new Error("Twitch-kirjastoa ei voitu ladata."));
+            },
+            { once: true },
+        );
+    }).finally(() => {
+        twitchSdkPromise = null;
+    });
+
+    return twitchSdkPromise;
+}
+
+function createTwitchPlayer(id, name, unmuted) {
+    const container = document.getElementById(`player-${id}`);
+    if (!container) return;
+
+    container.innerHTML = '<div class="player-loading" role="status">Ladataan Twitch-soitinta…</div>';
+
+    waitForTwitchSdk()
+        .then(() => {
+            if (document.getElementById(`player-${id}`) !== container || !document.getElementById(id)) return;
+
+            container.replaceChildren();
+            players[id] = new window.Twitch.Player(`player-${id}`, {
+                channel: name,
+                width: "100%",
+                height: "100%",
+                parent: [window.location.hostname || "localhost"],
+                muted: !unmuted,
+                volume: 0.8,
+            });
+        })
+        .catch(() => {
+            if (document.getElementById(`player-${id}`) === container) {
+                showPlayerError(
+                    id,
+                    "Twitch-soitinta ei voitu ladata. Tarkista verkkoyhteys ja yritä sivun lataamista uudelleen.",
+                );
+            }
+        });
+}
+
 // =============================================================================
 // STRIIMIEN HALLINTA
 // =============================================================================
@@ -476,15 +546,8 @@ function openStream(
     }
 
     // Luodaan videosoitin
-    if (platform === "twitch" && window.Twitch?.Player) {
-        players[id] = new window.Twitch.Player(`player-${id}`, {
-            channel: name,
-            width: "100%",
-            height: "100%",
-            parent: [window.location.hostname || "localhost"],
-            muted: !defaultUnmuted,
-            volume: 0.8, // 0.0 - 1.0, eli tässä 80%
-        });
+    if (platform === "twitch") {
+        createTwitchPlayer(id, name, defaultUnmuted);
     } else if (platform === "kick") {
         document.getElementById(`player-${id}`).appendChild(createKickPlayerIframe(name, defaultUnmuted));
     } else {

@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.19** · Päivitetty: **2026-08-22**
+Nykyinen versio: **1.8.20** · Päivitetty: **2026-09-03**
 
 ## 🎯 Yleiskuvaus
 
@@ -51,6 +51,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Live-merkintä, lähetyksen otsikko ja katsojaluku päivittyvät minuutin välein.
 - Kickin tiedot haetaan Kickin kanavarajapinnasta ja Twitchin tiedot DecAPI-palvelusta.
 - Haku keskeytyy kahdeksan sekunnin kuluttua ja sitä yritetään kerran uudelleen, jos verkkopyyntö epäonnistuu.
+- Twitch-soittimen latausta odotetaan tarvittaessa ennen palautettujen striimien avaamista, joten hidas SDK-lataus ei näy virheellisenä soitinvirheenä.
 
 ---
 
