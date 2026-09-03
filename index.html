@@ -42,8 +42,21 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<title>StreamLayer</title>
+<title>StreamLayer | Twitch- ja Kick-striimien moninäkymä</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="StreamLayer on maksuton selainpohjainen monistriimaussovellus Twitch- ja Kick-lähetysten seuraamiseen rinnakkain. Tallenna suosikit, seuraa live-tilaa ja hallitse chatteja yhdestä näkymästä.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="canonical" href="https://ipappa74.github.io/streamlayer/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fi_FI">
+<meta property="og:site_name" content="StreamLayer">
+<meta property="og:title" content="StreamLayer | Twitch- ja Kick-striimien moninäkymä">
+<meta property="og:description" content="Seuraa useita Twitch- ja Kick-striimejä rinnakkain, tallenna suosikit ja hallitse chatteja yhdestä näkymästä.">
+<meta property="og:url" content="https://ipappa74.github.io/streamlayer/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="StreamLayer | Twitch- ja Kick-striimien moninäkymä">
+<meta name="twitter:description" content="Selainpohjainen monistriimaussovellus Twitch- ja Kick-lähetysten seuraamiseen.">
 
 <!-- Faviconit -->
 <link rel="apple-touch-icon" sizes="180x180" href="/streamlayer/img/apple-touch-icon.png">
@@ -59,8 +72,8 @@ body {
   background: #0a0a0b;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #f5f5f7;
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 /* Neon glow animation - StreamLayer Blue */
@@ -138,7 +151,7 @@ body {
 
 /* HERO SECTION */
 .hero {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -173,11 +186,13 @@ body {
 
 /* BUTTON */
 .launch-btn {
+  display: inline-block;
   margin-top: 45px;
   padding: 16px 42px;
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
+  text-decoration: none;
   background: #007aff;
   border: none;
   border-radius: 12px;
@@ -203,11 +218,59 @@ body {
   letter-spacing: 1px;
 }
 
+/* Hakukoneille ja kävijöille näkyvä, tarkempi sovellusesittely */
+.seo-content {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 64px 24px 84px;
+  color: #d5d5da;
+}
+
+.seo-content h2 {
+  margin: 0 0 18px;
+  color: #f5f5f7;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.seo-content p {
+  max-width: 760px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feature-list li {
+  padding: 20px;
+  border: 1px solid rgba(0, 122, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(18, 18, 21, 0.72);
+  line-height: 1.55;
+}
+
+.feature-list strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
 /* Mobiili-skaalaus */
 @media (max-width: 768px) {
   .title { font-size: 42px; letter-spacing: -1px; }
   .subtitle { font-size: 16px; max-width: 90%; }
   .launch-btn { width: 80%; padding: 18px; }
+  .feature-list { grid-template-columns: 1fr; }
+  .seo-content { padding-top: 48px; }
 }
 </style>
 </head>
@@ -225,15 +288,44 @@ body {
     Katso useita Twitch- ja Kick-striimejä rinnakkain, seuraa live-tilaa ja räätälöi katselukokemuksesi.
   </p>
 
-  <!-- Vaihda 'app.html' sovelluksesi tiedostonimeen -->
-  <button class="launch-btn" onclick="location.href='streamlayer.html'">
+  <a class="launch-btn" href="streamlayer.html">
     Avaa sovellus
-  </button>
+  </a>
 </div>
+
+<main class="seo-content">
+  <section aria-labelledby="streamlayer-info">
+    <h2 id="streamlayer-info">Seuraa Twitch- ja Kick-striimejä yhdestä näkymästä</h2>
+    <p>StreamLayer on selainpohjainen monistriimaussovellus, jolla voit seurata useita Twitch- ja Kick-lähetyksiä samanaikaisesti. Lisää omat kanavasi suosikeiksi, näe niiden live-tila ja katsojaluku sekä avaa chatti juuri sille striimille, jota seuraat.</p>
+    <ul class="feature-list">
+      <li><strong>Useita striimejä rinnakkain</strong>Mukautuva ruudukko hyödyntää tilan yhdellä tai useammalla avoimella lähetyksellä.</li>
+      <li><strong>Suosikit ja live-seuranta</strong>Kanavat, asetukset ja avoimet striimit säilyvät omassa selaimessasi.</li>
+      <li><strong>Toimii myös mobiilissa</strong>Videot, chatit ja sivupalkki mukautuvat puhelimen ja tabletin näyttöön.</li>
+    </ul>
+  </section>
+</main>
 
 <div class="footer">
   © 2026 StreamLayer — Built for the community by Toni
 </div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "StreamLayer",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "fi",
+  "description": "Selainpohjainen sovellus Twitch- ja Kick-striimien seuraamiseen rinnakkain.",
+  "url": "https://ipappa74.github.io/streamlayer/",
+  "codeRepository": "https://github.com/ipappa74/streamlayer",
+  "author": {
+    "@type": "Person",
+    "name": "Toni"
+  }
+}
+</script>
 
 <script>
 /* Generate neon particles */

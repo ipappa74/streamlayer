@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ipappa74.github.io/streamlayer/sitemap.xml
