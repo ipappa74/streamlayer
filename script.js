@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.26",
+    version: "1.8.27",
     buildDate: "2026-09-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -31,6 +31,10 @@ const statusDiagnostics = new Map();
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 let playerLayoutFrame = null;
 let twitchSdkPromise = null;
+let mutedKickResizeTimer = null;
+let lastKickViewportWidth = window.innerWidth;
+let lastKickViewportHeight = window.innerHeight;
+const mutedKickPlayersPending = new Set();
 let statusUpdateInFlight = false;
 let statusUpdateQueued = false;
 
@@ -95,6 +99,39 @@ function refreshViewportAfterRotation() {
         syncViewportHeight();
         alignCurrentLandscapeStream();
     }, 180);
+}
+
+function recoverMutedKickPlayersAfterResize() {
+    if (window.innerWidth === lastKickViewportWidth && window.innerHeight === lastKickViewportHeight) return;
+    lastKickViewportWidth = window.innerWidth;
+    lastKickViewportHeight = window.innerHeight;
+
+    // Kick voi muuttaa upotuksen omaa äänen tilaa koonmuutoksessa. Irrotus
+    // hiljentää mykistetyn soittimen heti; äänessä oleviin ei kosketa.
+    document.querySelectorAll('.stream-wrapper[data-platform="kick"]').forEach((wrapper) => {
+        if (isStreamUnmuted(wrapper.id)) return;
+
+        const container = document.getElementById(`player-${wrapper.id}`);
+        const iframe = container?.querySelector("iframe");
+        if (!iframe) return;
+
+        iframe.remove();
+        mutedKickPlayersPending.add(wrapper.id);
+    });
+
+    if (mutedKickResizeTimer !== null) window.clearTimeout(mutedKickResizeTimer);
+    mutedKickResizeTimer = window.setTimeout(() => {
+        mutedKickResizeTimer = null;
+        mutedKickPlayersPending.forEach((id) => {
+            const wrapper = document.getElementById(id);
+            const container = document.getElementById(`player-${id}`);
+            const name = wrapper?.querySelector(".fav-alias")?.textContent;
+            if (wrapper && container && name && !isStreamUnmuted(id) && !container.querySelector("iframe")) {
+                container.appendChild(createKickPlayerIframe(name, false));
+            }
+        });
+        mutedKickPlayersPending.clear();
+    }, 600);
 }
 
 /* --- SVG-KUVAKKEET --- */
@@ -1012,6 +1049,7 @@ function applySidebarState(isCollapsed) {
 }
 
 window.addEventListener("resize", () => {
+    recoverMutedKickPlayersAfterResize();
     refreshViewportAfterRotation();
     if (isCompactMobileLayout()) applySidebarState(true);
 });

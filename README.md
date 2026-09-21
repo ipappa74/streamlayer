@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.26** · Päivitetty: **2026-09-21**
+Nykyinen versio: **1.8.27** · Päivitetty: **2026-09-21**
 
 ## 🎯 Yleiskuvaus
 
@@ -37,7 +37,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
 - Uusi striimi alkaa mykistettynä.
 - Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
-- Ikkunan koon muuttaminen ei lataa Kick-soittimia uudelleen. Kortin äänipainike lataa uudelleen vain kyseisen Kick-soittimen.
+- Ikkunan koon muuttuessa sovellus pysäyttää mykistetyt Kick-soittimet ja lataa ne uudelleen mykistettyinä koon vakiinnuttua. Äänessä olevia Kick-soittimia ei ladata uudelleen. Kortin äänipainike lataa uudelleen vain kyseisen soittimen.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
 ### ⭐ Suosikit, automaatio ja asetukset
