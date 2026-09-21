@@ -168,8 +168,7 @@ function updateActiveStreamsStorage() {
         const name = wrapper.querySelector(".fav-alias").textContent;
         // Alusta selviää id:n toisesta osasta (esim. "s-kick-pelaaja")
         const platform = wrapper.id.split("-")[1];
-        const muteBtn = document.getElementById("mute-btn-" + wrapper.id);
-        const isUnmuted = muteBtn ? muteBtn.classList.contains("is-active") : false;
+        const isUnmuted = isStreamUnmuted(wrapper.id);
         active.push({
             name,
             platform,
@@ -358,6 +357,23 @@ function updateStreamEmptyState() {
     emptyState.hidden = grid.querySelector(".stream-wrapper") !== null;
 }
 
+function isStreamUnmuted(id) {
+    return document.getElementById(id)?.dataset.unmuted === "true";
+}
+
+function setStreamUnmuted(id, unmuted) {
+    const wrapper = document.getElementById(id);
+    const muteBtn = document.getElementById(`mute-btn-${id}`);
+
+    if (wrapper) wrapper.dataset.unmuted = String(unmuted);
+    if (!muteBtn) return;
+
+    muteBtn.classList.toggle("is-active", unmuted);
+    muteBtn.innerHTML = unmuted ? svgIcons.mute : svgIcons.unmute;
+    muteBtn.setAttribute("aria-label", unmuted ? "Mykistä striimi" : "Poista mykistys");
+    muteBtn.title = muteBtn.getAttribute("aria-label");
+}
+
 function showPlayerError(id, message) {
     const container = document.getElementById(`player-${id}`);
     if (container) {
@@ -417,7 +433,7 @@ function waitForTwitchSdk() {
     return twitchSdkPromise;
 }
 
-function createTwitchPlayer(id, name, unmuted) {
+function createTwitchPlayer(id, name) {
     const container = document.getElementById(`player-${id}`);
     if (!container) return;
 
@@ -433,7 +449,9 @@ function createTwitchPlayer(id, name, unmuted) {
                 width: "100%",
                 height: "100%",
                 parent: [window.location.hostname || "localhost"],
-                muted: !unmuted,
+                // Tila luetaan juuri ennen soittimen luontia, jotta nopea
+                // painallus latauksen aikana ei palaudu oletusarvoon.
+                muted: !isStreamUnmuted(id),
                 volume: 0.8,
             });
         })
@@ -474,6 +492,7 @@ function openStream(
     wrapper.className = "stream-wrapper";
     wrapper.id = id;
     wrapper.dataset.platform = platform;
+    wrapper.dataset.unmuted = String(defaultUnmuted);
     wrapper.draggable = true;
 
     if (defaultChatOpen) wrapper.classList.add("chat-open");
@@ -513,39 +532,8 @@ function openStream(
     header.addEventListener("touchend", handleTouchEnd);
     header.addEventListener("touchcancel", handleTouchEnd);
 
-    // Tallennetaan olemassa olevien striimien mute-tilat ennen layout-muutosta
-    const savedMuteStates = {};
-    document.querySelectorAll(".stream-wrapper").forEach((w) => {
-        if (w.id === id) return;
-        const muteBtn = document.getElementById("mute-btn-" + w.id);
-        savedMuteStates[w.id] = muteBtn ? muteBtn.classList.contains("is-active") : false;
-    });
-
     grid.appendChild(wrapper);
     updateStreamEmptyState();
-
-    // Palautetaan mute-tilat heti layout-muutoksen jälkeen
-    Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
-        const platform = streamId.split("-")[1];
-        const streamName = streamId.split("-").slice(2).join("-");
-        if (platform === "kick" && !wasUnmuted) {
-            // Kick ei tue mute-APIa -- ladataan uudelleen heti oikealla muted-arvolla
-            const container = document.getElementById(`player-${streamId}`);
-            if (container) {
-                container.replaceChildren(createKickPlayerIframe(streamName));
-            }
-        }
-    });
-
-    // Twitchin mute-palautus viiveellä (API vaatii aikaa)
-    setTimeout(() => {
-        Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
-            const platform = streamId.split("-")[1];
-            if (platform === "twitch" && players[streamId]) {
-                players[streamId].setMuted(!wasUnmuted);
-            }
-        });
-    }, 300);
 
     // Ladataan chat heti jos palautetaan tallennetusta tilasta
     if (defaultChatOpen) {
@@ -554,25 +542,18 @@ function openStream(
 
     // Luodaan videosoitin
     if (platform === "twitch") {
-        createTwitchPlayer(id, name, defaultUnmuted);
+        createTwitchPlayer(id, name);
     } else if (platform === "kick") {
         document.getElementById(`player-${id}`).appendChild(createKickPlayerIframe(name, defaultUnmuted));
     } else {
         showPlayerError(id, "Twitch-soitinta ei voitu ladata. Tarkista verkkoyhteys ja yritä sivun lataamista uudelleen.");
     }
 
-    // Päivitetään nappien tilat (viiveellä että DOM on valmis)
-    // HUOM: Koska selain pakottaa mute-tilan refreshin jälkeen,
-    // näytetään aina muted-tila. Käyttäjä voi aktivoida äänen klikkaamalla.
-    setTimeout(() => {
-        const muteBtn = document.getElementById(`mute-btn-${id}`);
-        if (muteBtn) {
-            muteBtn.classList.toggle("is-active", defaultUnmuted);
-            muteBtn.innerHTML = defaultUnmuted ? svgIcons.mute : svgIcons.unmute;
-            muteBtn.setAttribute("aria-label", defaultUnmuted ? "Mykistä striimi" : "Poista mykistys");
-            muteBtn.title = muteBtn.getAttribute("aria-label");
-        }
+    // Painikkeen tila on livekohtainen eikä sitä palauteta muiden soittimien
+    // asettelumuutosten yhteydessä.
+    setStreamUnmuted(id, defaultUnmuted);
 
+    setTimeout(() => {
         if (defaultChatOpen) {
             const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
             if (chatBtn) {
@@ -712,26 +693,22 @@ function _loadChatIframe(id, name, platform) {
 }
 
 function toggleMute(id, name, platform) {
-    const btn = document.getElementById(`mute-btn-${id}`);
-    const muted = btn.classList.toggle("is-active");
+    const unmuted = !isStreamUnmuted(id);
+    setStreamUnmuted(id, unmuted);
 
     if (platform === "twitch" && players[id]) {
-        players[id].setMuted(!muted);
-        if (muted && window.matchMedia("(max-width: 768px)").matches) {
+        players[id].setMuted(!unmuted);
+        if (unmuted && window.matchMedia("(max-width: 768px)").matches) {
             const playback = players[id].play();
             if (playback && typeof playback.catch === "function") {
                 playback.catch(() => {});
             }
         }
-    } else {
+    } else if (platform === "kick") {
         // Kick ei tue mute-APIa -- uudelleenladataan soitin eri muted-arvolla.
         const container = document.getElementById(`player-${id}`);
-        container.replaceChildren(createKickPlayerIframe(name, muted));
+        if (container) container.replaceChildren(createKickPlayerIframe(name, unmuted));
     }
-
-    btn.innerHTML = muted ? svgIcons.mute : svgIcons.unmute;
-    btn.setAttribute("aria-label", muted ? "Mykistä striimi" : "Poista mykistys");
-    btn.title = btn.getAttribute("aria-label");
     updateActiveStreamsStorage();
 }
 
@@ -1004,13 +981,6 @@ function toggleSidebar() {
     const main = document.querySelector("main");
     const btn = sidebar.querySelector(".toggle-sidebar-btn");
 
-    // Tallennetaan mute-tilat ennen layout-muutosta
-    const savedMuteStates = {};
-    document.querySelectorAll(".stream-wrapper").forEach((w) => {
-        const muteBtn = document.getElementById("mute-btn-" + w.id);
-        savedMuteStates[w.id] = muteBtn ? muteBtn.classList.contains("is-active") : false;
-    });
-
     let isCollapsed;
     if (isCompactMobileLayout()) {
         const isOpening = !sidebar.classList.contains("landscape-open");
@@ -1026,21 +996,6 @@ function toggleSidebar() {
 
     localStorage.setItem("sidebar-collapsed", isCollapsed);
 
-    // Palautetaan mute-tilat layout-muutoksen jälkeen
-    setTimeout(() => {
-        Object.entries(savedMuteStates).forEach(([streamId, wasUnmuted]) => {
-            const platform = streamId.split("-")[1];
-            const streamName = streamId.split("-").slice(2).join("-");
-            if (platform === "twitch" && players[streamId]) {
-                players[streamId].setMuted(!wasUnmuted);
-            } else if (platform === "kick" && !wasUnmuted) {
-                const container = document.getElementById(`player-${streamId}`);
-                if (container) {
-                    container.replaceChildren(createKickPlayerIframe(streamName));
-                }
-            }
-        });
-    }, 200);
 }
 
 // =============================================================================
