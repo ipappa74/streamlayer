@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.27",
+    version: "1.8.28",
     buildDate: "2026-09-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -105,6 +105,11 @@ function recoverMutedKickPlayersAfterResize() {
     if (window.innerWidth === lastKickViewportWidth && window.innerHeight === lastKickViewportHeight) return;
     lastKickViewportWidth = window.innerWidth;
     lastKickViewportHeight = window.innerHeight;
+
+    // Puhelimen selaimen osoiterivi ja vieritys muuttavat näkymän mittoja.
+    // Uuden Kick-upotuksen käynnistys voi tällöin pysäyttää toisen videon.
+    if (window.matchMedia("(pointer: coarse)").matches &&
+        (window.innerWidth <= 768 || isCompactMobileLayout())) return;
 
     // Kick voi muuttaa upotuksen omaa äänen tilaa koonmuutoksessa. Irrotus
     // hiljentää mykistetyn soittimen heti; äänessä oleviin ei kosketa.
