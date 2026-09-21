@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.23",
+    version: "1.8.24",
     buildDate: "2026-09-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -26,10 +26,14 @@ let favorites = [];
 let autoCloseOffline = false;
 const players = {};
 const offlineTrackers = {};
+const streamAudioStates = new Map();
+const statusDiagnostics = new Map();
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 let playerLayoutFrame = null;
 let twitchSdkPromise = null;
 let muteStateRestoreTimer = null;
+let statusUpdateInFlight = false;
+let statusUpdateQueued = false;
 
 function isCompactMobileLayout() {
     return window.innerWidth <= 932 && window.innerHeight <= 600 && window.innerWidth > window.innerHeight;
@@ -98,21 +102,9 @@ function restoreMuteStatesAfterViewportChange() {
     document.querySelectorAll(".stream-wrapper").forEach((wrapper) => {
         const id = wrapper.id;
         const platform = wrapper.dataset.platform;
-        const shouldBeUnmuted = isStreamUnmuted(id);
-
-        if (platform === "twitch" && players[id]) {
-            players[id].setMuted(!shouldBeUnmuted);
-            return;
-        }
-
-        // Kickin upotuksella ei ole mute-rajapintaa. Luodaan uudelleen vain
-        // sellainen soitin, jonka pitää pysyä mykistettynä. Ääntä käyttävä
-        // Kick-soitin jätetään koskematta, jotta sen toisto ei katkea.
-        if (platform === "kick" && !shouldBeUnmuted) {
-            const container = document.getElementById(`player-${id}`);
-            const name = wrapper.querySelector(".fav-alias")?.textContent;
-            if (container && name) container.replaceChildren(createKickPlayerIframe(name, false));
-        }
+        applyStreamAudioState(id, platform, wrapper.querySelector(".fav-alias")?.textContent, {
+            restoreKickMute: true,
+        });
     });
 }
 
@@ -150,23 +142,7 @@ function loadInitialData() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
         try {
-            favorites = JSON.parse(raw)
-                .filter((favorite) =>
-                    favorite &&
-                    ["kick", "twitch"].includes(favorite.platform) &&
-                    typeof favorite.name === "string" &&
-                    CHANNEL_NAME_PATTERN.test(favorite.name),
-                )
-                .map((favorite) => ({
-                    ...favorite,
-                    name: favorite.name.trim(),
-                    isLive: Boolean(favorite.isLive),
-                    viewers: Number(favorite.viewers) || 0,
-                    statusText: typeof favorite.statusText === "string" ? favorite.statusText : "Offline",
-                    statusError: false,
-                    title: typeof favorite.title === "string" ? favorite.title : "",
-                    autoOpen: Boolean(favorite.autoOpen),
-                }));
+            favorites = getValidFavorites(JSON.parse(raw));
         } catch (e) {
             favorites = [];
         }
@@ -239,9 +215,31 @@ async function fetchWithRetry(url, options = {}, retries = STATUS_RETRIES) {
     throw lastError;
 }
 
+function updateStatusDiagnostic(source, state, message) {
+    statusDiagnostics.set(source, { state, message, updatedAt: new Date() });
+
+    const list = document.getElementById("status-diagnostics");
+    if (!list) return;
+
+    list.replaceChildren();
+    statusDiagnostics.forEach((diagnostic, name) => {
+        const item = document.createElement("li");
+        item.className = `diagnostic-item is-${diagnostic.state}`;
+        item.textContent = `${name}: ${diagnostic.message} (${diagnostic.updatedAt.toLocaleTimeString("fi-FI")})`;
+        list.appendChild(item);
+    });
+}
+
 async function updateAllStatuses() {
-    await Promise.all(
-        favorites.map(async (f) => {
+    if (statusUpdateInFlight) {
+        statusUpdateQueued = true;
+        return;
+    }
+
+    statusUpdateInFlight = true;
+    try {
+        await Promise.all(
+            favorites.map(async (f) => {
             try {
                 if (f.platform === "kick") {
                     const res = await fetchWithRetry(
@@ -287,6 +285,12 @@ async function updateAllStatuses() {
                     }
                 }
 
+                updateStatusDiagnostic(
+                    f.platform === "kick" ? "Kick" : "DecAPI / Twitch",
+                    "ok",
+                    "Viimeisin haku onnistui",
+                );
+
                 // Offline-striimejä suljetaan vain käyttäjän erikseen valitsemalla asetuksella.
                 const streamId = `s-${f.platform}-${f.name.toLowerCase()}`;
                 const wrapper = document.getElementById(streamId);
@@ -313,17 +317,29 @@ async function updateAllStatuses() {
                 f.statusText = "Virhe";
                 f.statusError = true;
                 f.title = "";
+                updateStatusDiagnostic(
+                    f.platform === "kick" ? "Kick" : "DecAPI / Twitch",
+                    "error",
+                    "Viimeisin haku epäonnistui",
+                );
             }
-        }),
-    );
+            }),
+        );
 
-    // Livenä olevat ensin, sen jälkeen katsojamäärän mukaan
-    favorites.sort((a, b) => {
-        if (a.isLive !== b.isLive) return b.isLive ? 1 : -1;
-        return b.viewers - a.viewers;
-    });
+        // Livenä olevat ensin, sen jälkeen katsojamäärän mukaan
+        favorites.sort((a, b) => {
+            if (a.isLive !== b.isLive) return b.isLive ? 1 : -1;
+            return b.viewers - a.viewers;
+        });
 
-    renderFavorites();
+        renderFavorites();
+    } finally {
+        statusUpdateInFlight = false;
+        if (statusUpdateQueued) {
+            statusUpdateQueued = false;
+            window.setTimeout(updateAllStatuses, 0);
+        }
+    }
 }
 
 // =============================================================================
@@ -356,26 +372,25 @@ function renderFavorites() {
 
             return `
         <div class="favorite-item">
-            <div class="fav-info" onclick="openStream('${fav.name}', '${fav.platform}')">
+            <div class="fav-info" data-action="open-favorite" data-name="${fav.name}" data-platform="${fav.platform}" role="button" tabindex="0">
                 <div class="icon-group">
                     <div class="platform-icon-wrapper">
                         <span class="status-dot ${fav.isLive ? "live" : ""}"></span>
-                        <img src="${iconSrc}" class="platform-icon">
+                        <img src="${iconSrc}" class="platform-icon" alt="">
                     </div>
                     <input type="checkbox" class="fav-auto" title="Avaa automaattisesti kun livessä"
                         ${fav.autoOpen ? "checked" : ""}
-                        onchange="toggleAutoOpen(${i}, event)"
-                        onclick="event.stopPropagation()">
+                        data-index="${i}">
                 </div>
                     <div class="fav-text-stack">
                         <span class="fav-alias">${fav.name}</span>
                         ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
                         ${fav.statusError
-                            ? `<div class="status-text status-error">Tilaa ei saatu haettua <span aria-hidden="true">·</span> <button class="status-refresh" type="button" onclick="refreshFavoriteStatus(${i}, event)" aria-label="Yritä hakea kanavan live-tila uudelleen">Päivitä</button></div>`
+                            ? `<div class="status-text status-error">Tilaa ei saatu haettua <span aria-hidden="true">·</span> <button class="status-refresh" type="button" data-action="refresh-favorite-status" data-index="${i}" aria-label="Yritä hakea kanavan live-tila uudelleen">Päivitä</button></div>`
                             : `<div class="status-text">${escapeHtml(fav.statusText || "")}</div>`}
                     </div>
             </div>
-            <button class="delete-btn" onclick="removeFavorite(${i}, event)">×</button>
+            <button class="delete-btn" type="button" data-action="remove-favorite" data-index="${i}" aria-label="Poista suosikki ${fav.name}">×</button>
         </div>`;
         })
         .join("");
@@ -388,13 +403,14 @@ function updateStreamEmptyState() {
 }
 
 function isStreamUnmuted(id) {
-    return document.getElementById(id)?.dataset.unmuted === "true";
+    return streamAudioStates.get(id) ?? document.getElementById(id)?.dataset.unmuted === "true";
 }
 
 function setStreamUnmuted(id, unmuted) {
     const wrapper = document.getElementById(id);
     const muteBtn = document.getElementById(`mute-btn-${id}`);
 
+    streamAudioStates.set(id, unmuted);
     if (wrapper) wrapper.dataset.unmuted = String(unmuted);
     if (!muteBtn) return;
 
@@ -402,6 +418,23 @@ function setStreamUnmuted(id, unmuted) {
     muteBtn.innerHTML = unmuted ? svgIcons.mute : svgIcons.unmute;
     muteBtn.setAttribute("aria-label", unmuted ? "Mykistä striimi" : "Poista mykistys");
     muteBtn.title = muteBtn.getAttribute("aria-label");
+}
+
+function applyStreamAudioState(id, platform, name, { restoreKickMute = false } = {}) {
+    const shouldBeUnmuted = isStreamUnmuted(id);
+
+    if (platform === "twitch" && players[id]) {
+        players[id].setMuted(!shouldBeUnmuted);
+        return;
+    }
+
+    // Kickin upotuksella ei ole käytössä mute-rajapintaa. Vaihtoehdon A
+    // mukaisesti luodaan vain mykistetty Kick-soitin uudelleen koonmuutoksen
+    // jälkeen, jotta ääni ei avaudu itsestään.
+    if (platform === "kick" && (!shouldBeUnmuted || !restoreKickMute)) {
+        const container = document.getElementById(`player-${id}`);
+        if (container && name) container.replaceChildren(createKickPlayerIframe(name, shouldBeUnmuted));
+    }
 }
 
 function showPlayerError(id, message) {
@@ -541,14 +574,14 @@ function openStream(
     wrapper.innerHTML = `
         <div class="stream-header" style="cursor: move;">
             <div class="stream-title-group">
-                <img src="${iconSrc}" class="header-icon">
+                <img src="${iconSrc}" class="header-icon" alt="">
                 <span class="fav-alias">${name}</span>
             </div>
             <div class="stream-header-btns">
-                <button class="icon-btn" aria-label="Avaa tai sulje chat" onclick="toggleChat('${id}', '${name}', '${platform}')" title="Avaa tai sulje chat">${svgIcons.chat}</button>
-                <button class="icon-btn mute-btn" id="mute-btn-${id}" aria-label="Poista mykistys" onclick="toggleMute('${id}', '${name}', '${platform}')" title="Poista mykistys">${svgIcons.unmute}</button>
-                <button class="icon-btn" aria-label="Lataa striimi uudelleen" onclick="refreshStream('${id}')" title="Lataa striimi uudelleen">${svgIcons.refresh}</button>
-                <button class="icon-btn close-btn" aria-label="Sulje striimi" onclick="closeStream('${id}')" title="Sulje striimi">${svgIcons.close}</button>
+                <button class="icon-btn chat-btn" type="button" data-action="toggle-chat" data-id="${id}" data-name="${name}" data-platform="${platform}" aria-label="Avaa tai sulje chat" title="Avaa tai sulje chat">${svgIcons.chat}</button>
+                <button class="icon-btn mute-btn" type="button" id="mute-btn-${id}" data-action="toggle-mute" data-id="${id}" data-name="${name}" data-platform="${platform}" aria-label="Poista mykistys" title="Poista mykistys">${svgIcons.unmute}</button>
+                <button class="icon-btn" type="button" data-action="refresh-stream" data-id="${id}" aria-label="Lataa striimi uudelleen" title="Lataa striimi uudelleen">${svgIcons.refresh}</button>
+                <button class="icon-btn close-btn" type="button" data-action="close-stream" data-id="${id}" aria-label="Sulje striimi" title="Sulje striimi">${svgIcons.close}</button>
             </div>
         </div>
         <div class="content-area">
@@ -585,7 +618,7 @@ function openStream(
 
     setTimeout(() => {
         if (defaultChatOpen) {
-            const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
+            const chatBtn = wrapper.querySelector(".chat-btn");
             if (chatBtn) {
                 chatBtn.classList.add("is-active");
             }
@@ -607,6 +640,7 @@ function openStream(
 function closeStream(id) {
     if (players[id]) delete players[id];
     if (offlineTrackers[id]) delete offlineTrackers[id];
+    streamAudioStates.delete(id);
 
     const el = document.getElementById(id);
     if (el) el.remove();
@@ -653,7 +687,7 @@ function toggleChat(id, name, platform) {
             if (openWrapper.id !== id) {
                 openWrapper.classList.remove("chat-open");
                 // Poista vihreä väri myös napista
-                const otherChatBtn = openWrapper.querySelector('button[onclick*="toggleChat"]');
+                const otherChatBtn = openWrapper.querySelector(".chat-btn");
                 if (otherChatBtn) {
                     otherChatBtn.classList.remove("is-active");
                 }
@@ -666,7 +700,7 @@ function toggleChat(id, name, platform) {
     window.setTimeout(schedulePlayerLayoutRefresh, 180);
 
     // Päivitetään chat-napin tila
-    const chatBtn = wrapper.querySelector('button[onclick*="toggleChat"]');
+    const chatBtn = wrapper.querySelector(".chat-btn");
     if (chatBtn) {
         chatBtn.classList.toggle("is-active", isOpening);
         chatBtn.setAttribute("aria-label", isOpening ? "Sulje chat" : "Avaa chat");
@@ -704,14 +738,10 @@ function _loadChatIframe(id, name, platform) {
 
     if (platform === "kick") {
         chatContainer.innerHTML = `
-                <div style="position:relative;height:100%;overflow:hidden;">
+                <div class="kick-chat-wrapper">
                     <iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>
-                    <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:#0e0e10;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:5;">
-                        <button onclick="window.open('https://kick.com/${name}/chat', '_blank')"
-                                title="Avaa chatti Kickissä"
-                                style="width:160px;height:38px;background:#53fc18;color:#000;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:transform 0.2s,box-shadow 0.2s;"
-                                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.4)';"
-                                onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';">
+                    <div class="kick-chat-footer">
+                        <button type="button" class="kick-chat-open-btn" data-action="open-kick-chat" data-name="${name}" title="Avaa chatti Kickissä">
                             Avaa Kickissä
                         </button>
                     </div>
@@ -726,18 +756,12 @@ function toggleMute(id, name, platform) {
     const unmuted = !isStreamUnmuted(id);
     setStreamUnmuted(id, unmuted);
 
-    if (platform === "twitch" && players[id]) {
-        players[id].setMuted(!unmuted);
-        if (unmuted && window.matchMedia("(max-width: 768px)").matches) {
+    applyStreamAudioState(id, platform, name);
+    if (platform === "twitch" && unmuted && players[id] && window.matchMedia("(max-width: 768px)").matches) {
             const playback = players[id].play();
             if (playback && typeof playback.catch === "function") {
                 playback.catch(() => {});
             }
-        }
-    } else if (platform === "kick") {
-        // Kick ei tue mute-APIa -- uudelleenladataan soitin eri muted-arvolla.
-        const container = document.getElementById(`player-${id}`);
-        if (container) container.replaceChildren(createKickPlayerIframe(name, unmuted));
     }
     updateActiveStreamsStorage();
 }
@@ -915,6 +939,17 @@ function saveFavorite(event) {
 
 function removeFavorite(i, e) {
     e.stopPropagation();
+    const favorite = favorites[i];
+    if (!favorite) return;
+
+    const streamId = `s-${favorite.platform}-${favorite.name.toLowerCase()}`;
+    if (document.getElementById(streamId)) {
+        const shouldClose = window.confirm(
+            `Suosikki ${favorite.name} on avoinna. Valitse OK sulkeaksesi myös liven tai Peruuta jättääksesi sen auki.`,
+        );
+        if (shouldClose) closeStream(streamId);
+    }
+
     favorites.splice(i, 1);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     renderFavorites();
@@ -1036,36 +1071,123 @@ function toggleSidebar() {
 }
 
 // =============================================================================
-// TIETOA-MODAL
+// MODAALIT JA TAPAHTUMAT
 // =============================================================================
 
-function openSettings() {
-    document.getElementById("settings-modal").style.display = "flex";
+let activeModalTrigger = null;
+
+function openModal(id, trigger) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    activeModalTrigger = trigger || document.activeElement;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    window.requestAnimationFrame(() => modal.querySelector(".modal-close")?.focus());
 }
 
-function closeSettings(event) {
-    const modal = document.getElementById("settings-modal");
-    if (event.target === modal || event.target.classList.contains("modal-close")) {
-        modal.style.display = "none";
-    }
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    activeModalTrigger?.focus();
+    activeModalTrigger = null;
 }
 
-function openAbout() {
+function openSettings(trigger) {
+    openModal("settings-modal", trigger);
+}
+
+function openAbout(trigger) {
     document.getElementById("app-name").textContent = APP_META.name;
     document.getElementById("app-version").textContent = `Versio ${APP_META.version}`;
     document.getElementById("app-author").textContent = `Tekijä: ${APP_META.author}`;
     document.getElementById("app-date").textContent = `Päivitetty: ${APP_META.buildDate}`;
     document.getElementById("app-kick").href = APP_META.kick;
     document.getElementById("app-repo").href = APP_META.repo;
-    document.getElementById("about-modal").style.display = "flex";
+    openModal("about-modal", trigger);
 }
 
-function closeAbout(event) {
-    const modal = document.getElementById("about-modal");
-    // Suljetaan taustaa klikatessa tai sulkupainikkeesta
-    if (event.target === modal || event.target.classList.contains("modal-close")) {
-        modal.style.display = "none";
+function handleActionClick(event) {
+    if (event.target.matches(".fav-auto")) return;
+
+    const overlay = event.target.closest(".modal-overlay");
+    if (overlay && event.target === overlay) {
+        closeModal(overlay.id);
+        return;
     }
+
+    const actionElement = event.target.closest("[data-action]");
+    if (!actionElement) return;
+
+    const { action, id, index, modal, name, platform } = actionElement.dataset;
+    switch (action) {
+        case "toggle-sidebar":
+            toggleSidebar();
+            break;
+        case "open-settings":
+            openSettings(actionElement);
+            break;
+        case "open-about":
+            openAbout(actionElement);
+            break;
+        case "close-modal":
+            closeModal(modal);
+            break;
+        case "export-backup":
+            exportBackup();
+            break;
+        case "open-favorite":
+            openStream(name, platform);
+            break;
+        case "remove-favorite":
+            removeFavorite(Number(index), event);
+            break;
+        case "refresh-favorite-status":
+            refreshFavoriteStatus(Number(index), event);
+            break;
+        case "toggle-chat":
+            toggleChat(id, name, platform);
+            break;
+        case "toggle-mute":
+            toggleMute(id, name, platform);
+            break;
+        case "refresh-stream":
+            refreshStream(id);
+            break;
+        case "close-stream":
+            closeStream(id);
+            break;
+        case "open-kick-chat":
+            window.open(`https://kick.com/${name}/chat`, "_blank", "noopener");
+            break;
+        default:
+            break;
+    }
+}
+
+function bindApplicationEvents() {
+    document.addEventListener("click", handleActionClick);
+    document.addEventListener("change", (event) => {
+        if (event.target.matches(".fav-auto")) toggleAutoOpen(Number(event.target.dataset.index), event);
+        if (event.target.id === "auto-close-offline") toggleAutoCloseOffline(event);
+        if (event.target.id === "backup-file") importBackup(event);
+    });
+    document.getElementById("favorite-form").addEventListener("submit", saveFavorite);
+    document.addEventListener("keydown", (event) => {
+        if ((event.key === "Enter" || event.key === " ") && event.target.matches(".fav-info")) {
+            event.preventDefault();
+            openStream(event.target.dataset.name, event.target.dataset.platform);
+        }
+        if (event.key === "Escape") {
+            const openModalElement = Array.from(document.querySelectorAll(".modal-overlay")).find(
+                (modal) => modal.style.display === "flex",
+            );
+            if (openModalElement) closeModal(openModalElement.id);
+        }
+    });
 }
 
 // =============================================================================
@@ -1170,5 +1292,6 @@ function handleDrop(e) {
 // =============================================================================
 
 syncViewportHeight();
+bindApplicationEvents();
 loadInitialData();
 setInterval(updateAllStatuses, 60000);

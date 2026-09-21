@@ -224,6 +224,15 @@ aside h3 {
     overflow: hidden;
 }
 
+.fav-info:focus-visible,
+.icon-btn:focus-visible,
+.delete-btn:focus-visible,
+.modal-close:focus-visible,
+.kick-chat-open-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
 /* --- Status- ja alustakuvakkeet --- */
 .icon-container {
     position: relative;
@@ -810,6 +819,45 @@ body.is-dragging .stream-wrapper {
     left: 0;
 }
 
+.kick-chat-wrapper {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+.kick-chat-footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    border-top: 1px solid var(--border);
+    background: #0e0e10;
+}
+
+.kick-chat-open-btn {
+    width: 160px;
+    height: 38px;
+    border: 0;
+    border-radius: 6px;
+    background: #53fc18;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kick-chat-open-btn:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
 /* =============================================================================
    9. MODALIT
    ============================================================================= */
@@ -870,6 +918,29 @@ body.is-dragging .stream-wrapper {
     color: var(--text-dim);
     font-size: 0.8rem;
     line-height: 1.45;
+}
+
+.status-diagnostics {
+    display: grid;
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.diagnostic-item {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.diagnostic-item.is-ok::before {
+    color: var(--live-green);
+    content: "● ";
+}
+
+.diagnostic-item.is-error::before {
+    color: var(--red);
+    content: "● ";
 }
 
 .modal-close {
