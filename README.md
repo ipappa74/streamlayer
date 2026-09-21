@@ -36,7 +36,8 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
 - Uusi striimi alkaa mykistettynä.
-- Avoimien striimien chat- ja äänitilat palautetaan selaimen muistista. Mobiilissa Kick avautuu aina ensin mykistettynä selaimen toistorajoitusten vuoksi.
+- Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
+- Koonmuutoksen jälkeen mykistetty Kick-striimi palautetaan mykistettynä. Tämä voi ladata kyseisen mykistetyn Kick-soittimen uudelleen.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
 ### ⭐ Suosikit, automaatio ja asetukset
@@ -45,6 +46,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Auto-open avaa valitun kanavan, kun se on livenä.
 - **Asetukset**-ikkunasta voi ottaa käyttöön offline-striimin automaattisen sulkemisen minuutin kuluttua. Asetus on oletuksena pois päältä.
 - Asetukset-ikkunasta voi viedä ja palauttaa JSON-varmuuskopion.
+- Asetukset-ikkunan **Yhteystilanne** näyttää viimeisimmän Kick- sekä DecAPI/Twitch-live-haun onnistumisen tai virheen.
 
 ### 🟢 Live-tilanne
 
@@ -78,7 +80,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Valitse Kick tai Twitch.
 - Syötä kanavan käyttäjänimi ja valitse **Lisää listalle**.
 - Avaa kanava klikkaamalla suosikkia.
-- Poista suosikki punaisesta sulkupainikkeesta.
+- Poista suosikki punaisesta sulkupainikkeesta. Jos sen live on avoinna, voit valita suljetaanko se samalla.
 
 ### 2. Hallitse striimiä
 
@@ -90,6 +92,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Avaa sivupalkin alareunasta **Asetukset**.
 - Valitse halutessasi offline-striimien automaattinen sulkeminen.
 - Vie JSON-varmuuskopio ennen selaindatan tyhjentämistä ja palauta se tarvittaessa samasta ikkunasta.
+- Sulje Tietoa- ja Asetukset-ikkunat Escape-näppäimellä tai sulkupainikkeesta.
 
 ## Käynnistys
 
