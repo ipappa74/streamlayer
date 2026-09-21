@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.20** · Päivitetty: **2026-09-03**
+Nykyinen versio: **1.8.21** · Päivitetty: **2026-09-21**
 
 ## 🎯 Yleiskuvaus
 
