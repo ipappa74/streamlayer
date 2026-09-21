@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.21",
+    version: "1.8.22",
     buildDate: "2026-09-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -86,12 +86,10 @@ function refreshViewportAfterRotation() {
     requestAnimationFrame(() => {
         syncViewportHeight();
         alignCurrentLandscapeStream();
-        schedulePlayerLayoutRefresh();
     });
     window.setTimeout(() => {
         syncViewportHeight();
         alignCurrentLandscapeStream();
-        schedulePlayerLayoutRefresh();
     }, 180);
 }
 
