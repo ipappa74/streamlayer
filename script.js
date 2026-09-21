@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.25",
+    version: "1.8.26",
     buildDate: "2026-09-21",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -31,7 +31,6 @@ const statusDiagnostics = new Map();
 const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,50}$/;
 let playerLayoutFrame = null;
 let twitchSdkPromise = null;
-let muteStateRestoreTimer = null;
 let statusUpdateInFlight = false;
 let statusUpdateQueued = false;
 
@@ -96,25 +95,6 @@ function refreshViewportAfterRotation() {
         syncViewportHeight();
         alignCurrentLandscapeStream();
     }, 180);
-}
-
-function restoreMuteStatesAfterViewportChange() {
-    document.querySelectorAll(".stream-wrapper").forEach((wrapper) => {
-        const id = wrapper.id;
-        const platform = wrapper.dataset.platform;
-        applyStreamAudioState(id, platform, wrapper.querySelector(".fav-alias")?.textContent, {
-            restoreKickMute: true,
-        });
-    });
-}
-
-function scheduleMuteStateRestore() {
-    if (muteStateRestoreTimer !== null) window.clearTimeout(muteStateRestoreTimer);
-
-    muteStateRestoreTimer = window.setTimeout(() => {
-        muteStateRestoreTimer = null;
-        restoreMuteStatesAfterViewportChange();
-    }, 300);
 }
 
 /* --- SVG-KUVAKKEET --- */
@@ -420,7 +400,7 @@ function setStreamUnmuted(id, unmuted) {
     muteBtn.title = muteBtn.getAttribute("aria-label");
 }
 
-function applyStreamAudioState(id, platform, name, { restoreKickMute = false } = {}) {
+function applyStreamAudioState(id, platform, name) {
     const shouldBeUnmuted = isStreamUnmuted(id);
 
     if (platform === "twitch" && players[id]) {
@@ -428,10 +408,9 @@ function applyStreamAudioState(id, platform, name, { restoreKickMute = false } =
         return;
     }
 
-    // Kickin upotuksella ei ole käytössä mute-rajapintaa. Vaihtoehdon A
-    // mukaisesti luodaan vain mykistetty Kick-soitin uudelleen koonmuutoksen
-    // jälkeen, jotta ääni ei avaudu itsestään.
-    if (platform === "kick" && (!shouldBeUnmuted || !restoreKickMute)) {
+    // Kickin ääni asetetaan upotusosoitteessa. Painike lataa uudelleen vain
+    // valitun soittimen; asettelumuutokset eivät koske muiden soittimien ääneen.
+    if (platform === "kick") {
         const container = document.getElementById(`player-${id}`);
         if (container && name) container.replaceChildren(createKickPlayerIframe(name, shouldBeUnmuted));
     }
@@ -1034,16 +1013,13 @@ function applySidebarState(isCollapsed) {
 
 window.addEventListener("resize", () => {
     refreshViewportAfterRotation();
-    scheduleMuteStateRestore();
     if (isCompactMobileLayout()) applySidebarState(true);
 });
 window.addEventListener("orientationchange", () => {
     refreshViewportAfterRotation();
-    scheduleMuteStateRestore();
 });
 window.visualViewport?.addEventListener("resize", () => {
     refreshViewportAfterRotation();
-    scheduleMuteStateRestore();
 });
 
 function toggleSidebar() {
