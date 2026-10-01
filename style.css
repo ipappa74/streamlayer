@@ -1433,3 +1433,9 @@ main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 2
     .topbar-nav-link:not(.is-current) { display: none; }
     .topbar-nav-link.is-current { padding: 0 10px; font-size: .65rem; }
 }
+
+/* LIVE-merkki käyttää samaa punaista kuin sivupalkin livepiste. */
+.stream-state.is-live { color: var(--red); }
+.stream-state.is-live i { background: var(--red); box-shadow: 0 0 8px rgba(255, 69, 58, .7); }
+.stream-viewers svg { width: 13px; height: 13px; fill: currentColor; }
+.stream-viewers[hidden] { display: none; }

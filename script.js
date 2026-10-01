@@ -152,6 +152,7 @@ const svgIcons = {
     refresh: `<svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`,
     close: `<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`,
     chat: `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>`,
+    viewers: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`,
 };
 
 // =============================================================================
@@ -423,7 +424,6 @@ function renderFavorites() {
                 </div>
                     <div class="fav-text-stack">
                         <span class="fav-alias">${fav.name}</span>
-                        ${fav.isLive && fav.title ? `<div class="fav-title" title="${escapeHtml(fav.title)}">${escapeHtml(fav.title)}</div>` : ""}
                         ${fav.statusError
                             ? `<div class="status-text status-error">Tilaa ei saatu haettua <span aria-hidden="true">·</span> <button class="status-refresh" type="button" data-action="refresh-favorite-status" data-index="${i}" aria-label="Yritä hakea kanavan live-tila uudelleen">Päivitä</button></div>`
                             : `<div class="status-text">${escapeHtml(fav.statusText || "")}</div>`}
@@ -434,6 +434,7 @@ function renderFavorites() {
         })
         .join("");
     updateTopbarStatus();
+    updateOpenStreamMetadata();
 }
 
 function updateTopbarStatus() {
@@ -444,6 +445,28 @@ function updateTopbarStatus() {
     status.textContent = liveCount > 0
         ? `${liveCount} live nyt`
         : "Ei livejä juuri nyt";
+}
+
+function updateOpenStreamMetadata() {
+    favorites.forEach((favorite) => {
+        const wrapper = document.getElementById(`s-${favorite.platform}-${favorite.name.toLowerCase()}`);
+        if (!wrapper) return;
+
+        const state = wrapper.querySelector(".stream-state");
+        const meta = wrapper.querySelector(".stream-channel-meta");
+        const viewers = wrapper.querySelector(".stream-viewers");
+        const isLive = favorite.isLive === true;
+
+        if (state) {
+            state.classList.toggle("is-live", isLive);
+            state.innerHTML = `<i></i>${isLive ? "LIVE" : "OFFLINE"}`;
+        }
+        if (meta) meta.textContent = favorite.title || (isLive ? "Lähetys käynnissä" : "Offline");
+        if (viewers) {
+            viewers.hidden = !isLive;
+            viewers.querySelector("span").textContent = Number(favorite.viewers || 0).toLocaleString("fi-FI");
+        }
+    });
 }
 
 function updateStreamEmptyState() {
@@ -633,10 +656,10 @@ function openStream(
                 <div class="stream-channel-identity">
                     <div class="stream-channel-line">
                         <span class="fav-alias">${name}</span>
-                        <span class="platform-badge platform-${platform}">${platform}</span>
                         <span class="stream-state ${favorite?.isLive ? "is-live" : ""}"><i></i>${statusLabel}</span>
+                        <span class="stream-state stream-viewers" title="Katsojat" ${favorite?.isLive ? "" : "hidden"}>${svgIcons.viewers}<span>${Number(favorite?.viewers || 0).toLocaleString("fi-FI")}</span></span>
                     </div>
-                    <span class="stream-channel-meta">${escapeHtml(favorite?.title || viewersLabel)}</span>
+                    <span class="stream-channel-meta">${escapeHtml(favorite?.title || (favorite?.isLive ? "Lähetys käynnissä" : viewersLabel))}</span>
                 </div>
             </div>
             <div class="stream-header-btns">
