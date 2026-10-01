@@ -823,10 +823,11 @@ function _loadChatIframe(id, name, platform) {
 
     const chatShellStart = `
         <section class="chat-shell" aria-label="${name}-chat">
+            ${platform === "kick" ? "" : `
             <header class="chat-shell-header">
                 <span class="chat-live-label"><i></i>LIVE_CHAT</span>
                 <button class="chat-settings-btn" type="button" data-action="open-chat-settings" aria-label="Avaa chatin asetukset" title="Chatin asetukset">⚙</button>
-            </header>
+            </header>`}
             <div class="chat-embed-frame">`;
     const chatShellEnd = `</div></section>`;
 

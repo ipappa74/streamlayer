@@ -1560,3 +1560,38 @@ aside h3,
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     }
 }
+
+/* Kick-upotuksen tiivistetty chat-näkymä: oma otsikkorivi ja Kickin
+   kirjoituskenttä ovat piilossa, mutta viestit käyttävät koko korkeuden. */
+.chat-embed-frame .kick-chat-wrapper > iframe {
+    height: calc(125% + 120px) !important;
+}
+
+.kick-chat-footer {
+    height: 48px;
+    border-top: 1px solid var(--ops-line);
+    background: #0b111b;
+}
+
+.kick-chat-open-btn {
+    width: 164px;
+    height: 32px;
+    border: 1px solid rgba(82, 228, 130, .55);
+    border-radius: 7px;
+    color: var(--ops-green);
+    background: #111b2b;
+    box-shadow: none;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+.kick-chat-open-btn:hover {
+    border-color: var(--ops-green);
+    color: #dfffe9;
+    background: #17263b;
+    box-shadow: none;
+    transform: none;
+}
