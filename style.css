@@ -1548,16 +1548,57 @@ aside h3,
     }
 }
 
-/* Ruutupaikat ovat ennustettavia: chat käyttää kahta ja tavallinen video yhtä. */
-@media (min-width: 1040px) and (max-width: 1599px) {
+/* Alle 1600 pikselissä käytetään pystyasettelua. Näin chat ei kutista videota
+   käyttökelvottomaksi sivupalkin ollessa näkyvissä. Sivupalkin sulkeminen
+   kasvattaa silti pääalueen välittömästi koko ikkunan levyiseksi. */
+@media (min-width: 769px) and (max-width: 1599px) {
     #stream-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px;
+        height: auto !important;
+        min-height: 0;
+        max-height: none !important;
+    }
+
+    #stream-grid:has(> .stream-wrapper:only-of-type) {
+        height: auto;
+        min-height: 0;
+    }
+
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper,
+    .stream-wrapper,
+    .stream-wrapper.chat-open {
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        grid-column: 1 !important;
+    }
+
+    .stream-wrapper.chat-open .content-area {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    .stream-wrapper.chat-open .video-container {
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+        height: auto !important;
+        flex: none !important;
+    }
+
+    .stream-wrapper.chat-open .chat-container {
+        width: 100% !important;
+        height: 500px !important;
+        border-top: 1px solid var(--ops-line);
+        border-left: 0;
+        flex: none !important;
     }
 }
 
 @media (min-width: 1600px) {
     #stream-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)) !important;
     }
 }
 
