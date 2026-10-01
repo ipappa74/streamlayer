@@ -116,10 +116,6 @@
 	
 <!-- Footer -->
 	<footer class="app-footer">
-		<div class="footer-links">
-			<button class="footer-link" type="button" data-action="open-settings">Asetukset</button>
-			<button class="footer-link" type="button" data-action="open-about">Tietoa sovelluksesta</button>
-		</div>
 		<span class="footer-copy">© 2026 StreamLayer by Toni</span>
 	</footer>
 </aside>
@@ -138,7 +134,7 @@
 <div id="about-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="app-name" aria-hidden="true">
     <div class="modal-content about-card">
         <button class="modal-close" type="button" data-action="close-modal" data-modal="about-modal" aria-label="Sulje tiedot">×</button>
-        <h2 id="app-name">StreamLayer</h2>
+        <h2 id="app-name">Tietoa</h2>
         <div class="meta-info-list">
             <p id="app-version"></p>
             <p id="app-author"></p>
@@ -172,27 +168,6 @@
             <h3 id="diagnostics-title">Yhteystilanne</h3>
             <ul id="status-diagnostics" class="status-diagnostics" aria-live="polite"></ul>
         </section>
-    </div>
-</div>
-
-<!-- Oman chatin asetukset ovat valmiina, kun viestilähde kytketään käyttöön. -->
-<div id="chat-settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="chat-settings-title" aria-hidden="true">
-    <div class="modal-content about-card settings-card">
-        <button class="modal-close" type="button" data-action="close-modal" data-modal="chat-settings-modal" aria-label="Sulje chatin asetukset">×</button>
-        <h2 id="chat-settings-title">Chatin asetukset</h2>
-        <p class="settings-lead">Viestisuodattimet otetaan käyttöön, kun oma chat-yhteys on kytketty. Nykyinen alustachat säilyy toistaiseksi luettavana upotuksena.</p>
-        <label class="stream-setting chat-setting" for="chat-show-timestamps">
-            <input type="checkbox" id="chat-show-timestamps">
-            <span>Näytä aikaleimat</span>
-        </label>
-        <label class="stream-setting chat-setting" for="chat-collapse-duplicates">
-            <input type="checkbox" id="chat-collapse-duplicates">
-            <span>Yhdistä toistuvat viestit</span>
-        </label>
-        <label class="stream-setting chat-setting" for="chat-block-emoji-only">
-            <input type="checkbox" id="chat-block-emoji-only">
-            <span>Piilota vain emojeista koostuvat viestit</span>
-        </label>
     </div>
 </div>
 
