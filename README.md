@@ -7,11 +7,11 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.9.0** · Päivitetty: **2026-10-01**
+Nykyinen versio: **1.10.0** · Päivitetty: **2026-10-01**
 
 ## 🎯 Yleiskuvaus
 
-**StreamLayer** on kevyt ja responsiivinen monistriimaussovellus Twitch- ja Kick-lähetysten seuraamiseen. Lisää kanavat suosikeiksi, avaa useita lähetyksiä rinnakkain ja hallitse chattia sekä ääntä striimikohtaisesti ilman erillistä palvelinsovellusta.
+**StreamLayer** on kevyt, selainpohjainen katselupöytä Kick- ja Twitch-lähetysten seuraamiseen. Lisää kanavat suosikeiksi, avaa useita lähetyksiä rinnakkain ja hallitse chattia sekä ääntä striimikohtaisesti ilman erillistä palvelinsovellusta.
 
 Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosikit ja asetukset säilyvät selaimessa, ja niistä voi tehdä ladattavan varmuuskopion.
 
@@ -19,37 +19,42 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ## 🚀 Ominaisuudet
 
-### 🎥 Monialustatuki ja hallinta
+### Monialustatuki ja hallinta
 
 - **Twitch ja Kick:** Lisää saman niminen kanava kummaltakin alustalta omaksi suosikikseen.
-- **Mukautuva asettelu:** Yksi avoin striimi käyttää koko pääalueen. Useat striimit asettuvat ruudukoksi.
-- **Katselupöytä:** Operatiivinen yläpalkki, tiiviimpi seurantalista sekä kanavatiedot ja chat samassa striimikortissa.
+- **Mukautuva asettelu:** Yksi avoin striimi käyttää koko pääalueen. Vähintään 1600 px leveässä työpöytänäkymässä ruudukossa on neljä tasalevyistä ruutupaikkaa.
+- **Chatin tila:** Chatillinen striimi käyttää kahta ruutupaikkaa ja chatiton yhtä. Neljä chatitonta striimiä täyttää yhden rivin.
+- **Katselupöytä:** Tumma yläpalkki, tiivis seurantalista sekä kanavatiedot ja chat samassa striimikortissa.
 - **Raahaus:** Järjestä avoimia striimejä vetämällä. Avoimien striimien järjestys säilyy selaimessa.
 - **Tyhjät näkymät:** Sovellus opastaa, kun suosikkeja tai avoimia striimejä ei vielä ole.
 
-### 📱 Mobiilikäyttö
+### Mobiili- ja kapeat näkymät
 
-- Striimit asettuvat mobiilissa allekkain ja chatti avautuu videon alapuolelle.
-- Sivupalkki sulkeutuu, kun avaat striimin.
+- Alle 1600 px leveydessä striimit ovat allekkain ja käyttävät pääalueen koko leveyden. Chatti avautuu videon alapuolelle.
+- Sivupalkki rajaa pääalueen leveyden näkyvänä ja suljettuna antaa katselupöydälle koko ikkunan leveyden.
+- Puhelimessa sivupalkki toimii peittävänä valikkona ja sulkeutuu, kun avaat striimin.
 - Mobiiliselaimet voivat rajoittaa äänekästä automaattista toistoa. Kickissä ota ääni käyttöön striimikortin äänipainikkeesta ja käynnistä tarvittaessa video soittimen omasta toistopainikkeesta.
 
-### 🔇 Ääni ja chat
+### Ääni ja chat
 
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
 - Uusi striimi alkaa mykistettynä.
 - Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
 - Työpöydällä ikkunan koon muuttuessa sovellus pysäyttää mykistetyt Kick-soittimet ja lataa ne uudelleen mykistettyinä koon vakiinnuttua. Puhelimessa tätä uudelleenlatausta ei tehdä, jotta mobiiliselaimen koonmuutokset eivät keskeytä muita lähetyksiä. Kortin äänipainike lataa uudelleen vain kyseisen soittimen.
+- Kick- ja Twitch-chatit ovat alustojen omia upotuksia. StreamLayerin ulompi chat-otsikko on poistettu, jotta viesteille jää enemmän tilaa. Kick-chatin alareunassa on keskitetty **Avaa Kickissä** -painike.
+- Chatin asetuksissa näkyvät aikaleima-, toistuvien viestien ja pelkkien emojiviestien valinnat tallennetaan valmiiksi omaa tulevaa chat-näkymää varten. Ne eivät vielä muuta ulkopuolisen Kick- tai Twitch-upotuksen viestejä.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
-### ⭐ Suosikit, automaatio ja asetukset
+### Suosikit, automaatio ja asetukset
 
 - LIVE-tilassa olevat suosikit nousevat listan alkuun katsojamäärän mukaan.
 - Auto-open avaa valitun kanavan, kun se on livenä.
 - **Asetukset**-ikkunasta voi ottaa käyttöön offline-striimin automaattisen sulkemisen minuutin kuluttua. Asetus on oletuksena pois päältä.
 - Asetukset-ikkunasta voi viedä ja palauttaa JSON-varmuuskopion.
 - Asetukset-ikkunan **Yhteystilanne** näyttää viimeisimmän Kick- sekä DecAPI/Twitch-live-haun onnistumisen tai virheen.
+- Asetukset- ja Tietoa-ikkunat käyttävät samaa tummaa katselupöydän teemaa kuin muu sovellus.
 
-### 🟢 Live-tilanne
+### Live-tilanne
 
 - Live-merkintä, lähetyksen otsikko ja katsojaluku päivittyvät minuutin välein.
 - Kickin tiedot haetaan Kickin kanavarajapinnasta ja Twitchin tiedot DecAPI-palvelusta.
@@ -62,13 +67,15 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ### Käytetyt teknologiat
 
-- **HTML5 ja CSS3:** Tumma StreamLayer Blue -teema, responsiivinen ruudukko ja popup-ikkunat.
+- **HTML5 ja CSS3:** Tumma katselupöytäteema, responsiivinen ruudukko ja modaalit.
 - **Vanilla JavaScript:** Sovelluslogiikka ilman rakennusvaihetta tai npm-riippuvuuksia.
 - **Upotukset ja rajapinnat:** Twitch Embed SDK, Kick Player, DecAPI ja Kickin kanavarajapinta.
 
 ### Tallennus ja varmuuskopiointi
 
-- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen, chatin ja äänen tilat selaimen `localStorage`-muistiin.
+- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen, chatin asetukset ja äänen tilat selaimen `localStorage`-muistiin.
+- Tallennus on sidottu sivun osoitteeseen. GitHub Pages, `localhost` ja paikallinen `file:`-osoite käyttävät eri tallennustiloja.
+- Avaimet ovat `streamlayer`, `streamlayer_active_v1`, `streamlayer_settings_v1`, `streamlayer_chat_settings_v1` ja `sidebar-collapsed`.
 - Selaindatan tyhjennys poistaa nämä tiedot. Vie ensin JSON-varmuuskopio **Asetukset**-ikkunasta.
 - Varmuuskopio sisältää suosikit, auto-open-valinnat, asetukset ja avoimet striimit. Palautus korvaa nykyiset tiedot vahvistuksen jälkeen.
 
@@ -97,10 +104,11 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ## Käynnistys
 
-- Avaa [index.html](index.html) selaimessa tai julkaise projektin tiedostot staattisena sivustona.
+- Avaa [index.html](index.html) selaimessa ja valitse **Avaa sovellus**, tai avaa sovellus suoraan tiedostosta [streamlayer.html](streamlayer.html).
 - Twitch-upotus tarvitsee tuotannossa HTTPS-osoitteen ja oikean verkkotunnuksen `parent`-asetukseksi.
 
 ## Huomioitavaa
 
 - DecAPI on ulkoinen palvelu. Jos se ei vastaa, Twitchin live-tiedot voivat näkyä virhetilana.
 - Kickin ja Twitchin upotusten toiminta, erityisesti mobiiliääni, riippuu myös selaimen autoplay-säännöistä ja palveluiden omista rajoituksista.
+- TikTok LIVE ei ole mukana alustavalinnassa. TikTokin virallinen upotus koskee yksittäisiä videojulkaisuja, ei vapaasti valittavia käynnissä olevia live-lähetyksiä.

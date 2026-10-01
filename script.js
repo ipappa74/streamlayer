@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.9.0",
+    version: "1.10.0",
     buildDate: "2026-10-01",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
