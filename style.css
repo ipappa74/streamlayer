@@ -1598,7 +1598,7 @@ aside h3,
 
 @media (min-width: 1600px) {
     #stream-grid {
-        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)) !important;
     }
 }
 
