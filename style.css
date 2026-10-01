@@ -1641,3 +1641,149 @@ aside h3,
     box-shadow: none;
     transform: none;
 }
+
+/* Modaali-ikkunat käyttävät samaa katselupöydän pintaa ja hierarkiaa kuin muu
+   sovellus. */
+.modal-overlay {
+    padding: 20px;
+    box-sizing: border-box;
+    background: rgba(3, 6, 11, .78);
+    backdrop-filter: blur(14px);
+}
+
+.about-card {
+    width: min(100%, 480px);
+    min-width: 0;
+    max-width: 480px;
+    max-height: min(760px, calc(100dvh - 40px));
+    overflow: auto;
+    padding: 28px;
+    border: 1px solid var(--ops-line);
+    border-radius: 11px;
+    background: #0d1420;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, .55), 0 0 0 1px rgba(22, 131, 255, .06);
+    text-align: left;
+}
+
+.settings-card {
+    width: min(100%, 560px);
+    max-width: 560px;
+}
+
+.about-card h2,
+.settings-card h2 {
+    margin: 0 36px 20px 0;
+    color: #eef5ff;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .82rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    line-height: 1.2;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.about-card h2::before,
+.settings-card h2::before {
+    margin-right: 8px;
+    color: var(--ops-blue);
+    content: "STREAMLAYER /";
+}
+
+.modal-close {
+    top: 16px;
+    right: 16px;
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--ops-line);
+    border-radius: 7px;
+    color: #9eafc8;
+    background: #111b2b;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    border-color: rgba(237, 120, 131, .6);
+    color: #ffd9de;
+    background: #1b1b2a;
+}
+
+.meta-info-list p {
+    margin: 8px 0;
+    color: var(--ops-muted);
+    font-size: .79rem;
+}
+
+.meta-info-list a:first-of-type,
+.meta-info-list a + a {
+    margin: 20px 8px 0 0;
+}
+
+.repo-btn,
+.kick-btn {
+    padding: 9px 12px;
+    border: 1px solid var(--ops-line);
+    border-radius: 7px;
+    color: #dcecff;
+    background: #111b2b;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+}
+
+.repo-btn:hover,
+.kick-btn:hover {
+    border-color: var(--ops-blue);
+    color: #fff;
+    background: #17263b;
+    transform: none;
+}
+
+.settings-card .stream-setting {
+    margin: 0;
+    padding: 13px 0;
+    border-top: 1px solid var(--ops-line);
+    color: #dce7f7;
+    font-size: .82rem;
+}
+
+.settings-section {
+    margin-top: 14px;
+    padding: 15px;
+    border-color: var(--ops-line);
+    border-radius: 8px;
+    background: #0a1019;
+}
+
+.settings-section h3 {
+    color: #dce7f7;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .72rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.settings-section p,
+.settings-lead,
+.diagnostic-item {
+    color: var(--ops-muted);
+}
+
+.backup-btn {
+    border-color: var(--ops-line);
+    border-radius: 7px;
+    color: #cbd8eb;
+    background: #111b2b;
+}
+
+.backup-btn:hover {
+    border-color: var(--ops-blue);
+    color: #fff;
+    background: #17263b;
+}
