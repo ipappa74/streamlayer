@@ -1598,8 +1598,8 @@ aside h3,
 
 @media (min-width: 1600px) {
     #stream-grid {
-        grid-template-columns: repeat(auto-fit, minmax(400px, 420px)) !important;
-        justify-content: start;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        justify-content: stretch;
     }
 
     /* Yksittäinen striimi käyttää edelleen koko katselualueen. */
