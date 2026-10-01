@@ -1598,7 +1598,14 @@ aside h3,
 
 @media (min-width: 1600px) {
     #stream-grid {
-        grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 420px)) !important;
+        justify-content: start;
+    }
+
+    /* Yksittäinen striimi käyttää edelleen koko katselualueen. */
+    #stream-grid:has(> .stream-wrapper:only-of-type) {
+        grid-template-columns: 1fr !important;
+        justify-content: stretch;
     }
 }
 
