@@ -1503,6 +1503,24 @@ main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 2
         flex: 0 0 340px;
     }
 
+    /* Chatin vieressä oleva tavallinen video täyttää oman ruutunsa korkeuden.
+       Kuvasuhde säilyy ja mahdollinen ylimäärä rajautuu vain sivuilta. */
+    .stream-wrapper.neighbor-has-chat .content-area {
+        flex: 1 1 auto;
+        align-items: stretch;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .stream-wrapper.neighbor-has-chat .video-container {
+        width: auto !important;
+        height: 100% !important;
+        max-width: none;
+        max-height: none !important;
+        aspect-ratio: 16 / 9;
+        flex: 0 0 auto !important;
+    }
+
     #stream-grid:has(> .stream-wrapper:only-of-type) {
         grid-template-columns: 1fr !important;
         height: calc(100dvh - 92px);
