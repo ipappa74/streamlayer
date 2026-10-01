@@ -42,7 +42,6 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
 - Työpöydällä ikkunan koon muuttuessa sovellus pysäyttää mykistetyt Kick-soittimet ja lataa ne uudelleen mykistettyinä koon vakiinnuttua. Puhelimessa tätä uudelleenlatausta ei tehdä, jotta mobiiliselaimen koonmuutokset eivät keskeytä muita lähetyksiä. Kortin äänipainike lataa uudelleen vain kyseisen soittimen.
 - Kick- ja Twitch-chatit ovat alustojen omia upotuksia. StreamLayerin ulompi chat-otsikko on poistettu, jotta viesteille jää enemmän tilaa. Kick-chatin alareunassa on keskitetty **Avaa Kickissä** -painike.
-- Chatin asetuksissa näkyvät aikaleima-, toistuvien viestien ja pelkkien emojiviestien valinnat tallennetaan valmiiksi omaa tulevaa chat-näkymää varten. Ne eivät vielä muuta ulkopuolisen Kick- tai Twitch-upotuksen viestejä.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
 
 ### Suosikit, automaatio ja asetukset
@@ -73,9 +72,9 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ### Tallennus ja varmuuskopiointi
 
-- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen, chatin asetukset ja äänen tilat selaimen `localStorage`-muistiin.
+- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen ja äänen tilat selaimen `localStorage`-muistiin.
 - Tallennus on sidottu sivun osoitteeseen. GitHub Pages, `localhost` ja paikallinen `file:`-osoite käyttävät eri tallennustiloja.
-- Avaimet ovat `streamlayer`, `streamlayer_active_v1`, `streamlayer_settings_v1`, `streamlayer_chat_settings_v1` ja `sidebar-collapsed`.
+- Avaimet ovat `streamlayer`, `streamlayer_active_v1`, `streamlayer_settings_v1` ja `sidebar-collapsed`.
 - Selaindatan tyhjennys poistaa nämä tiedot. Vie ensin JSON-varmuuskopio **Asetukset**-ikkunasta.
 - Varmuuskopio sisältää suosikit, auto-open-valinnat, asetukset ja avoimet striimit. Palautus korvaa nykyiset tiedot vahvistuksen jälkeen.
 

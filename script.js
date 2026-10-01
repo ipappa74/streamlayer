@@ -191,9 +191,16 @@ function loadInitialData() {
     } catch (e) {
         // Oletusasetukset ovat turvallinen palautus vioittuneelle selaindatalle.
     }
-    document.getElementById("chat-show-timestamps").checked = chatSettings.showTimestamps;
-    document.getElementById("chat-collapse-duplicates").checked = chatSettings.collapseDuplicates;
-    document.getElementById("chat-block-emoji-only").checked = chatSettings.blockEmojiOnly;
+    const chatSettingsInputs = {
+        showTimestamps: document.getElementById("chat-show-timestamps"),
+        collapseDuplicates: document.getElementById("chat-collapse-duplicates"),
+        blockEmojiOnly: document.getElementById("chat-block-emoji-only"),
+    };
+    if (chatSettingsInputs.showTimestamps && chatSettingsInputs.collapseDuplicates && chatSettingsInputs.blockEmojiOnly) {
+        chatSettingsInputs.showTimestamps.checked = chatSettings.showTimestamps;
+        chatSettingsInputs.collapseDuplicates.checked = chatSettings.collapseDuplicates;
+        chatSettingsInputs.blockEmojiOnly.checked = chatSettings.blockEmojiOnly;
+    }
 
     // Palautetaan sivupalkin tila edelliseltä sessiolta
     applySidebarState(isCompactMobileLayout() || localStorage.getItem("sidebar-collapsed") === "true");

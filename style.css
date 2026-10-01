@@ -1794,3 +1794,21 @@ aside h3,
     color: #fff;
     background: #17263b;
 }
+
+/* Tyhjä katselupöytä keskitetään myös kapeiden näkymien pystyasettelussa. */
+#stream-grid:has(#stream-empty-state:not([hidden])) {
+    display: flex !important;
+    min-height: calc(100dvh - 92px) !important;
+    align-items: center;
+    justify-content: center;
+}
+
+#stream-grid:has(#stream-empty-state:not([hidden])) .empty-state {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    #stream-grid:has(#stream-empty-state:not([hidden])) {
+        min-height: calc(100dvh - 72px) !important;
+    }
+}
