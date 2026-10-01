@@ -1208,7 +1208,7 @@ function saveChatSettings() {
 }
 
 function openAbout(trigger) {
-    document.getElementById("app-name").textContent = APP_META.name;
+    document.getElementById("app-name").textContent = "Tietoa";
     document.getElementById("app-version").textContent = `Versio ${APP_META.version}`;
     document.getElementById("app-author").textContent = `Tekijä: ${APP_META.author}`;
     document.getElementById("app-date").textContent = `Päivitetty: ${APP_META.buildDate}`;

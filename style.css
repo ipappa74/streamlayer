@@ -1807,6 +1807,11 @@ aside h3,
     margin: 0;
 }
 
+.empty-state::before {
+    display: none;
+    content: none;
+}
+
 @media (max-width: 768px) {
     #stream-grid:has(#stream-empty-state:not([hidden])) {
         min-height: calc(100dvh - 72px) !important;
