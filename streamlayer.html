@@ -54,9 +54,29 @@
     
 <!-- Ulkoiset kirjastot ja tyylit -->
     <script id="twitch-embed-sdk" src="https://player.twitch.tv/js/embed/v1.js" defer></script>
-    <link rel="stylesheet" href="style.css?v=1.8.28">
+    <link rel="stylesheet" href="style.css?v=1.9.0">
 </head>
 <body>
+
+<!-- Ylätason navigointi pitää sovelluksen hallinnan erillään katselutilasta. -->
+<header class="app-topbar">
+    <div class="topbar-brand">
+        <svg class="topbar-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            <path d="M19 12l-14 9V3l14 9z" fill="currentColor" fill-opacity="0.2"></path>
+        </svg>
+        <span>StreamLayer</span>
+    </div>
+    <nav class="topbar-nav" aria-label="Sovelluksen navigointi">
+        <button type="button" class="topbar-nav-link is-current" data-action="toggle-sidebar">Seuranta</button>
+        <button type="button" class="topbar-nav-link" data-action="open-settings">Asetukset</button>
+        <button type="button" class="topbar-nav-link" data-action="open-about">Tietoa</button>
+    </nav>
+    <div class="topbar-state" aria-live="polite">
+        <span class="topbar-live-dot"></span>
+        <span id="topbar-live-count">Tilaa haetaan</span>
+    </div>
+</header>
 
 <aside id="main-sidebar">
 <!-- Mobiili sivupalkin sulku -->
@@ -74,7 +94,11 @@
         <h1 class="app-name">StreamLayer</h1>
     </div>	
 	
-    <h3>Suosikit</h3>
+    <div class="sidebar-section-heading">
+        <span class="section-indicator"></span>
+        <h3>Seuranta</h3>
+    </div>
+    <p class="sidebar-intro">Avaa live tai lisää seurattava kanava.</p>
 
 <!-- Uuden kanavan lisäyslomake -->
     <form id="favorite-form" class="input-group">
@@ -151,7 +175,28 @@
     </div>
 </div>
 
+<!-- Oman chatin asetukset ovat valmiina, kun viestilähde kytketään käyttöön. -->
+<div id="chat-settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="chat-settings-title" aria-hidden="true">
+    <div class="modal-content about-card settings-card">
+        <button class="modal-close" type="button" data-action="close-modal" data-modal="chat-settings-modal" aria-label="Sulje chatin asetukset">×</button>
+        <h2 id="chat-settings-title">Chatin asetukset</h2>
+        <p class="settings-lead">Viestisuodattimet otetaan käyttöön, kun oma chat-yhteys on kytketty. Nykyinen alustachat säilyy toistaiseksi luettavana upotuksena.</p>
+        <label class="stream-setting chat-setting" for="chat-show-timestamps">
+            <input type="checkbox" id="chat-show-timestamps">
+            <span>Näytä aikaleimat</span>
+        </label>
+        <label class="stream-setting chat-setting" for="chat-collapse-duplicates">
+            <input type="checkbox" id="chat-collapse-duplicates">
+            <span>Yhdistä toistuvat viestit</span>
+        </label>
+        <label class="stream-setting chat-setting" for="chat-block-emoji-only">
+            <input type="checkbox" id="chat-block-emoji-only">
+            <span>Piilota vain emojeista koostuvat viestit</span>
+        </label>
+    </div>
+</div>
+
 <!-- Sovelluslogiikka -->
-<script src="script.js?v=1.8.28" defer></script>
+<script src="script.js?v=1.9.0" defer></script>
 </body>
 </html>

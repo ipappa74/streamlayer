@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.8.28",
-    buildDate: "2026-09-21",
+    version: "1.9.0",
+    buildDate: "2026-10-01",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -17,6 +17,7 @@ const APP_META = {
 const STORAGE_KEY = "streamlayer";
 const STORAGE_ACTIVE = "streamlayer_active_v1";
 const STORAGE_SETTINGS = "streamlayer_settings_v1";
+const STORAGE_CHAT_SETTINGS = "streamlayer_chat_settings_v1";
 const OFFLINE_DELAY = 1 * 60 * 1000; // 1 minuutti ennen kuin offline-striimi suljetaan
 const STATUS_TIMEOUT_MS = 8000;
 const STATUS_RETRIES = 1;
@@ -24,6 +25,11 @@ const BACKUP_SCHEMA_VERSION = 1;
 
 let favorites = [];
 let autoCloseOffline = false;
+let chatSettings = {
+    showTimestamps: true,
+    collapseDuplicates: true,
+    blockEmojiOnly: false,
+};
 const players = {};
 const offlineTrackers = {};
 const streamAudioStates = new Map();
@@ -177,6 +183,16 @@ function loadInitialData() {
         autoCloseOffline = false;
     }
     document.getElementById("auto-close-offline").checked = autoCloseOffline;
+
+    try {
+        const savedChatSettings = JSON.parse(localStorage.getItem(STORAGE_CHAT_SETTINGS) || "{}");
+        chatSettings = { ...chatSettings, ...savedChatSettings };
+    } catch (e) {
+        // Oletusasetukset ovat turvallinen palautus vioittuneelle selaindatalle.
+    }
+    document.getElementById("chat-show-timestamps").checked = chatSettings.showTimestamps;
+    document.getElementById("chat-collapse-duplicates").checked = chatSettings.collapseDuplicates;
+    document.getElementById("chat-block-emoji-only").checked = chatSettings.blockEmojiOnly;
 
     // Palautetaan sivupalkin tila edelliseltä sessiolta
     applySidebarState(isCompactMobileLayout() || localStorage.getItem("sidebar-collapsed") === "true");
@@ -382,6 +398,7 @@ function renderFavorites() {
                 <strong>Ei vielä suosikkeja</strong>
                 <span>Valitse alusta ja lisää ensimmäinen kanava.</span>
             </div>`;
+        updateTopbarStatus();
         return;
     }
 
@@ -416,6 +433,17 @@ function renderFavorites() {
         </div>`;
         })
         .join("");
+    updateTopbarStatus();
+}
+
+function updateTopbarStatus() {
+    const status = document.getElementById("topbar-live-count");
+    if (!status) return;
+
+    const liveCount = favorites.filter((favorite) => favorite.isLive).length;
+    status.textContent = liveCount > 0
+        ? `${liveCount} live nyt`
+        : "Ei livejä juuri nyt";
 }
 
 function updateStreamEmptyState() {
@@ -592,11 +620,24 @@ function openStream(
     const iconSrc =
         platform === "kick" ? "https://kick.com/favicon.ico" : "https://www.twitch.tv/favicon.ico";
 
+    const favorite = favorites.find((item) => item.platform === platform && item.name.toLowerCase() === name.toLowerCase());
+    const statusLabel = favorite?.isLive ? "LIVE" : "OFFLINE";
+    const viewersLabel = favorite?.isLive
+        ? `${Number(favorite.viewers || 0).toLocaleString("fi-FI")} katsojaa`
+        : "Ei katsojatietoa";
+
     wrapper.innerHTML = `
         <div class="stream-header" style="cursor: move;">
             <div class="stream-title-group">
                 <img src="${iconSrc}" class="header-icon" alt="">
-                <span class="fav-alias">${name}</span>
+                <div class="stream-channel-identity">
+                    <div class="stream-channel-line">
+                        <span class="fav-alias">${name}</span>
+                        <span class="platform-badge platform-${platform}">${platform}</span>
+                        <span class="stream-state ${favorite?.isLive ? "is-live" : ""}"><i></i>${statusLabel}</span>
+                    </div>
+                    <span class="stream-channel-meta">${escapeHtml(favorite?.title || viewersLabel)}</span>
+                </div>
             </div>
             <div class="stream-header-btns">
                 <button class="icon-btn chat-btn" type="button" data-action="toggle-chat" data-id="${id}" data-name="${name}" data-platform="${platform}" aria-label="Avaa tai sulje chat" title="Avaa tai sulje chat">${svgIcons.chat}</button>
@@ -757,8 +798,18 @@ function _loadChatIframe(id, name, platform) {
             ? `https://kick.com/popout/${name}/chat`
             : `https://www.twitch.tv/embed/${name}/chat?parent=${parent}&darkpopout`;
 
+    const chatShellStart = `
+        <section class="chat-shell" aria-label="${name}-chat">
+            <header class="chat-shell-header">
+                <span class="chat-live-label"><i></i>LIVE_CHAT</span>
+                <button class="chat-settings-btn" type="button" data-action="open-chat-settings" aria-label="Avaa chatin asetukset" title="Chatin asetukset">⚙</button>
+            </header>
+            <div class="chat-embed-frame">`;
+    const chatShellEnd = `</div></section>`;
+
     if (platform === "kick") {
         chatContainer.innerHTML = `
+                ${chatShellStart}
                 <div class="kick-chat-wrapper">
                     <iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>
                     <div class="kick-chat-footer">
@@ -767,9 +818,9 @@ function _loadChatIframe(id, name, platform) {
                         </button>
                     </div>
                 </div>
-            `;
+                ${chatShellEnd}`;
     } else {
-        chatContainer.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+        chatContainer.innerHTML = `${chatShellStart}<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>${chatShellEnd}`;
     }
 }
 
@@ -1117,6 +1168,19 @@ function openSettings(trigger) {
     openModal("settings-modal", trigger);
 }
 
+function openChatSettings(trigger) {
+    openModal("chat-settings-modal", trigger);
+}
+
+function saveChatSettings() {
+    chatSettings = {
+        showTimestamps: document.getElementById("chat-show-timestamps").checked,
+        collapseDuplicates: document.getElementById("chat-collapse-duplicates").checked,
+        blockEmojiOnly: document.getElementById("chat-block-emoji-only").checked,
+    };
+    localStorage.setItem(STORAGE_CHAT_SETTINGS, JSON.stringify(chatSettings));
+}
+
 function openAbout(trigger) {
     document.getElementById("app-name").textContent = APP_META.name;
     document.getElementById("app-version").textContent = `Versio ${APP_META.version}`;
@@ -1149,6 +1213,9 @@ function handleActionClick(event) {
             break;
         case "open-about":
             openAbout(actionElement);
+            break;
+        case "open-chat-settings":
+            openChatSettings(actionElement);
             break;
         case "close-modal":
             closeModal(modal);
@@ -1191,6 +1258,7 @@ function bindApplicationEvents() {
         if (event.target.matches(".fav-auto")) toggleAutoOpen(Number(event.target.dataset.index), event);
         if (event.target.id === "auto-close-offline") toggleAutoCloseOffline(event);
         if (event.target.id === "backup-file") importBackup(event);
+        if (event.target.matches("#chat-show-timestamps, #chat-collapse-duplicates, #chat-block-emoji-only")) saveChatSettings();
     });
     document.getElementById("favorite-form").addEventListener("submit", saveFavorite);
     document.addEventListener("keydown", (event) => {

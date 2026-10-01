@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.8.28** · Päivitetty: **2026-09-21**
+Nykyinen versio: **1.9.0** · Päivitetty: **2026-10-01**
 
 ## 🎯 Yleiskuvaus
 
@@ -23,6 +23,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 - **Twitch ja Kick:** Lisää saman niminen kanava kummaltakin alustalta omaksi suosikikseen.
 - **Mukautuva asettelu:** Yksi avoin striimi käyttää koko pääalueen. Useat striimit asettuvat ruudukoksi.
+- **Katselupöytä:** Operatiivinen yläpalkki, tiiviimpi seurantalista sekä kanavatiedot ja chat samassa striimikortissa.
 - **Raahaus:** Järjestä avoimia striimejä vetämällä. Avoimien striimien järjestys säilyy selaimessa.
 - **Tyhjät näkymät:** Sovellus opastaa, kun suosikkeja tai avoimia striimejä ei vielä ole.
 
