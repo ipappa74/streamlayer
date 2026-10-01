@@ -1415,7 +1415,7 @@ body.is-dragging .stream-wrapper {
     --ops-blue: #1683ff;
     --ops-green: #52e482;
 }
-body { display: block; min-height: 100vh; height: auto; padding-top: 57px; background-color: var(--ops-bg); background-image: linear-gradient(rgba(44,77,119,.1) 1px,transparent 1px), linear-gradient(90deg,rgba(44,77,119,.1) 1px,transparent 1px), radial-gradient(circle at 52% 0%,rgba(22,131,255,.12),transparent 38%); background-size: 52px 52px,52px 52px,auto; }
+body { display: block; min-height: 100vh; height: auto; padding-top: 56px; background-color: var(--ops-bg); background-image: linear-gradient(rgba(44,77,119,.1) 1px,transparent 1px), linear-gradient(90deg,rgba(44,77,119,.1) 1px,transparent 1px), radial-gradient(circle at 52% 0%,rgba(22,131,255,.12),transparent 38%); background-size: 52px 52px,52px 52px,auto; }
 .app-topbar { position: fixed; inset: 0 0 auto; z-index: 2000; display: flex; align-items: center; height: 56px; padding: 0 28px; box-sizing: border-box; border-bottom: 1px solid rgba(75,103,143,.35); background: rgba(6,9,15,.94); backdrop-filter: blur(18px); }
 .topbar-brand { display: flex; align-items: center; gap: 9px; min-width: 210px; color: #f1f6ff; font-size: 1rem; font-weight: 800; letter-spacing: -.03em; }
 .topbar-logo { width: 25px; height: 25px; color: var(--ops-blue); }
@@ -1445,23 +1445,17 @@ main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 2
 @media (min-width: 769px) {
     /* Yläpalkki on 56 px ja pääalueen pystypehmusteet yhteensä 36 px.
        Yksittäinen striimi jää täsmälleen näkyvään katselualueeseen. */
-    body:has(#stream-grid > .stream-wrapper) {
+    body:has(#stream-grid > .stream-wrapper:only-of-type) {
         height: 100dvh;
         padding-top: 56px;
         overflow-y: hidden;
         box-sizing: border-box;
     }
 
-    main:has(#stream-grid > .stream-wrapper) {
+    main:has(#stream-grid > .stream-wrapper:only-of-type) {
         height: calc(100dvh - 56px);
         min-height: 0;
         overflow: hidden;
-    }
-
-    #stream-grid:has(> .stream-wrapper) {
-        height: calc(100dvh - 92px);
-        min-height: 0;
-        grid-auto-rows: minmax(0, 1fr);
     }
 
     #stream-grid {
@@ -1480,17 +1474,6 @@ main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 2
     .video-container,
     .chat-container {
         min-width: 0;
-    }
-
-    .stream-wrapper .content-area {
-        flex: 1 1 0;
-        min-height: 0;
-        overflow: hidden;
-    }
-
-    .stream-wrapper:not(.chat-open) .video-container {
-        height: 100%;
-        aspect-ratio: auto;
     }
 
     .stream-wrapper.chat-open {
@@ -1522,6 +1505,7 @@ main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 2
 
     #stream-grid:has(> .stream-wrapper:only-of-type) {
         grid-template-columns: 1fr !important;
+        height: calc(100dvh - 92px);
         min-height: 0;
     }
 
