@@ -1936,6 +1936,21 @@ aside h3,
         border-left: 0;
         flex: none !important;
     }
+
+    /* Chatiton kortti ei veny viereisen chatillisen kortin korkeuteen. */
+    .stream-wrapper:not(.chat-open) {
+        align-self: start;
+    }
+
+    .stream-wrapper.neighbor-has-chat .content-area {
+        flex: 0 0 auto;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .stream-wrapper.neighbor-has-chat .video-container {
+        max-height: none !important;
+    }
 }
 
 /* Kapeassa pääalueessa kortit ovat allekkain koko käytettävällä leveydellä. */
