@@ -1030,7 +1030,12 @@ function saveFavorite(event) {
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     document.getElementById("channel-name").value = "";
-    setFormFeedback(`${n} lisättiin suosikkeihin.`);
+    const successMessage = `${n} lisättiin suosikkeihin.`;
+    setFormFeedback(successMessage);
+    window.setTimeout(() => {
+        const feedback = document.getElementById("form-feedback");
+        if (feedback.textContent === successMessage) feedback.textContent = "";
+    }, 2500);
     renderFavorites();
     updateAllStatuses();
 }
