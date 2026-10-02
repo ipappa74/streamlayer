@@ -1059,6 +1059,17 @@ function toggleAutoOpen(index, event) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
 }
 
+function selectFavoritePlatform(platform) {
+    if (!['kick', 'twitch'].includes(platform)) return;
+
+    document.getElementById('platform-select').value = platform;
+    document.querySelectorAll('.platform-choice').forEach((button) => {
+        const isSelected = button.dataset.platform === platform;
+        button.classList.toggle('is-selected', isSelected);
+        button.setAttribute('aria-pressed', String(isSelected));
+    });
+}
+
 function refreshFavoriteStatus(index, event) {
     event.stopPropagation();
     if (!favorites[index]) return;
@@ -1239,6 +1250,9 @@ function handleActionClick(event) {
             break;
         case "open-about":
             openAbout(actionElement);
+            break;
+        case "select-platform":
+            selectFavoritePlatform(platform);
             break;
         case "open-chat-settings":
             openChatSettings(actionElement);

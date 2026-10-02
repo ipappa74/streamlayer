@@ -102,11 +102,18 @@
 
 <!-- Uuden kanavan lisäyslomake -->
     <form id="favorite-form" class="input-group">
-        <select id="platform-select">
-            <option value="kick">Kick</option>
-            <option value="twitch">Twitch</option>
-        </select>
-        <input type="text" id="channel-name" placeholder="Käyttäjänimi" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]+">
+        <div class="favorite-platform-row">
+            <input type="text" id="channel-name" placeholder="Käyttäjänimi" aria-label="Käyttäjänimi" autocomplete="off" required maxlength="50" pattern="[A-Za-z0-9_-]+">
+            <input type="hidden" id="platform-select" value="kick">
+            <div class="platform-picker" role="group" aria-label="Valitse palvelu">
+                <button class="platform-choice is-selected" type="button" data-action="select-platform" data-platform="kick" aria-pressed="true" aria-label="Valitse Kick" title="Kick">
+                    <img src="https://kick.com/favicon.ico" alt="">
+                </button>
+                <button class="platform-choice" type="button" data-action="select-platform" data-platform="twitch" aria-pressed="false" aria-label="Valitse Twitch" title="Twitch">
+                    <img src="https://www.twitch.tv/favicon.ico" alt="">
+                </button>
+            </div>
+        </div>
         <button class="primary-btn" type="submit">Lisää listalle</button>
         <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
     </form>

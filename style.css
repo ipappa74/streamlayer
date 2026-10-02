@@ -1812,6 +1812,74 @@ aside h3,
     content: none;
 }
 
+/* Kanavan lisäys: käyttäjänimi ja alustavalinta samalla rivillä. */
+#favorite-form {
+    display: flex;
+    gap: 8px;
+    padding-right: 0;
+}
+
+.favorite-platform-row {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+}
+
+#favorite-form #channel-name {
+    min-width: 0;
+    height: 40px;
+    flex: 1;
+    padding: 0 11px;
+    box-sizing: border-box;
+}
+
+.platform-picker {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+#favorite-form .platform-choice {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--ops-line);
+    border-radius: 7px;
+    background: #111b2b;
+    cursor: pointer;
+}
+
+#favorite-form .platform-choice img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+#favorite-form .platform-choice:hover {
+    border-color: rgba(22, 131, 255, .72);
+    background: #17263b;
+}
+
+#favorite-form .platform-choice.is-selected {
+    border-color: var(--ops-blue);
+    background: rgba(22, 131, 255, .16);
+    box-shadow: 0 0 0 2px rgba(22, 131, 255, .12);
+}
+
+#favorite-form .primary-btn {
+    width: 100%;
+    min-height: 38px;
+    padding: 9px 12px;
+}
+
+#favorite-form .form-feedback {
+    width: 100%;
+    margin: 0;
+}
+
 @media (max-width: 768px) {
     #stream-grid:has(#stream-empty-state:not([hidden])) {
         min-height: calc(100dvh - 72px) !important;
