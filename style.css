@@ -1955,8 +1955,8 @@ aside h3,
         flex: none !important;
     }
 
-    /* Chatiton kortti ei veny viereisen chatillisen kortin korkeuteen. */
-    .stream-wrapper:not(.chat-open) {
+    /* Kortit eivät veny viereisen striimin korkeuteen. */
+    .stream-wrapper {
         align-self: start;
     }
 
