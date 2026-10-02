@@ -30,7 +30,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ### Mobiili- ja kapeat näkymät
 
-- Alle 1600 px leveydessä striimit ovat allekkain ja käyttävät pääalueen koko leveyden. Chatti avautuu videon alapuolelle.
+- Kun katselupöydän käytettävä leveys jää alle 2050 px, striimit ovat allekkain ja käyttävät pääalueen koko leveyden. Chatti avautuu videon alapuolelle.
 - Sivupalkki rajaa pääalueen leveyden näkyvänä ja suljettuna antaa katselupöydälle koko ikkunan leveyden.
 - Puhelimessa sivupalkki toimii peittävänä valikkona ja sulkeutuu, kun avaat striimin.
 - Mobiiliselaimet voivat rajoittaa äänekästä automaattista toistoa. Kickissä ota ääni käyttöön striimikortin äänipainikkeesta ja käynnistä tarvittaessa video soittimen omasta toistopainikkeesta.
