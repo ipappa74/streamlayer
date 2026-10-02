@@ -1888,7 +1888,7 @@ aside h3,
 }
 
 /* Keskikokoisella katselupöydällä käytetään kahta yhtä leveää korttia.
-   Chat avautuu videon alle, jolloin sen avaaminen ei muuta korttien leveyttä. */
+   Useamman striimin näkymässä chat pysyy videon vieressä. */
 @container (min-width: 1200px) and (max-width: 2050px) {
     #stream-grid {
         display: grid !important;
@@ -1918,18 +1918,36 @@ aside h3,
     }
 
     .stream-wrapper.chat-open .content-area {
-        flex-direction: column !important;
+        flex-direction: row !important;
         height: auto !important;
     }
 
     .stream-wrapper.chat-open .video-container {
-        width: 100% !important;
+        width: auto !important;
         aspect-ratio: 16 / 9 !important;
         height: auto !important;
-        flex: none !important;
+        flex: 1 1 0 !important;
     }
 
     .stream-wrapper.chat-open .chat-container {
+        width: clamp(240px, 40%, 340px) !important;
+        height: auto !important;
+        border-top: 0;
+        border-left: 1px solid var(--ops-line);
+        flex: 0 0 clamp(240px, 40%, 340px) !important;
+    }
+
+    /* Yksittäisessä kortissa käytetään leveämpää videota ja chatti sen alla. */
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .content-area {
+        flex-direction: column !important;
+    }
+
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .video-container {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .chat-container {
         width: 100% !important;
         height: 420px !important;
         border-top: 1px solid var(--ops-line);

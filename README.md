@@ -30,7 +30,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ### Mobiili- ja kapeat näkymät
 
-- Keskikokoisella katselupöydällä kaksi striimiä näkyy rinnakkain. Chatti avautuu videon alle, joten korttien leveys ei muutu chatin tilan mukana.
+- Keskikokoisella katselupöydällä kaksi striimiä näkyy rinnakkain ja chatti avautuu videon oikealle puolelle. Yksittäisessä striimissä chatti avautuu videon alle.
 - Kun katselupöydän käytettävä leveys jää alle 1200 px, striimit ovat allekkain ja käyttävät pääalueen koko leveyden.
 - Sivupalkki rajaa pääalueen leveyden näkyvänä ja suljettuna antaa katselupöydälle koko ikkunan leveyden.
 - Puhelimessa sivupalkki toimii peittävänä valikkona ja sulkeutuu, kun avaat striimin.
