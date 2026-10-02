@@ -1918,23 +1918,27 @@ aside h3,
     }
 
     .stream-wrapper.chat-open .content-area {
-        flex-direction: row !important;
+        position: relative;
         height: auto !important;
     }
 
     .stream-wrapper.chat-open .video-container {
-        width: auto !important;
+        width: 100% !important;
         aspect-ratio: 16 / 9 !important;
         height: auto !important;
-        flex: 1 1 0 !important;
+        flex: none !important;
     }
 
     .stream-wrapper.chat-open .chat-container {
+        position: absolute !important;
+        top: 0;
+        right: 0;
+        bottom: 0;
         width: clamp(240px, 40%, 340px) !important;
-        height: auto !important;
+        height: 100% !important;
         border-top: 0;
         border-left: 1px solid var(--ops-line);
-        flex: 0 0 clamp(240px, 40%, 340px) !important;
+        flex: none !important;
     }
 
     /* Yksittäisessä kortissa käytetään leveämpää videota ja chatti sen alla. */
@@ -1948,6 +1952,7 @@ aside h3,
     }
 
     #stream-grid:has(> .stream-wrapper:only-of-type) .stream-wrapper.chat-open .chat-container {
+        position: relative !important;
         width: 100% !important;
         height: 420px !important;
         border-top: 1px solid var(--ops-line);
