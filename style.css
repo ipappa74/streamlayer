@@ -812,8 +812,8 @@ body.is-dragging .stream-wrapper {
 .chat-container iframe {
     background-color: #0e0e10;
     border: none;
-    width: 125%;
-    height: 125%;
+    width: 121.36%;
+    height: 121.36%;
     transform: scale(0.824);
     transform-origin: top left;
     position: absolute;
@@ -1070,8 +1070,8 @@ body.is-dragging .stream-wrapper {
 
     /* Chatin sisällä olevan iframen skaalaus */
     .stream-wrapper.chat-open .chat-container iframe {
-        width: 125% !important;
-        height: 125% !important;
+        width: 121.36% !important;
+        height: 121.36% !important;
         transform: scale(0.824);
         transform-origin: top left;
     }
@@ -1176,8 +1176,8 @@ body.is-dragging .stream-wrapper {
     .chat-container iframe {
         background-color: #0e0e10;
         border: none;
-        width: 125%;
-        height: 125%;
+        width: 121.36%;
+        height: 121.36%;
         transform: scale(0.824);
         transform-origin: top left;
         position: absolute;
@@ -1427,7 +1427,7 @@ body { display: block; min-height: 100vh; height: auto; padding-top: 56px; box-s
 aside { top: 56px; width: 286px; height: calc(100vh - 56px) !important; padding: 0 14px 12px 20px !important; border-right-color: var(--ops-line); background: rgba(10,15,24,.94); backdrop-filter: blur(16px); } aside.collapsed { transform: translateX(-100%); }.app-header { display: none; }.toggle-sidebar-btn { top: 13px; right: -27px; width: 27px; height: 34px; border-color: var(--ops-line); border-left: 0; border-radius: 0 7px 7px 0; background: var(--ops-surface); }.sidebar-section-heading { display: flex; align-items: center; gap: 9px; margin: 24px 0 4px; } aside h3 { margin: 0 !important; color: #c9d5e8; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }.sidebar-intro { margin: 0 0 15px 16px; color: var(--ops-muted); font-size: .75rem; line-height: 1.35; }.input-group { gap: 8px; padding-right: 0; } input,select,button { border-color: var(--ops-line); background: var(--ops-surface); } input:focus,select:focus { border-color: var(--ops-blue); box-shadow: 0 0 0 3px rgba(22,131,255,.13); } button.primary-btn { border-radius: 7px; background: var(--ops-blue); letter-spacing: .01em; }#favorites-list { gap: 8px; padding-right: 5px; }.favorite-item { padding: 9px 10px; border-color: var(--ops-line); border-radius: 8px; background: rgba(17,27,43,.78); transition: border-color .18s ease,background .18s ease; }.favorite-item:hover { border-color: rgba(22,131,255,.72); background: rgba(20,36,59,.92); }.fav-alias { color: #e8f0fc; }.fav-title,.status-text { color: var(--ops-muted); }.app-footer { border-color: var(--ops-line); }
 main { width: calc(100% - 286px); min-height: calc(100vh - 56px); margin-left: 286px; padding: 18px; }main.expanded { width: 100%; margin-left: 0; }#stream-grid { gap: 16px; max-width: none; margin: 0; }.empty-state { width: min(100%,560px); padding: 38px; border-color: var(--ops-line); border-style: solid; background: rgba(13,20,33,.86); box-shadow: 0 24px 64px rgba(0,0,0,.2); }.empty-state::before { margin-bottom: 12px; color: var(--ops-blue); font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .7rem; font-weight: 800; letter-spacing: .12em; content: "STREAMLAYER / KATSELUPÖYTÄ"; }.stream-wrapper { border-color: var(--ops-line); border-radius: 11px; background: var(--ops-surface); box-shadow: 0 18px 55px rgba(0,0,0,.25); }.stream-header { height: 64px; padding: 0 14px; border-bottom: 1px solid var(--ops-line); background: rgba(13,20,33,.98); }.stream-title-group { min-width: 0; gap: 10px; }.header-icon { width: 24px !important; height: 24px !important; padding: 3px; border-radius: 6px; background: #07111e; }.stream-channel-identity { display: flex; min-width: 0; flex-direction: column; gap: 5px; }.stream-channel-line { display: flex; align-items: center; gap: 7px; min-width: 0; }.stream-channel-line .fav-alias { max-width: 220px; font-size: .91rem; }.stream-channel-meta { overflow: hidden; max-width: min(54vw,620px); color: var(--ops-muted); font-size: .7rem; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }.platform-badge,.stream-state { display: inline-flex; align-items: center; gap: 5px; padding: 3px 6px; border: 1px solid var(--ops-line); border-radius: 4px; color: var(--ops-muted); font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .59rem; font-weight: 800; letter-spacing: .06em; line-height: 1; text-transform: uppercase; }.platform-kick { color: #8ef171; }.platform-twitch { color: #b994ff; }.stream-state.is-live { color: var(--ops-green); }.stream-state:not(.is-live) i { background: #64748b; box-shadow: none; }.stream-header-btns { gap: 6px; }.icon-btn { width: 34px; height: 34px; border-color: var(--ops-line); border-radius: 7px; background: #111b2b; }.icon-btn:hover { background: #17263b; }.icon-btn.is-active { color: var(--ops-green); border-color: rgba(82,228,130,.55); }.close-btn { color: #ed7883; background: transparent; }.content-area { background: #030507; }
 main { container-type: inline-size; }
-.chat-container { width: 360px; background: #090d14; border-left-color: var(--ops-line); }.chat-shell { display: flex; height: 100%; min-height: 0; flex-direction: column; }.chat-shell-header { display: flex; height: 42px; align-items: center; justify-content: space-between; padding: 0 12px; border-bottom: 1px solid var(--ops-line); background: #0b111b; flex-shrink: 0; }.chat-live-label { display: inline-flex; align-items: center; gap: 7px; color: #dbe8fa; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .67rem; font-weight: 800; letter-spacing: .08em; }.chat-settings-btn { width: 28px; height: 28px; padding: 0; border: 0; color: var(--ops-muted); background: transparent; cursor: pointer; }.chat-settings-btn:hover { color: #fff; }.chat-embed-frame { position: relative; overflow: hidden; min-height: 0; flex: 1; }.chat-embed-frame > iframe { width: 125%; height: 125%; transform: scale(.824); transform-origin: top left; }.chat-embed-frame .kick-chat-wrapper { height: 100%; }.kick-chat-footer { height: 54px; border-top-color: var(--ops-line); background: #0b111b; }.kick-chat-open-btn { width: calc(100% - 22px); height: 33px; border: 1px solid rgba(22,131,255,.75); border-radius: 6px; color: #dcecff; background: rgba(22,131,255,.1); box-shadow: none; }.kick-chat-open-btn:hover { background: rgba(22,131,255,.22); box-shadow: none; }.settings-lead { margin: -3px 0 16px; color: var(--text-dim); font-size: .85rem; line-height: 1.45; }.chat-setting { justify-content: flex-start; padding: 12px 0; border-top: 1px solid var(--ops-line); color: var(--text-main); font-size: .86rem; }
+.chat-container { width: 360px; background: #090d14; border-left-color: var(--ops-line); }.chat-shell { display: flex; height: 100%; min-height: 0; flex-direction: column; }.chat-shell-header { display: flex; height: 42px; align-items: center; justify-content: space-between; padding: 0 12px; border-bottom: 1px solid var(--ops-line); background: #0b111b; flex-shrink: 0; }.chat-live-label { display: inline-flex; align-items: center; gap: 7px; color: #dbe8fa; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .67rem; font-weight: 800; letter-spacing: .08em; }.chat-settings-btn { width: 28px; height: 28px; padding: 0; border: 0; color: var(--ops-muted); background: transparent; cursor: pointer; }.chat-settings-btn:hover { color: #fff; }.chat-embed-frame { position: relative; overflow: hidden; min-height: 0; flex: 1; }.chat-embed-frame > iframe { width: 121.36%; height: 121.36%; transform: scale(.824); transform-origin: top left; }.chat-embed-frame .kick-chat-wrapper { height: 100%; }.kick-chat-footer { height: 54px; border-top-color: var(--ops-line); background: #0b111b; }.kick-chat-open-btn { width: calc(100% - 22px); height: 33px; border: 1px solid rgba(22,131,255,.75); border-radius: 6px; color: #dcecff; background: rgba(22,131,255,.1); box-shadow: none; }.kick-chat-open-btn:hover { background: rgba(22,131,255,.22); box-shadow: none; }.settings-lead { margin: -3px 0 16px; color: var(--text-dim); font-size: .85rem; line-height: 1.45; }.chat-setting { justify-content: flex-start; padding: 12px 0; border-top: 1px solid var(--ops-line); color: var(--text-main); font-size: .86rem; }
 
 /* StreamScan-henkinen, selkeä käyttöliittymäkirjasinhierarkia. */
 body { font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -1613,7 +1613,7 @@ aside h3,
 /* Kick-upotuksen tiivistetty chat-näkymä: oma otsikkorivi ja Kickin
    kirjoituskenttä ovat piilossa, mutta viestit käyttävät koko korkeuden. */
 .chat-embed-frame .kick-chat-wrapper > iframe {
-    height: calc(125% + 120px) !important;
+    height: calc(121.36% + 120px) !important;
 }
 
 .kick-chat-footer {
