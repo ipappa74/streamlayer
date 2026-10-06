@@ -5,8 +5,8 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.10.0",
-    buildDate: "2026-10-01",
+    version: "1.10.1",
+    buildDate: "2026-10-07",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
     repo: "https://github.com/ipappa74/streamlayer",
@@ -220,12 +220,10 @@ function updateActiveStreamsStorage() {
         const name = wrapper.querySelector(".fav-alias").textContent;
         // Alusta selviää id:n toisesta osasta (esim. "s-kick-pelaaja")
         const platform = wrapper.id.split("-")[1];
-        const isUnmuted = isStreamUnmuted(wrapper.id);
         active.push({
             name,
             platform,
             chatOpen: wrapper.classList.contains("chat-open"),
-            unmuted: isUnmuted,
         });
     });
     localStorage.setItem(STORAGE_ACTIVE, JSON.stringify(active));
@@ -516,6 +514,28 @@ function applyStreamAudioState(id, platform, name) {
     }
 }
 
+function enforceMutedPlayers() {
+    document.querySelectorAll('.stream-wrapper[data-unmuted="false"]').forEach((wrapper) => {
+        const { id } = wrapper;
+
+        if (wrapper.dataset.platform === "twitch" && players[id]) {
+            players[id].setMuted(true);
+            return;
+        }
+
+        if (wrapper.dataset.platform === "kick") {
+            const iframe = document.querySelector(`#player-${id} iframe`);
+            if (!iframe) return;
+
+            const url = new URL(iframe.src);
+            if (url.searchParams.get("muted") !== "true") {
+                url.searchParams.set("muted", "true");
+                iframe.src = url.toString();
+            }
+        }
+    });
+}
+
 function showPlayerError(id, message) {
     const container = document.getElementById(`player-${id}`);
     if (container) {
@@ -596,6 +616,15 @@ function createTwitchPlayer(id, name) {
                 muted: !isStreamUnmuted(id),
                 volume: 0.8,
             });
+
+            // Twitch voi ottaa oman oletustilansa käyttöön vasta soittimen
+            // valmistuttua tai toiston käynnistyessä. Painikkeen tila on aina
+            // määräävä, joten mykistys asetetaan näissä vaiheissa uudelleen.
+            const enforceCurrentAudioState = () => {
+                if (players[id] && !isStreamUnmuted(id)) players[id].setMuted(true);
+            };
+            players[id].addEventListener(window.Twitch.Player.READY, enforceCurrentAudioState);
+            players[id].addEventListener(window.Twitch.Player.PLAYING, enforceCurrentAudioState);
         })
         .catch(() => {
             if (document.getElementById(`player-${id}`) === container) {
@@ -615,7 +644,6 @@ function openStream(
     name,
     platform,
     defaultChatOpen = false,
-    defaultUnmuted = false,
     skipStorage = false,
 ) {
     const grid = document.getElementById("stream-grid");
@@ -634,7 +662,10 @@ function openStream(
     wrapper.className = "stream-wrapper";
     wrapper.id = id;
     wrapper.dataset.platform = platform;
-    wrapper.dataset.unmuted = String(defaultUnmuted);
+    // Uusi tai selaimen muistista palautettu soitin alkaa aina mykistettynä.
+    // Ääni voidaan ottaa käyttöön vain tämän istunnon painalluksella.
+    const startsUnmuted = false;
+    wrapper.dataset.unmuted = String(startsUnmuted);
     wrapper.draggable = true;
 
     if (defaultChatOpen) wrapper.classList.add("chat-open");
@@ -699,14 +730,15 @@ function openStream(
     if (platform === "twitch") {
         createTwitchPlayer(id, name);
     } else if (platform === "kick") {
-        document.getElementById(`player-${id}`).appendChild(createKickPlayerIframe(name, defaultUnmuted));
+        document.getElementById(`player-${id}`).appendChild(createKickPlayerIframe(name, startsUnmuted));
     } else {
         showPlayerError(id, "Twitch-soitinta ei voitu ladata. Tarkista verkkoyhteys ja yritä sivun lataamista uudelleen.");
     }
 
     // Painikkeen tila on livekohtainen eikä sitä palauteta muiden soittimien
     // asettelumuutosten yhteydessä.
-    setStreamUnmuted(id, defaultUnmuted);
+    setStreamUnmuted(id, startsUnmuted);
+    enforceMutedPlayers();
 
     setTimeout(() => {
         if (defaultChatOpen) {
@@ -755,16 +787,23 @@ function closeStream(id) {
 
 function refreshStream(id) {
     const container = document.getElementById(`player-${id}`);
+    const wrapper = document.getElementById(id);
     const ifr = container.querySelector("iframe");
 
-    if (ifr) {
-        // Reload pakottamalla src tyhjäksi hetkeksi
-        const src = ifr.src;
-        ifr.src = "";
-        setTimeout(() => (ifr.src = src), 10);
+    // Myös käyttäjän käynnistämä uudelleenlataus palaa turvalliseen
+    // oletustilaan. Ääni avataan tämän jälkeen erikseen äänipainikkeesta.
+    setStreamUnmuted(id, false);
+
+    if (ifr && wrapper?.dataset.platform === "kick") {
+        const name = wrapper.querySelector(".fav-alias")?.textContent;
+        if (name) container.replaceChildren(createKickPlayerIframe(name, false));
+    } else if (ifr) {
+        ifr.src = ifr.src;
     } else if (players[id]) {
+        players[id].setMuted(true);
         players[id].pause();
         players[id].play();
+        players[id].setMuted(true);
     }
 }
 
@@ -929,7 +968,6 @@ function getValidActiveStreams(streams) {
             name: stream.name,
             platform: stream.platform,
             chatOpen: stream.chatOpen === true,
-            unmuted: stream.unmuted === true,
         });
         return validStreams;
     }, []);
@@ -1114,7 +1152,7 @@ function restoreActiveStreams() {
         streams.forEach((s) => {
             // Jokainen palautettu live alkaa mykistettynä. Ääni otetaan käyttöön
             // aina käyttäjän omalla painalluksella kyseisestä livekortista.
-            openStream(s.name, s.platform, s.chatOpen, false, true);
+            openStream(s.name, s.platform, s.chatOpen, true);
         });
 
         updateActiveStreamsStorage();
@@ -1317,6 +1355,10 @@ function bindApplicationEvents() {
             );
             if (openModalElement) closeModal(openModalElement.id);
         }
+    });
+    window.addEventListener("pageshow", enforceMutedPlayers);
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) enforceMutedPlayers();
     });
 }
 

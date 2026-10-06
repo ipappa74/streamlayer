@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.10.0** · Päivitetty: **2026-10-01**
+Nykyinen versio: **1.10.1** · Päivitetty: **2026-10-07**
 
 ## 🎯 Yleiskuvaus
 
@@ -39,7 +39,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 ### Ääni ja chat
 
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
-- Uusi striimi alkaa mykistettynä.
+- Uusi striimi alkaa aina mykistettynä. Mykistys pysyy voimassa myös soittimen valmistuessa, sivulle palattaessa ja striimiä ladattaessa uudelleen.
 - Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
 - Työpöydällä ikkunan koon muuttuessa sovellus pysäyttää mykistetyt Kick-soittimet ja lataa ne uudelleen mykistettyinä koon vakiinnuttua. Puhelimessa tätä uudelleenlatausta ei tehdä, jotta mobiiliselaimen koonmuutokset eivät keskeytä muita lähetyksiä. Kortin äänipainike lataa uudelleen vain kyseisen soittimen.
 - Kick- ja Twitch-chatit ovat alustojen omia upotuksia. StreamLayerin ulompi chat-otsikko on poistettu, jotta viesteille jää enemmän tilaa. Kick-chatin alareunassa on keskitetty **Avaa Kickissä** -painike.
@@ -73,7 +73,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 
 ### Tallennus ja varmuuskopiointi
 
-- Sovellus tallentaa suosikit, asetukset, avoimet striimit, järjestyksen ja äänen tilat selaimen `localStorage`-muistiin.
+- Sovellus tallentaa suosikit, asetukset, avoimet striimit ja niiden järjestyksen selaimen `localStorage`-muistiin. Ääntä ei palauteta automaattisesti, vaan jokainen soitin avautuu mykistettynä.
 - Tallennus on sidottu sivun osoitteeseen. GitHub Pages, `localhost` ja paikallinen `file:`-osoite käyttävät eri tallennustiloja.
 - Avaimet ovat `streamlayer`, `streamlayer_active_v1`, `streamlayer_settings_v1` ja `sidebar-collapsed`.
 - Selaindatan tyhjennys poistaa nämä tiedot. Vie ensin JSON-varmuuskopio **Asetukset**-ikkunasta.
