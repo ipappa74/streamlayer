@@ -414,7 +414,7 @@ function renderFavorites() {
         .map((fav, i) => {
             const iconSrc =
                 fav.platform === "kick"
-                    ? "https://kick.com/favicon.ico"
+                    ? "img/kick_favicon.ico"
                     : "https://www.twitch.tv/favicon.ico";
 
             return `
@@ -648,7 +648,7 @@ function openStream(
     wrapper.addEventListener("drop", handleDrop);
 
     const iconSrc =
-        platform === "kick" ? "https://kick.com/favicon.ico" : "https://www.twitch.tv/favicon.ico";
+        platform === "kick" ? "img/kick_favicon.ico" : "https://www.twitch.tv/favicon.ico";
 
     const favorite = favorites.find((item) => item.platform === platform && item.name.toLowerCase() === name.toLowerCase());
     const statusLabel = favorite?.isLive ? "LIVE" : "OFFLINE";
