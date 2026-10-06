@@ -1440,10 +1440,19 @@ aside h3,
 @media (max-width:768px) { body { padding-top:52px; }.app-topbar { height:52px; padding:0 15px; }.topbar-brand { min-width:0; font-size:.92rem; }.topbar-nav { margin-left:auto; }.topbar-nav-link { padding:0 7px; font-size:.62rem; }.topbar-nav-link.is-current::after { right:7px; left:7px; }.topbar-state { display:none; }aside { top:52px; height:calc(100vh - 52px) !important; }main { min-height:calc(100vh - 52px); padding:10px; }.stream-header { height:58px; }.stream-channel-meta { max-width:145px; }.stream-state { display:none; }.chat-container { border-top-color:var(--ops-line); } }
 
 @media (max-width:420px) {
-    .topbar-brand { min-width: 42px; font-size: 0; }
+    .app-topbar { gap: 4px; padding: 0 8px; }
+    .topbar-brand { min-width: 25px; flex: 0 0 25px; font-size: 0; }
     .topbar-logo { width: 25px; height: 25px; }
-    .topbar-nav-link:not(.is-current) { display: none; }
-    .topbar-nav-link.is-current { padding: 0 10px; font-size: .65rem; }
+    .topbar-nav { min-width: 0; flex: 1; margin-left: 0; }
+    .topbar-nav-link {
+        display: block;
+        min-width: 0;
+        flex: 1;
+        padding: 0 3px;
+        font-size: .57rem;
+        letter-spacing: .035em;
+    }
+    .topbar-nav-link.is-current::after { right: 3px; left: 3px; }
 }
 
 /* LIVE-merkki käyttää samaa punaista kuin sivupalkin livepiste. */

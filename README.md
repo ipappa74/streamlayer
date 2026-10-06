@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.10.1** · Päivitetty: **2026-10-07**
+Nykyinen versio: **1.10.2** · Päivitetty: **2026-10-07**
 
 ## 🎯 Yleiskuvaus
 
@@ -34,6 +34,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Kun katselupöydän käytettävä leveys jää alle 1200 px, striimit ovat allekkain ja käyttävät pääalueen koko leveyden.
 - Sivupalkki rajaa pääalueen leveyden näkyvänä ja suljettuna antaa katselupöydälle koko ikkunan leveyden.
 - Puhelimessa sivupalkki toimii peittävänä valikkona ja sulkeutuu, kun avaat striimin.
+- Puhelimen yläpalkissa Seuranta, Asetukset ja Tietoa pysyvät kaikki näkyvissä myös kapeimmilla näytöillä.
 - Mobiiliselaimet voivat rajoittaa äänekästä automaattista toistoa. Kickissä ota ääni käyttöön striimikortin äänipainikkeesta ja käynnistä tarvittaessa video soittimen omasta toistopainikkeesta.
 
 ### Ääni ja chat
