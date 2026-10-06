@@ -5,7 +5,7 @@
 /* --- METATIEDOT --- */
 const APP_META = {
     name: "StreamLayer",
-    version: "1.10.2",
+    version: "1.10.3",
     buildDate: "2026-10-07",
     author: "Toni",
     kick: "https://kick.com/ipappa/",
@@ -514,6 +514,20 @@ function applyStreamAudioState(id, platform, name) {
     }
 }
 
+function muteOtherKickStreams(activeId) {
+    document.querySelectorAll('.stream-wrapper[data-platform="kick"]').forEach((wrapper) => {
+        if (wrapper.id === activeId || !isStreamUnmuted(wrapper.id)) return;
+
+        const name = wrapper.querySelector(".fav-alias")?.textContent;
+        const container = document.getElementById(`player-${wrapper.id}`);
+        setStreamUnmuted(wrapper.id, false);
+
+        if (container && name) {
+            container.replaceChildren(createKickPlayerIframe(name, false));
+        }
+    });
+}
+
 function enforceMutedPlayers() {
     document.querySelectorAll('.stream-wrapper[data-unmuted="false"]').forEach((wrapper) => {
         const { id } = wrapper;
@@ -891,6 +905,12 @@ function _loadChatIframe(id, name, platform) {
 
 function toggleMute(id, name, platform) {
     const unmuted = !isStreamUnmuted(id);
+
+    // Kickin upotukset jakavat selaimessa äänitilaa. Pidetään vain yksi Kick
+    // äänessä kerrallaan ja päivitetään myös muiden korttien painiketila.
+    // Valittu soitin luodaan viimeisenä, jotta sen muted=false jää voimaan.
+    if (platform === "kick" && unmuted) muteOtherKickStreams(id);
+
     setStreamUnmuted(id, unmuted);
 
     applyStreamAudioState(id, platform, name);

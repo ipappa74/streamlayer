@@ -7,7 +7,7 @@
 
 # StreamLayer
 
-Nykyinen versio: **1.10.2** · Päivitetty: **2026-10-07**
+Nykyinen versio: **1.10.3** · Päivitetty: **2026-10-07**
 
 ## 🎯 Yleiskuvaus
 
@@ -42,6 +42,7 @@ Projekti on toteutettu staattisena HTML-, CSS- ja JavaScript-sovelluksena. Suosi
 - Jokaisella striimillä on oma chat- ja äänensäätönsä.
 - Uusi striimi alkaa aina mykistettynä. Mykistys pysyy voimassa myös soittimen valmistuessa, sivulle palattaessa ja striimiä ladattaessa uudelleen.
 - Sivun avauksessa myös aiemmin avoinna olleet striimit palautuvat mykistettyinä. Ääni otetaan käyttöön aina kyseisen striimikortin painikkeesta.
+- Kickissä vain yksi striimi on äänessä kerrallaan. Kun avaat äänen toisesta Kick-striimistä, aiempi Kick-striimi mykistyy ja sen painike päivittyy vastaamaan todellista tilaa. Twitchin ääntä hallitaan edelleen erikseen.
 - Työpöydällä ikkunan koon muuttuessa sovellus pysäyttää mykistetyt Kick-soittimet ja lataa ne uudelleen mykistettyinä koon vakiinnuttua. Puhelimessa tätä uudelleenlatausta ei tehdä, jotta mobiiliselaimen koonmuutokset eivät keskeytä muita lähetyksiä. Kortin äänipainike lataa uudelleen vain kyseisen soittimen.
 - Kick- ja Twitch-chatit ovat alustojen omia upotuksia. StreamLayerin ulompi chat-otsikko on poistettu, jotta viesteille jää enemmän tilaa. Kick-chatin alareunassa on keskitetty **Avaa Kickissä** -painike.
 - Kuvakepainikkeilla on selitteet ja ruudunlukijanimet.
